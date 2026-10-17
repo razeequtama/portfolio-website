@@ -1,30 +1,15 @@
 import React from 'react';
-import { SectionHeader } from '../components/common/SectionHeader';
-import { developerProfile, portfolioSections } from '../data/portfolioData';
+import { developerProfile } from '../data/portfolioData';
 
 interface WelcomePageProps {
   onNavigate: (sectionIndex: number) => void;
 }
 
 export const WelcomePage: React.FC<WelcomePageProps> = ({ onNavigate }) => {
-  const welcomeMeta = portfolioSections[0];
-
   return (
     <div className="page-welcome">
-      <SectionHeader
-        number={welcomeMeta.number}
-        title={welcomeMeta.title}
-        subtitle={welcomeMeta.subtitle}
-        badge={welcomeMeta.badge}
-      />
-
       {/* === CHANGE HERE: Main Hero Intro & Heading === */}
       <section className="welcome-hero">
-        <div className="welcome-greeting-badge">
-          <span>Hello, World!</span>
-          <span>// {developerProfile.status}</span>
-        </div>
-
         <h2 className="hero-main-title">
           Hi, I am <span className="hero-highlight-name">{developerProfile.name}</span>.
           <br />
@@ -134,4 +119,3 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onNavigate }) => {
     </div>
   );
 };
-

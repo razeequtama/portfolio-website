@@ -16,8 +16,8 @@ import type {
 
 /* === CHANGE HERE: Developer Profile & Quick Stats === */
 export const developerProfile: DeveloperProfile = {
-  name: 'Alex Mercer',
-  role: 'Staff Systems & Frontend Architect',
+  name: 'Raziq Rabbani Utama',
+  role: 'Software Engineer',
   status: 'Open to select high-impact advisory & senior roles',
   location: 'San Francisco, CA (Remote)',
   yearsExperience: '8+ Years',

@@ -3,14 +3,13 @@ import type { SectionMeta } from '../../types/portfolio';
 import { developerProfile } from '../../data/portfolioData';
 
 interface NavbarProps {
-  currentSection: SectionMeta;
+  currentSection?: SectionMeta;
   theme: 'dark' | 'light';
   onToggleTheme: () => void;
   onNavigateSection?: (index: number) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
-  currentSection,
   theme,
   onToggleTheme,
 }) => {
@@ -18,20 +17,9 @@ export const Navbar: React.FC<NavbarProps> = ({
     <nav className="navbar" role="navigation" aria-label="Main Navigation">
       <div className="navbar-brand">
         <span style={{ fontWeight: 800 }}>{developerProfile.name}</span>
-        <span className="brand-badge">{currentSection.number} // {currentSection.title}</span>
       </div>
 
       <div className="navbar-right">
-        <div className="nav-hint-pill" title="Use Left and Right arrow keys on your keyboard to rotate the turntable carousel">
-          <span>keys:</span>
-          <span>[ ← / → ]</span>
-        </div>
-
-        <div className="nav-status-badge">
-          <span className="status-dot" aria-hidden="true"></span>
-          <span>Available</span>
-        </div>
-
         <button
           type="button"
           className="theme-toggle-btn"
@@ -63,4 +51,3 @@ export const Navbar: React.FC<NavbarProps> = ({
     </nav>
   );
 };
-
