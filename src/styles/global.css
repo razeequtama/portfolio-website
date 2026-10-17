@@ -63,29 +63,32 @@ textarea:focus-visible {
   position: relative;
 }
 
-/* Main Content Area */
+/* Main Content Area: Full Width with Fluid, Reasonable Padding */
 .main-viewport {
   flex: 1;
   width: 100%;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 5.5rem 1.5rem 400px 1.5rem; /* bottom padding to clear the circular turntable dock */
+  max-width: 100%;
+  margin: 0;
+  padding: 5rem clamp(1.5rem, 4.5vw, 4.5rem) 400px clamp(1.5rem, 4.5vw, 4.5rem); /* bottom padding to clear the circular turntable dock */
 }
 
 @media (max-width: 1024px) {
   .main-viewport {
+    padding-top: 4.5rem;
     padding-bottom: 350px;
   }
 }
 
 @media (max-width: 640px) {
   .main-viewport {
+    padding-top: 4rem;
     padding-bottom: 310px;
   }
 }
 
 /* Subtle, polished page entrance transition */
 .page-content-wrapper {
+  width: 100%;
   animation: pageContentFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   will-change: opacity, transform;
 }
@@ -116,7 +119,7 @@ textarea:focus-visible {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 1.5rem;
+  padding: 0 clamp(1.5rem, 4.5vw, 4.5rem);
 }
 
 .navbar-brand {

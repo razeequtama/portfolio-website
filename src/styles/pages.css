@@ -2,6 +2,7 @@
 
 /* --- SECTION HEADER --- */
 .section-header {
+  padding-top: clamp(3.5rem, 9vh, 6.5rem);
   margin-bottom: 2.5rem;
 }
 
@@ -33,7 +34,7 @@
 .section-subtitle {
   font-size: var(--text-lg);
   color: var(--text-secondary);
-  max-width: 650px;
+  max-width: 900px;
   line-height: 1.5;
 }
 
@@ -85,7 +86,7 @@
 .hero-bio {
   font-size: var(--text-lg);
   color: var(--text-secondary);
-  max-width: 750px;
+  max-width: 950px;
   line-height: 1.6;
 }
 
@@ -742,11 +743,11 @@
 /* --- 07. CONTACT PAGE --- */
 .contact-layout {
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
+  grid-template-columns: minmax(320px, 440px) 1fr;
   gap: 2rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 860px) {
   .contact-layout {
     grid-template-columns: 1fr;
   }

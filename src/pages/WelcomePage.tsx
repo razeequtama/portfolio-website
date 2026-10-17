@@ -11,7 +11,7 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onNavigate }) => {
       {/* === CHANGE HERE: Main Hero Intro & Heading === */}
       <section className="welcome-hero">
         <h2 className="hero-main-title">
-          Hi, I am <span className="hero-highlight-name">{developerProfile.name}</span>.
+          Hi, I'm <span className="hero-highlight-name">{developerProfile.name}</span>.
           <br />
           {developerProfile.role}.
         </h2>
