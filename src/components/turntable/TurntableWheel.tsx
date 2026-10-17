@@ -32,7 +32,7 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
   );
 
   // Visual index for wheel rotation and cards placement
-  const [visualIndex, setVisualIndex] = useState<number>(() => (isDockOpen ? activeIndex : 0));
+  const [visualIndex, setVisualIndex] = useState<number>(activeIndex);
   const [isIntroSpinning, setIsIntroSpinning] = useState<boolean>(false);
   const [isImmediateReset, setIsImmediateReset] = useState<boolean>(false);
 
@@ -103,18 +103,16 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
         }, 0);
       }
     } else if (wasOpen && !isDockOpen) {
-      // DOCK JUST CLOSED: Let dock sink down smoothly into peeking state (450ms)
+      // DOCK JUST CLOSED: Retain current active card in collapsed peeking mode
       if (introSpinTimerRef.current) {
         clearTimeout(introSpinTimerRef.current);
         introSpinTimerRef.current = null;
       }
-      resetTimerRef.current = window.setTimeout(() => {
-        setIsImmediateReset(true);
-        setIsIntroSpinning(false);
-        setVisualIndex(0);
-      }, 450);
-    } else if (isDockOpen) {
-      // DOCK IS ALREADY OPEN: User navigated to another section (next/prev/card click)
+      setIsIntroSpinning(false);
+      setIsImmediateReset(false);
+      setVisualIndex(activeIndex);
+    } else {
+      // User navigated to another section (while open or while collapsed)
       startSpinTimerRef.current = window.setTimeout(() => {
         if (introSpinTimerRef.current) {
           clearTimeout(introSpinTimerRef.current);
