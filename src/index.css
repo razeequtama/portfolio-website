@@ -1,0 +1,12 @@
+/* === PORTFOLIO ROOT CSS === */
+@import './styles/variables.css';
+@import './styles/global.css';
+@import './styles/turntable.css';
+@import './styles/pages.css';
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
