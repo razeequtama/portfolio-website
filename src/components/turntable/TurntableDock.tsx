@@ -59,7 +59,7 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onPrev, onNext]);
 
-  // Mouse wheel & trackpad scroll listener to change cards
+  // Mouse wheel & trackpad scroll listener to change cards (supports proportional multi-card scrolling)
   useEffect(() => {
     const dockEl = dockRef.current;
     if (!dockEl) return;
@@ -69,18 +69,25 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
       e.stopPropagation();
 
       const now = performance.now();
-      const dominantDelta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-      scrollAccumulatorRef.current += dominantDelta;
+      const rawDelta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
 
-      if (now - lastScrollTimeRef.current > 180) {
-        if (scrollAccumulatorRef.current > 12) {
-          onNext();
-          lastScrollTimeRef.current = now;
-          scrollAccumulatorRef.current = 0;
-        } else if (scrollAccumulatorRef.current < -12) {
-          onPrev();
-          lastScrollTimeRef.current = now;
-          scrollAccumulatorRef.current = 0;
+      // Reset accumulator if user stopped scrolling for > 220ms
+      if (now - lastScrollTimeRef.current > 220) {
+        scrollAccumulatorRef.current = 0;
+      }
+      lastScrollTimeRef.current = now;
+
+      scrollAccumulatorRef.current += rawDelta;
+
+      // Each ~35px of wheel/trackpad delta triggers 1 card step
+      const SCROLL_STEP_THRESHOLD = 35;
+      if (Math.abs(scrollAccumulatorRef.current) >= SCROLL_STEP_THRESHOLD) {
+        const steps = Math.trunc(scrollAccumulatorRef.current / SCROLL_STEP_THRESHOLD);
+        scrollAccumulatorRef.current -= steps * SCROLL_STEP_THRESHOLD;
+
+        const target = Math.max(0, Math.min(portfolioSections.length - 1, activeIndex + steps));
+        if (target !== activeIndex) {
+          onSelectIndex(target);
         }
       }
     };
@@ -89,7 +96,7 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
     return () => {
       dockEl.removeEventListener('wheel', handleWheel);
     };
-  }, [onNext, onPrev]);
+  }, [activeIndex, onSelectIndex]);
 
   const lastToggleTimeRef = useRef<number>(0);
 

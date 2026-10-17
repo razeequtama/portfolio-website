@@ -6,8 +6,8 @@ interface TurntableWheelProps {
   activeIndex: number;
   isDockOpen: boolean;
   onSelectIndex: (index: number) => void;
-  onNext: () => void;
-  onPrev: () => void;
+  onNext?: () => void;
+  onPrev?: () => void;
 }
 
 const STEP_ANGLE = 26; // Adjacent cards tilt at ±26° as specified
@@ -23,8 +23,6 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
   activeIndex,
   isDockOpen,
   onSelectIndex,
-  onNext,
-  onPrev,
 }) => {
   // Screen width responsive radius initialized with window width
   const [radius, setRadius] = useState<number>(() =>
@@ -162,13 +160,20 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
       }
 
       // Convert horizontal pixel drag into rotational degrees
-      let angleDelta = (deltaX / radius) * 55;
+      // Multiplier 85 ensures natural 1:1 swipe across mobile, tablet, and desktop
+      const rawAngleDelta = (deltaX / radius) * 85;
 
-      // Elastic rubberband resistance at boundaries (cannot loop beyond 0 or 6)
-      if (activeIndex === 0 && angleDelta > 0) {
-        angleDelta *= 0.22;
-      } else if (activeIndex === TOTAL_CARDS - 1 && angleDelta < 0) {
-        angleDelta *= 0.22;
+      // Linear boundaries relative to activeIndex (cannot drag past Card 01 or Card 07)
+      const maxPositiveAngle = activeIndex * STEP_ANGLE;
+      const maxNegativeAngle = -(TOTAL_CARDS - 1 - activeIndex) * STEP_ANGLE;
+
+      let angleDelta = rawAngleDelta;
+      if (rawAngleDelta > maxPositiveAngle) {
+        const overdrag = rawAngleDelta - maxPositiveAngle;
+        angleDelta = maxPositiveAngle + overdrag * 0.22;
+      } else if (rawAngleDelta < maxNegativeAngle) {
+        const overdrag = rawAngleDelta - maxNegativeAngle;
+        angleDelta = maxNegativeAngle + overdrag * 0.22;
       }
 
       currentDragAngleRef.current = angleDelta;
@@ -183,21 +188,21 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
 
     const deltaAngle = currentDragAngleRef.current;
     const duration = performance.now() - dragStartTimeRef.current;
-    const isQuickFlick = duration < 300 && Math.abs(deltaAngle) > 6;
+    const velocity = deltaAngle / Math.max(duration, 1); // deg/ms
+    const isQuickFlick = duration < 350 && Math.abs(deltaAngle) > 6;
 
     if (hasMovedSignificantlyRef.current) {
-      // Determine snap direction with linear bounds check
-      if (isQuickFlick || Math.abs(deltaAngle) >= STEP_ANGLE / 2.5) {
-        if (deltaAngle < 0) {
-          // Dragged left -> roll next card if not at last card
-          if (activeIndex < TOTAL_CARDS - 1) {
-            onNext();
-          }
-        } else {
-          // Dragged right -> roll prev card if not at first card
-          if (activeIndex > 0) {
-            onPrev();
-          }
+      // Calculate how many cards to shift based on drag displacement + flick momentum
+      // Notice: dragging left (deltaAngle < 0) moves forward towards higher indices
+      const momentumAngle = isQuickFlick ? velocity * 140 : 0;
+      const effectiveAngle = deltaAngle + momentumAngle;
+      const cardsDisplaced = -effectiveAngle / STEP_ANGLE;
+      const targetSteps = Math.round(cardsDisplaced);
+
+      if (targetSteps !== 0) {
+        const targetIndex = Math.max(0, Math.min(TOTAL_CARDS - 1, activeIndex + targetSteps));
+        if (targetIndex !== activeIndex) {
+          onSelectIndex(targetIndex);
         }
       }
     }
@@ -205,9 +210,9 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
     // Reset drag angle offset smoothly
     setDragOffsetAngle(0);
     currentDragAngleRef.current = 0;
-  }, [isDragging, activeIndex, onNext, onPrev]);
+  }, [isDragging, activeIndex, onSelectIndex]);
 
-  // Global mouse move & up listeners while dragging
+  // Global mouse & touch listeners while dragging
   useEffect(() => {
     if (!isDragging) return;
 
@@ -219,12 +224,28 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
       handleEnd();
     };
 
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches.length === 1) {
+        handleMove(e.touches[0].clientX);
+      }
+    };
+
+    const onTouchEnd = () => {
+      handleEnd();
+    };
+
     window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('mouseup', onMouseUp);
+    window.addEventListener('touchmove', onTouchMove, { passive: true });
+    window.addEventListener('touchend', onTouchEnd);
+    window.addEventListener('touchcancel', onTouchEnd);
 
     return () => {
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mouseup', onMouseUp);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
+      window.removeEventListener('touchcancel', onTouchEnd);
     };
   }, [isDragging, handleMove, handleEnd]);
 
