@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { portfolioSections } from '../../data/portfolioData';
 import { TurntableCard } from './TurntableCard';
+import { GearTableSurface } from './GearTableSurface';
 
 interface TurntableWheelProps {
   activeIndex: number;
@@ -297,20 +298,11 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
       aria-roledescription="carousel"
       aria-label="Portfolio Sections Carousel Disc"
     >
-      {/* Physical Disc Surface with subtle grooves and center hub */}
-      <div
-        className="disc-surface"
-        style={{
-          transform: `rotate(${wheelVisualRotation}deg)`,
-          transition: wheelTransition,
-        }}
-      >
-        <div className="disc-groove groove-outer" />
-        <div className="disc-groove groove-middle" />
-        <div className="disc-groove groove-inner" />
-        <div className="disc-groove groove-core" />
-        <div className="disc-center-hub" />
-      </div>
+      {/* Physical Cogwheel Gear Table Surface */}
+      <GearTableSurface
+        rotation={wheelVisualRotation}
+        transition={wheelTransition}
+      />
 
       {/* Radially Mounted Carousel Cards: Strictly Linear Track (01 WELCOME to 07 CONTACT) */}
       <div className="turntable-cards-layer">

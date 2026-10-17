@@ -355,21 +355,28 @@
   }
 }
 
-/* Visual Disc Surface: ONLY THE CIRCLE (No rectangular tray!) */
+/* === GEAR TABLE SURFACE === */
+/* Authentic Industrial Cogwheel Gear Platter with Jagged Teeth & Mechanical Detailing */
+.gear-table-surface,
 .disc-surface {
   position: absolute;
   inset: 0;
-  border-radius: 50%;
-  background-color: var(--turntable-disc-bg);
-  border: 2px solid var(--turntable-disc-border);
-  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6), inset 0 0 80px rgba(0, 0, 0, 0.45);
+  width: 100%;
+  height: 100%;
   pointer-events: auto;
-  overflow: hidden;
   will-change: transform;
   touch-action: none;
+  filter: drop-shadow(0 -10px 32px rgba(0, 0, 0, 0.65));
 }
 
-/* Vinyl-like concentric groove rings on the circular wheel */
+.gear-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+/* Vinyl-like concentric groove rings on the circular wheel (fallback) */
 .disc-groove {
   position: absolute;
   top: 50%;
@@ -385,7 +392,7 @@
 .groove-inner { width: 66%; height: 66%; }
 .groove-core { width: 48%; height: 48%; border-style: dashed; opacity: 0.6; }
 
-/* Center Hub */
+/* Center Hub (fallback) */
 .disc-center-hub {
   position: absolute;
   top: 50%;
