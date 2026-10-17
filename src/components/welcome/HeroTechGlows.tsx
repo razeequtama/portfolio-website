@@ -2,22 +2,28 @@ import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { TECH_LOGOS, type TechLogo } from '../../data/techLogos';
 import '../../styles/heroTechGlows.css';
 
-// 14 distinct anchor coordinates (in percentages of the hero section, with safe boundary margins)
+// 20 distinct anchor coordinates (in percentages of the hero section, with safe boundary margins)
 const ANCHOR_POINTS = [
-  { xPercent: 12, yPercent: 18 },  // Upper-left above title
-  { xPercent: 28, yPercent: 12 },  // Top-left
-  { xPercent: 46, yPercent: 13 },  // Top-center above hero text
-  { xPercent: 64, yPercent: 16 },  // Top-center-right
-  { xPercent: 86, yPercent: 15 },  // Top-right above portrait shoulder
-  { xPercent: 10, yPercent: 48 },  // Left beside bio
-  { xPercent: 38, yPercent: 46 },  // Center behind text
-  { xPercent: 58, yPercent: 42 },  // Mid-gap between text and portrait
-  { xPercent: 88, yPercent: 46 },  // Right beside portrait
-  { xPercent: 12, yPercent: 82 },  // Lower-left below buttons
-  { xPercent: 30, yPercent: 86 },  // Lower-center-left
-  { xPercent: 50, yPercent: 85 },  // Lower-center
-  { xPercent: 70, yPercent: 83 },  // Lower-center-right under portrait
-  { xPercent: 86, yPercent: 78 },  // Lower-right corner
+  { xPercent: 10, yPercent: 16 },  // Top-left
+  { xPercent: 28, yPercent: 12 },  // Top-left-center
+  { xPercent: 48, yPercent: 14 },  // Top-center
+  { xPercent: 68, yPercent: 13 },  // Top-right-center
+  { xPercent: 88, yPercent: 16 },  // Top-right
+  { xPercent: 8,  yPercent: 36 },  // Far left upper-mid
+  { xPercent: 26, yPercent: 38 },  // Left-mid behind text
+  { xPercent: 46, yPercent: 34 },  // Center upper-mid
+  { xPercent: 66, yPercent: 38 },  // Mid-gap right
+  { xPercent: 88, yPercent: 35 },  // Far right upper-mid
+  { xPercent: 10, yPercent: 60 },  // Far left lower-mid
+  { xPercent: 30, yPercent: 64 },  // Left-mid below bio
+  { xPercent: 50, yPercent: 58 },  // Center lower-mid
+  { xPercent: 70, yPercent: 62 },  // Right-mid below portrait
+  { xPercent: 89, yPercent: 57 },  // Far right lower-mid
+  { xPercent: 9,  yPercent: 84 },  // Bottom left below buttons
+  { xPercent: 28, yPercent: 86 },  // Bottom left-center
+  { xPercent: 48, yPercent: 82 },  // Bottom center
+  { xPercent: 68, yPercent: 85 },  // Bottom right-center
+  { xPercent: 87, yPercent: 80 },  // Bottom right corner
 ];
 
 function shuffleArray<T>(array: T[]): T[] {
@@ -34,7 +40,7 @@ function getEffectiveColor(color: string, isLight: boolean): string {
   const upper = color.toUpperCase();
   if (isLight) {
     if (upper === '#FFFFFF') return '#1e293b';
-    if (upper === '#F7DF1E') return '#b45309'; // rich amber gold for clear contrast on light
+    if (upper === '#F7DF1E' || upper === '#FCC624') return '#b45309'; // rich amber gold for clear contrast on light
     if (upper === '#61DAFB') return '#0284c7'; // deeper sky-blue for clear contrast on light
   }
   return color;
@@ -184,7 +190,7 @@ export const HeroTechGlows: React.FC = () => {
         closestIdx = -1;
       }
 
-      // 2. Physics & DOM updates for all 14 nodes
+      // 2. Physics & DOM updates for all 20 nodes
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
         const nodeEl = nodeRefs.current[i];
