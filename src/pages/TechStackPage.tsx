@@ -12,7 +12,6 @@ export const TechStackPage: React.FC = () => {
         number={techStackMeta.number}
         title={techStackMeta.title}
         subtitle={techStackMeta.subtitle}
-        badge={techStackMeta.badge}
       />
 
       {/* Categorized Skills Grid */}

@@ -507,11 +507,12 @@
 .card-subtitle {
   font-size: 0.92rem;
   color: var(--text-secondary);
-  line-height: 1.5;
+  line-height: 1.45;
   display: -webkit-box;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  margin-bottom: 0.75rem;
 }
 
 @media (max-width: 1024px) {
@@ -523,8 +524,9 @@
   }
   .card-subtitle {
     font-size: 0.85rem;
-    line-height: 1.45;
-    -webkit-line-clamp: 3;
+    line-height: 1.4;
+    -webkit-line-clamp: 2;
+    margin-bottom: 0.6rem;
   }
 }
 
@@ -532,17 +534,436 @@
   .card-number {
     font-size: 1.05rem;
   }
-  .card-badge {
-    font-size: 0.68rem;
-    padding: 0.15rem 0.45rem;
-  }
   .card-title {
     font-size: 1.05rem;
     margin-bottom: 0.35rem;
   }
   .card-subtitle {
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     line-height: 1.35;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
+    margin-bottom: 0.5rem;
   }
+}
+
+/* === TURNTABLE CARD BLUEPRINT GRAPHICS & TERMINAL SCHEMATICS === */
+.card-graphic-container {
+  margin-top: auto;
+  width: 100%;
+  height: 94px;
+  background: rgba(10, 12, 16, 0.45);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  pointer-events: none;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.turntable-card.is-active .card-graphic-container {
+  background: rgba(10, 12, 16, 0.7);
+  border-color: rgba(59, 130, 246, 0.35);
+  box-shadow: inset 0 0 16px rgba(59, 130, 246, 0.08);
+}
+
+@media (max-width: 1024px) {
+  .card-graphic-container {
+    height: 80px;
+  }
+}
+
+@media (max-width: 640px) {
+  .card-graphic-container {
+    height: 66px;
+  }
+}
+
+/* 01. Terminal Graphic */
+.graphic-terminal {
+  justify-content: flex-start;
+}
+
+.terminal-topbar {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.55rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.terminal-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot-red { background-color: #ef4444; }
+.dot-yellow { background-color: #eab308; }
+.dot-green { background-color: #10b981; }
+
+.terminal-title {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  margin-left: auto;
+  letter-spacing: 0.03em;
+}
+
+.terminal-screen {
+  padding: 0.4rem 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  line-height: 1.4;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.terminal-line {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+.term-prompt {
+  color: var(--accent-color);
+  font-weight: 700;
+}
+
+.term-cmd {
+  color: var(--text-primary);
+}
+
+.term-output {
+  color: var(--text-secondary);
+}
+
+.term-accent {
+  color: #60a5fa;
+  font-weight: 600;
+}
+
+.term-dim {
+  color: var(--text-muted);
+  font-size: 0.6rem;
+}
+
+.term-status {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.terminal-cursor {
+  color: var(--accent-color);
+  font-weight: 700;
+  animation: termBlink 1s infinite steps(2, start);
+}
+
+@keyframes termBlink {
+  to {
+    visibility: hidden;
+  }
+}
+
+/* 02. SVG Blueprint Schematics */
+.graphic-svg {
+  justify-content: center;
+  align-items: center;
+}
+
+.blueprint-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  padding: 0.35rem 0.45rem;
+}
+
+.bp-frame {
+  stroke: var(--border-subtle);
+  stroke-width: 1.2;
+  fill: rgba(255, 255, 255, 0.01);
+}
+
+.bp-divider {
+  stroke: var(--border-subtle);
+  stroke-width: 1;
+}
+
+.bp-dot {
+  fill: var(--text-muted);
+  opacity: 0.5;
+}
+
+.bp-url-bar {
+  fill: rgba(255, 255, 255, 0.05);
+}
+
+.bp-line-dim {
+  fill: rgba(255, 255, 255, 0.1);
+}
+
+.bp-card-hero {
+  fill: rgba(59, 130, 246, 0.1);
+  stroke: rgba(59, 130, 246, 0.35);
+  stroke-width: 1;
+}
+
+.bp-card-sub {
+  fill: rgba(255, 255, 255, 0.02);
+  stroke: var(--border-subtle);
+  stroke-width: 0.8;
+}
+
+/* Engineering Architecture Nodes */
+.bp-path {
+  stroke: var(--border-strong);
+  stroke-width: 1.2;
+}
+
+.bp-path-dashed {
+  stroke: var(--accent-color);
+  stroke-width: 1.2;
+  stroke-dasharray: 3 3;
+  opacity: 0.7;
+}
+
+.bp-node-outer {
+  fill: rgba(255, 255, 255, 0.03);
+  stroke: var(--border-strong);
+  stroke-width: 1.2;
+}
+
+.bp-node-core {
+  fill: var(--accent-color);
+}
+
+.bp-gateway {
+  fill: rgba(59, 130, 246, 0.15);
+  stroke: var(--accent-color);
+  stroke-width: 1.2;
+}
+
+.bp-node-sub {
+  fill: rgba(255, 255, 255, 0.04);
+  stroke: var(--border-color);
+  stroke-width: 1;
+}
+
+.bp-node-db {
+  fill: rgba(16, 185, 129, 0.15);
+  stroke: #10b981;
+  stroke-width: 1;
+}
+
+.bp-label, .bp-label-code, .bp-label-tiny {
+  font-family: var(--font-mono);
+  fill: var(--text-muted);
+  font-size: 6px;
+  font-weight: 700;
+}
+
+.bp-label-code {
+  fill: var(--text-primary);
+  font-size: 7px;
+}
+
+/* Experience Milestone Track */
+.bp-rail {
+  stroke: var(--border-strong);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.bp-milestone-past {
+  fill: var(--bg-surface);
+  stroke: var(--border-strong);
+  stroke-width: 2;
+}
+
+.bp-milestone-halo {
+  fill: rgba(59, 130, 246, 0.2);
+  stroke: var(--accent-color);
+  stroke-width: 1;
+  stroke-dasharray: 2 2;
+}
+
+.bp-milestone-active {
+  fill: var(--accent-color);
+}
+
+.bp-label-year {
+  font-family: var(--font-mono);
+  font-size: 6.5px;
+  fill: var(--text-muted);
+  font-weight: 600;
+}
+
+.bp-label-year-active {
+  font-family: var(--font-mono);
+  font-size: 7px;
+  fill: var(--accent-color);
+  font-weight: 800;
+}
+
+.bp-label-role {
+  font-family: var(--font-mono);
+  font-size: 6.5px;
+  fill: var(--text-secondary);
+  font-weight: 700;
+}
+
+.bp-label-role-active {
+  font-family: var(--font-mono);
+  font-size: 7px;
+  fill: var(--text-primary);
+  font-weight: 800;
+}
+
+/* 05. Tech Matrix */
+.graphic-tech-matrix {
+  padding: 0.5rem 0.65rem;
+  justify-content: space-between;
+}
+
+.tech-matrix-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.3rem;
+}
+
+.matrix-badge {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.18rem 0;
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+
+.turntable-card.is-active .matrix-badge {
+  color: var(--text-primary);
+  border-color: rgba(59, 130, 246, 0.35);
+  background: rgba(59, 130, 246, 0.08);
+}
+
+.tech-matrix-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.2rem;
+}
+
+.matrix-status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #10b981;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+}
+
+.matrix-label {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+/* 06. About Compass Blueprint */
+.bp-compass-outer {
+  stroke: var(--border-strong);
+  stroke-width: 1.2;
+  stroke-dasharray: 2 4;
+}
+
+.bp-compass-inner {
+  stroke: var(--border-subtle);
+  stroke-width: 1;
+}
+
+.bp-crosshair {
+  stroke: var(--border-subtle);
+  stroke-width: 0.8;
+  stroke-dasharray: 2 2;
+}
+
+.bp-diamond {
+  fill: rgba(59, 130, 246, 0.12);
+  stroke: var(--accent-color);
+  stroke-width: 1.4;
+}
+
+.bp-diamond-core {
+  fill: var(--accent-color);
+}
+
+.bp-compass-coord {
+  font-family: var(--font-mono);
+  font-size: 6px;
+  fill: var(--text-muted);
+  font-weight: 700;
+}
+
+/* 07. Contact Radar Beacon */
+.bp-radar-arc {
+  fill: none;
+}
+
+.bp-radar-arc.arc-1 {
+  stroke: rgba(59, 130, 246, 0.6);
+  stroke-width: 1.2;
+}
+
+.bp-radar-arc.arc-2 {
+  stroke: rgba(59, 130, 246, 0.35);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.bp-radar-arc.arc-3 {
+  stroke: rgba(59, 130, 246, 0.18);
+  stroke-width: 0.8;
+  stroke-dasharray: 2 4;
+}
+
+.bp-transmitter {
+  fill: rgba(59, 130, 246, 0.2);
+  stroke: var(--accent-color);
+  stroke-width: 1.4;
+}
+
+.bp-transmitter-core {
+  fill: var(--accent-color);
+}
+
+.bp-hud-box {
+  fill: rgba(255, 255, 255, 0.02);
+  stroke: var(--border-strong);
+  stroke-width: 1;
+}
+
+.bp-hud-ping {
+  fill: #10b981;
+}
+
+.bp-hud-text {
+  font-family: var(--font-mono);
+  font-size: 6.5px;
+  fill: var(--text-primary);
+  font-weight: 700;
+}
+
+.bp-hud-sub {
+  font-family: var(--font-mono);
+  font-size: 6px;
+  fill: var(--text-muted);
 }

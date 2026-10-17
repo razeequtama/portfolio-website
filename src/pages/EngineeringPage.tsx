@@ -12,7 +12,6 @@ export const EngineeringPage: React.FC = () => {
         number={engineeringMeta.number}
         title={engineeringMeta.title}
         subtitle={engineeringMeta.subtitle}
-        badge={engineeringMeta.badge}
       />
 
       {/* Engineering Philosophy Summary */}

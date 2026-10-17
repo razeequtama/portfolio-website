@@ -11,7 +11,6 @@ export const AboutPage: React.FC = () => {
         number={aboutMeta.number}
         title={aboutMeta.title}
         subtitle={aboutMeta.subtitle}
-        badge={aboutMeta.badge}
       />
 
       <div className="about-layout">

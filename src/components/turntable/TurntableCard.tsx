@@ -1,5 +1,6 @@
 import React from 'react';
 import type { SectionMeta } from '../../types/portfolio';
+import { TurntableCardGraphic } from './TurntableCardGraphic';
 
 interface TurntableCardProps {
   section: SectionMeta;
@@ -47,10 +48,9 @@ export const TurntableCard: React.FC<TurntableCardProps> = ({
           }
         }}
       >
-        {/* Card Header: Number & Category Badge */}
+        {/* Card Header: Number */}
         <div className="turntable-card-header">
           <span className="card-number">{section.number}</span>
-          <span className="card-badge">{section.badge}</span>
         </div>
 
         {/* Card Body: Clean, Large Title & Expanded Subtitle */}
@@ -58,6 +58,9 @@ export const TurntableCard: React.FC<TurntableCardProps> = ({
           <div className="card-title">{section.title}</div>
           <div className="card-subtitle">{section.subtitle}</div>
         </div>
+
+        {/* Card Graphic: Section Blueprint Schematic & Visual Terminal */}
+        <TurntableCardGraphic sectionId={section.id} isActive={isActive} />
       </article>
     </div>
   );

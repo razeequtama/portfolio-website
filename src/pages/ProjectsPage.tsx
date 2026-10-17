@@ -21,7 +21,6 @@ export const ProjectsPage: React.FC = () => {
         number={projectsMeta.number}
         title={projectsMeta.title}
         subtitle={projectsMeta.subtitle}
-        badge={projectsMeta.badge}
       />
 
       {/* Filter Tabs */}
