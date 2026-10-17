@@ -1,5 +1,6 @@
 import React from 'react';
 import { developerProfile } from '../data/portfolioData';
+import mePhoto from '../assets/Me.png';
 
 interface WelcomePageProps {
   onNavigate: (sectionIndex: number) => void;
@@ -10,50 +11,63 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onNavigate }) => {
     <div className="page-welcome">
       {/* === CHANGE HERE: Main Hero Intro & Heading === */}
       <section className="welcome-hero">
-        <h2 className="hero-main-title">
-          Hi, I'm <span className="hero-highlight-name">{developerProfile.name}</span>.
-          <br />
-          {developerProfile.role}.
-        </h2>
+        <div className="welcome-hero-content">
+          <h2 className="hero-main-title">
+            Hi, I'm <span className="hero-highlight-name">{developerProfile.name}</span>.
+            <br />
+            {developerProfile.role}.
+          </h2>
 
-        {/* === CHANGE HERE: Bio Summary Text === */}
-        <p className="hero-bio">
-          I design and build resilient distributed systems, high-performance web applications,
-          and robust developer tooling. Focused on deterministic architectures, strict typing,
-          and fluid interactive experiences.
-        </p>
+          {/* === CHANGE HERE: Bio Summary Text === */}
+          <p className="hero-bio">
+            I design and build resilient distributed systems, high-performance web applications,
+            and robust developer tooling. Focused on deterministic architectures, strict typing,
+            and fluid interactive experiences.
+          </p>
 
-        {/* Action Buttons to Jump Directly to Other Sections */}
-        <div className="welcome-actions">
-          {/* Jump to Projects (index 1) */}
-          <button
-            type="button"
-            className="btn-primary"
-            onClick={() => onNavigate(1)}
-          >
-            Explore Projects →
-          </button>
+          {/* Action Buttons to Jump Directly to Other Sections */}
+          <div className="welcome-actions">
+            {/* Jump to Projects (index 1) */}
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={() => onNavigate(1)}
+            >
+              Explore Projects →
+            </button>
 
-          {/* Jump to Contact (index 6) */}
-          <button
-            type="button"
-            className="btn-secondary"
-            onClick={() => onNavigate(6)}
-          >
-            Get In Touch
-          </button>
+            {/* Jump to Contact (index 6) */}
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={() => onNavigate(6)}
+            >
+              Get In Touch
+            </button>
 
-          {/* Direct CV Download Link */}
-          <a
-            href="#cv-download"
-            className="btn-secondary"
-            onClick={(e) => {
-              e.preventDefault();
-              alert('CV download placeholder. Replace with your hosted resume PDF link!');
-            }}
-          >
-            Download CV ↓
-          </a>
+            {/* Direct CV Download Link */}
+            <a
+              href="#cv-download"
+              className="btn-secondary"
+              onClick={(e) => {
+                e.preventDefault();
+                alert('CV download placeholder. Replace with your hosted resume PDF link!');
+              }}
+            >
+              Download CV ↓
+            </a>
+          </div>
+        </div>
+
+        {/* Hero Portrait: Profile image positioned to the right */}
+        <div className="welcome-hero-image-wrapper">
+          <div className="hero-image-glow" aria-hidden="true" />
+          <img
+            src={mePhoto}
+            alt={developerProfile.name}
+            className="welcome-hero-image"
+            loading="eager"
+          />
         </div>
       </section>
 
