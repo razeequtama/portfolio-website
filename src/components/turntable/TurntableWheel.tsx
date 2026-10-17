@@ -139,6 +139,7 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
         }
       }}
       onTouchEnd={handleEnd}
+      onTouchCancel={handleEnd}
       role="region"
       aria-roledescription="carousel"
       aria-label="Portfolio Sections Carousel Disc"
