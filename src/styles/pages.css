@@ -82,9 +82,9 @@
   justify-content: center;
   flex: 0 0 auto;
   width: clamp(260px, 26vw, 400px);
-  margin-left: clamp(0.5rem, 2vw, 2rem);
-  margin-right: clamp(3rem, 7vw, 7.5rem);
-  transform: translateX(-24px);
+  margin-left: clamp(2rem, 3.5vw, 3.5rem);
+  margin-right: clamp(1rem, 2vw, 2.5rem);
+  transform: translateX(10px);
   z-index: 2;
 }
 
