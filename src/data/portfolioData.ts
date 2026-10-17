@@ -470,8 +470,8 @@ export const aboutData: AboutContent = {
    ========================================================================= */
 export const contactData: ContactContent = {
   /* === CHANGE HERE: Direct Contact Info === */
-  email: 'alex.mercer.dev@example.com',
-  location: 'San Francisco, CA (PST / UTC-8)',
+  email: 'rabbaniu74m4@gmail.com',
+  location: 'Kota Bekasi, Jawa Barat, Indonesia.',
   availability: 'Available for Q2/Q3 high-impact roles & technical consulting',
   responseTime: 'Within 24 business hours',
   resumeUrl: '#download-cv',
@@ -480,29 +480,15 @@ export const contactData: ContactContent = {
     {
       platform: 'GitHub',
       label: 'Open Source Repositories',
-      url: 'https://github.com/example',
-      handle: 'github.com/example',
+      url: 'https://github.com/razeequtama',
+      handle: 'https://github.com/razeequtama',
     },
     /* === DUPLICATE THIS BLOCK OF CODE TO ADD A NEW Social Link === */
     {
       platform: 'LinkedIn',
       label: 'Professional Network',
-      url: 'https://linkedin.com/in/example',
-      handle: 'linkedin.com/in/alex-mercer',
-    },
-    /* === DUPLICATE THIS BLOCK OF CODE TO ADD A NEW Social Link === */
-    {
-      platform: 'X (Twitter)',
-      label: 'Technical Thoughts & Notes',
-      url: 'https://x.com/example',
-      handle: '@alex_dev_systems',
-    },
-    /* === DUPLICATE THIS BLOCK OF CODE TO ADD A NEW Social Link === */
-    {
-      platform: 'Substack',
-      label: 'Engineering Newsletter',
-      url: 'https://example.substack.com',
-      handle: 'systems-unwound.substack.com',
+      url: 'https://www.linkedin.com/in/raziqrabbaniutama/',
+      handle: 'https://www.linkedin.com/in/raziqrabbaniutama/',
     },
   ],
 };
