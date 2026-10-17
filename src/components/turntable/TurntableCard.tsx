@@ -10,6 +10,7 @@ interface TurntableCardProps {
   opacity: number;
   zIndex: number;
   isActive: boolean;
+  transition?: string;
   onClick: () => void;
 }
 
@@ -21,6 +22,7 @@ export const TurntableCard: React.FC<TurntableCardProps> = ({
   opacity,
   zIndex,
   isActive,
+  transition,
   onClick,
 }) => {
   // Mounting formula: transform: rotate(netAngle) translateY(-radius) scale(scale)
@@ -29,7 +31,7 @@ export const TurntableCard: React.FC<TurntableCardProps> = ({
     opacity,
     zIndex,
     pointerEvents: opacity < 0.1 ? 'none' : 'auto',
-    transition: 'transform 0.45s cubic-bezier(0.2, 0.9, 0.2, 1.05), opacity 0.35s ease',
+    transition: transition || 'transform 0.45s cubic-bezier(0.2, 0.9, 0.2, 1.05), opacity 0.35s ease',
   };
 
   return (

@@ -241,12 +241,10 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
     touchStartXRef.current = null;
   };
 
-  // Section metadata for previous and next cards
+  // Section metadata for previous and next cards (Linear bounded, no loop)
   const totalCards = portfolioSections.length;
-  const prevIndex = (activeIndex - 1 + totalCards) % totalCards;
-  const nextIndex = (activeIndex + 1) % totalCards;
-  const prevSection = portfolioSections[prevIndex];
-  const nextSection = portfolioSections[nextIndex];
+  const prevSection = activeIndex > 0 ? portfolioSections[activeIndex - 1] : null;
+  const nextSection = activeIndex < totalCards - 1 ? portfolioSections[activeIndex + 1] : null;
 
   return (
     <nav
@@ -318,6 +316,7 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
         {/* The Circular Wheel Disc & Radially Mounted Cards */}
         <TurntableWheel
           activeIndex={activeIndex}
+          isDockOpen={isDockOpen}
           onSelectIndex={onSelectIndex}
           onNext={onNext}
           onPrev={onPrev}

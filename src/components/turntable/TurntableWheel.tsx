@@ -4,6 +4,7 @@ import { TurntableCard } from './TurntableCard';
 
 interface TurntableWheelProps {
   activeIndex: number;
+  isDockOpen: boolean;
   onSelectIndex: (index: number) => void;
   onNext: () => void;
   onPrev: () => void;
@@ -20,6 +21,7 @@ function getResponsiveRadius(width: number): number {
 
 export const TurntableWheel: React.FC<TurntableWheelProps> = ({
   activeIndex,
+  isDockOpen,
   onSelectIndex,
   onNext,
   onPrev,
@@ -28,6 +30,11 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
   const [radius, setRadius] = useState<number>(() =>
     typeof window !== 'undefined' ? getResponsiveRadius(window.innerWidth) : 410
   );
+
+  // Visual index for wheel rotation and cards placement
+  const [visualIndex, setVisualIndex] = useState<number>(() => (isDockOpen ? activeIndex : 0));
+  const [isIntroSpinning, setIsIntroSpinning] = useState<boolean>(false);
+  const [isImmediateReset, setIsImmediateReset] = useState<boolean>(false);
 
   // Dragging state
   const [isDragging, setIsDragging] = useState(false);
@@ -38,6 +45,11 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
   const hasMovedSignificantlyRef = useRef<boolean>(false);
   const currentDragAngleRef = useRef<number>(0);
 
+  const prevDockOpenRef = useRef<boolean>(isDockOpen);
+  const introSpinTimerRef = useRef<number | null>(null);
+  const resetTimerRef = useRef<number | null>(null);
+  const startSpinTimerRef = useRef<number | null>(null);
+
   useEffect(() => {
     const handleResize = () => {
       setRadius(getResponsiveRadius(window.innerWidth));
@@ -47,8 +59,94 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Touch and Mouse Drag handlers
+  // Spin-in animation state machine on dock open & section change
+  useEffect(() => {
+    const wasOpen = prevDockOpenRef.current;
+    prevDockOpenRef.current = isDockOpen;
+
+    // Clear any pending timers
+    if (resetTimerRef.current) {
+      clearTimeout(resetTimerRef.current);
+      resetTimerRef.current = null;
+    }
+    if (startSpinTimerRef.current) {
+      clearTimeout(startSpinTimerRef.current);
+      startSpinTimerRef.current = null;
+    }
+
+    if (!wasOpen && isDockOpen) {
+      // DOCK JUST OPENED: Animate from Card 01 (index 0) to current section (activeIndex)
+      if (activeIndex > 0) {
+        startSpinTimerRef.current = window.setTimeout(() => {
+          setIsImmediateReset(true);
+          setIsIntroSpinning(false);
+          setVisualIndex(0);
+
+          const spinDuration = Math.min(480 + activeIndex * 85, 950);
+          const spinTick = window.setTimeout(() => {
+            setIsImmediateReset(false);
+            setIsIntroSpinning(true);
+            setVisualIndex(activeIndex);
+
+            introSpinTimerRef.current = window.setTimeout(() => {
+              setIsIntroSpinning(false);
+            }, spinDuration + 40);
+          }, 30);
+
+          startSpinTimerRef.current = spinTick;
+        }, 0);
+      } else {
+        startSpinTimerRef.current = window.setTimeout(() => {
+          setIsImmediateReset(false);
+          setIsIntroSpinning(false);
+          setVisualIndex(0);
+        }, 0);
+      }
+    } else if (wasOpen && !isDockOpen) {
+      // DOCK JUST CLOSED: Let dock sink down smoothly into peeking state (450ms)
+      if (introSpinTimerRef.current) {
+        clearTimeout(introSpinTimerRef.current);
+        introSpinTimerRef.current = null;
+      }
+      resetTimerRef.current = window.setTimeout(() => {
+        setIsImmediateReset(true);
+        setIsIntroSpinning(false);
+        setVisualIndex(0);
+      }, 450);
+    } else if (isDockOpen) {
+      // DOCK IS ALREADY OPEN: User navigated to another section (next/prev/card click)
+      startSpinTimerRef.current = window.setTimeout(() => {
+        if (introSpinTimerRef.current) {
+          clearTimeout(introSpinTimerRef.current);
+          introSpinTimerRef.current = null;
+        }
+        setIsImmediateReset(false);
+        setIsIntroSpinning(false);
+        setVisualIndex(activeIndex);
+      }, 0);
+    }
+  }, [isDockOpen, activeIndex]);
+
+  // Clean up timers on unmount
+  useEffect(() => {
+    return () => {
+      if (introSpinTimerRef.current) clearTimeout(introSpinTimerRef.current);
+      if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
+      if (startSpinTimerRef.current) clearTimeout(startSpinTimerRef.current);
+    };
+  }, []);
+
+  // Touch and Mouse Drag handlers with linear boundary resistance
   const handleStart = (clientX: number) => {
+    if (isIntroSpinning) {
+      if (introSpinTimerRef.current) {
+        clearTimeout(introSpinTimerRef.current);
+        introSpinTimerRef.current = null;
+      }
+      setIsIntroSpinning(false);
+      setVisualIndex(activeIndex);
+    }
+
     setIsDragging(true);
     dragStartXRef.current = clientX;
     dragStartTimeRef.current = performance.now();
@@ -57,18 +155,29 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
     setDragOffsetAngle(0);
   };
 
-  const handleMove = useCallback((clientX: number) => {
-    if (!isDragging) return;
-    const deltaX = clientX - dragStartXRef.current;
-    if (Math.abs(deltaX) > 4) {
-      hasMovedSignificantlyRef.current = true;
-    }
+  const handleMove = useCallback(
+    (clientX: number) => {
+      if (!isDragging) return;
+      const deltaX = clientX - dragStartXRef.current;
+      if (Math.abs(deltaX) > 4) {
+        hasMovedSignificantlyRef.current = true;
+      }
 
-    // Convert horizontal pixel drag into rotational degrees
-    const angleDelta = (deltaX / radius) * 55;
-    currentDragAngleRef.current = angleDelta;
-    setDragOffsetAngle(angleDelta);
-  }, [isDragging, radius]);
+      // Convert horizontal pixel drag into rotational degrees
+      let angleDelta = (deltaX / radius) * 55;
+
+      // Elastic rubberband resistance at boundaries (cannot loop beyond 0 or 6)
+      if (activeIndex === 0 && angleDelta > 0) {
+        angleDelta *= 0.22;
+      } else if (activeIndex === TOTAL_CARDS - 1 && angleDelta < 0) {
+        angleDelta *= 0.22;
+      }
+
+      currentDragAngleRef.current = angleDelta;
+      setDragOffsetAngle(angleDelta);
+    },
+    [isDragging, radius, activeIndex]
+  );
 
   const handleEnd = useCallback(() => {
     if (!isDragging) return;
@@ -79,14 +188,18 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
     const isQuickFlick = duration < 300 && Math.abs(deltaAngle) > 6;
 
     if (hasMovedSignificantlyRef.current) {
-      // Determine snap direction
+      // Determine snap direction with linear bounds check
       if (isQuickFlick || Math.abs(deltaAngle) >= STEP_ANGLE / 2.5) {
         if (deltaAngle < 0) {
-          // Dragged left -> roll next card
-          onNext();
+          // Dragged left -> roll next card if not at last card
+          if (activeIndex < TOTAL_CARDS - 1) {
+            onNext();
+          }
         } else {
-          // Dragged right -> roll prev card
-          onPrev();
+          // Dragged right -> roll prev card if not at first card
+          if (activeIndex > 0) {
+            onPrev();
+          }
         }
       }
     }
@@ -94,7 +207,7 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
     // Reset drag angle offset smoothly
     setDragOffsetAngle(0);
     currentDragAngleRef.current = 0;
-  }, [isDragging, onNext, onPrev]);
+  }, [isDragging, activeIndex, onNext, onPrev]);
 
   // Global mouse move & up listeners while dragging
   useEffect(() => {
@@ -117,8 +230,29 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
     };
   }, [isDragging, handleMove, handleEnd]);
 
+  // Dynamic synchronized transitions for wheel and cards
+  const spinDurationMs = Math.min(480 + activeIndex * 85, 950);
+  const spinDurationSec = (spinDurationMs / 1000).toFixed(2);
+
+  let wheelTransition: string;
+  let cardTransition: string;
+
+  if (isDragging || isImmediateReset) {
+    wheelTransition = 'none';
+    cardTransition = 'none';
+  } else if (isIntroSpinning) {
+    wheelTransition = `transform ${spinDurationSec}s cubic-bezier(0.16, 1, 0.3, 1)`;
+    cardTransition = `transform ${spinDurationSec}s cubic-bezier(0.16, 1, 0.3, 1), opacity ${(
+      (spinDurationMs * 0.7) /
+      1000
+    ).toFixed(2)}s ease`;
+  } else {
+    wheelTransition = 'transform 0.45s cubic-bezier(0.2, 0.9, 0.2, 1.05)';
+    cardTransition = 'transform 0.45s cubic-bezier(0.2, 0.9, 0.2, 1.05), opacity 0.35s ease';
+  }
+
   // Visual wheel rotation with custom spring easing
-  const wheelVisualRotation = -activeIndex * STEP_ANGLE + dragOffsetAngle;
+  const wheelVisualRotation = -visualIndex * STEP_ANGLE + dragOffsetAngle;
 
   return (
     <div
@@ -149,7 +283,7 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
         className="disc-surface"
         style={{
           transform: `rotate(${wheelVisualRotation}deg)`,
-          transition: isDragging ? 'none' : 'transform 0.45s cubic-bezier(0.2, 0.9, 0.2, 1.05)',
+          transition: wheelTransition,
         }}
       >
         <div className="disc-groove groove-outer" />
@@ -159,22 +293,19 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
         <div className="disc-center-hub" />
       </div>
 
-
-      {/* Radially Mounted Carousel Cards */}
+      {/* Radially Mounted Carousel Cards: Strictly Linear Track (01 WELCOME to 07 CONTACT) */}
       <div className="turntable-cards-layer">
         {portfolioSections.map((section, idx) => {
-          // Calculate shortest circular difference from activeIndex
-          let diff = ((idx - activeIndex) % TOTAL_CARDS + TOTAL_CARDS) % TOTAL_CARDS;
-          if (diff > TOTAL_CARDS / 2) {
-            diff -= TOTAL_CARDS;
-          }
+          // Strictly linear offset from visualIndex: NO CIRCULAR LOOP
+          const diff = idx - visualIndex;
 
           // Net angle includes step angle + dynamic drag offset
           const netAngle = diff * STEP_ANGLE + dragOffsetAngle;
           const absAngle = Math.abs(netAngle);
 
-          // Active card sits at netAngle = 0° (top center, upright)
-          const isActive = idx === activeIndex && Math.abs(dragOffsetAngle) < 13;
+          // Active card sits at netAngle = 0° (top center, upright) when not intro spinning
+          const isActive =
+            idx === activeIndex && !isIntroSpinning && Math.abs(dragOffsetAngle) < 13;
 
           // Compute scale, opacity, and zIndex along the perimeter
           let scale: number;
@@ -217,8 +348,9 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
               opacity={opacity}
               zIndex={zIndex}
               isActive={isActive}
+              transition={cardTransition}
               onClick={() => {
-                if (!hasMovedSignificantlyRef.current) {
+                if (!hasMovedSignificantlyRef.current && !isIntroSpinning) {
                   onSelectIndex(idx);
                 }
               }}

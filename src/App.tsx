@@ -38,13 +38,13 @@ export function App() {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
   };
 
-  // Rotation Navigation Handlers (Circular 7-item loop)
+  // Linear Navigation Handlers (Bounded between 0 and 6, no circular loop)
   const handleNext = () => {
-    setActiveIndex((prev) => (prev + 1) % portfolioSections.length);
+    setActiveIndex((prev) => Math.min(prev + 1, portfolioSections.length - 1));
   };
 
   const handlePrev = () => {
-    setActiveIndex((prev) => (prev - 1 + portfolioSections.length) % portfolioSections.length);
+    setActiveIndex((prev) => Math.max(prev - 1, 0));
   };
 
   const handleSelectIndex = (index: number) => {
