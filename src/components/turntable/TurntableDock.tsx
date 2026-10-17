@@ -16,9 +16,10 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
   onNext,
   onPrev,
 }) => {
-  // Desktop hover state & Mobile/Tablet explicit expand state
+  // Desktop hover state, explicit expand state, and manual collapse override
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const [isManuallyCollapsed, setIsManuallyCollapsed] = useState<boolean>(false);
 
   const hoverTimeoutRef = useRef<number | null>(null);
   const dockRef = useRef<HTMLElement>(null);
@@ -31,7 +32,8 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
   const touchStartYRef = useRef<number | null>(null);
   const touchStartXRef = useRef<number | null>(null);
 
-  const isDockOpen = isHovered || isExpanded;
+  // Dock is open if either hovered or explicitly expanded, unless manually collapsed
+  const isDockOpen = !isManuallyCollapsed && (isHovered || isExpanded);
 
   // Global keyboard navigation: ArrowLeft (prev) and ArrowRight (next)
   useEffect(() => {
@@ -94,14 +96,43 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
       clearTimeout(hoverTimeoutRef.current);
       hoverTimeoutRef.current = null;
     }
-    setIsHovered(true);
+    // Only expand on hover if user hasn't explicitly clicked Collapse during this hover
+    if (!isManuallyCollapsed) {
+      setIsHovered(true);
+    }
   };
 
   const handleMouseLeave = () => {
     hoverTimeoutRef.current = window.setTimeout(() => {
       setIsHovered(false);
+      setIsExpanded(false);
+      setIsManuallyCollapsed(false); // Reset manual collapse lock when cursor leaves
     }, 180);
   };
+
+  // Explicit Collapse handler (works on both desktop and mobile/tablet)
+  const handleCollapse = useCallback((e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
+    setIsManuallyCollapsed(true);
+    setIsExpanded(false);
+    setIsHovered(false);
+    // Blur button so activeElement focus doesn't keep dock open
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  }, []);
+
+  // Explicit Expand handler (works on both desktop and mobile/tablet)
+  const handleExpand = useCallback((e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
+    setIsManuallyCollapsed(false);
+    setIsExpanded(true);
+    setIsHovered(true);
+  }, []);
 
   // Mobile & Tablet Drag-Up to Expand and Drag-Down to Collapse
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -121,14 +152,13 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
     // When peeking: Dragging up expands the disc
     if (!isDockOpen) {
       if (deltaY < -20 && Math.abs(deltaY) > deltaX) {
-        setIsExpanded(true);
+        handleExpand();
         touchStartYRef.current = null;
       }
     } else {
       // When expanded: Swiping down from top handle collapses it
       if (deltaY > 40 && Math.abs(deltaY) > deltaX * 1.5) {
-        setIsExpanded(false);
-        setIsHovered(false);
+        handleCollapse();
         touchStartYRef.current = null;
       }
     }
@@ -138,10 +168,6 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
     touchStartYRef.current = null;
     touchStartXRef.current = null;
   };
-
-  const toggleExpand = useCallback(() => {
-    setIsExpanded((prev) => !prev);
-  }, []);
 
   // Section metadata for previous and next cards
   const totalCards = portfolioSections.length;
@@ -156,7 +182,11 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
       className={`turntable-dock ${isDockOpen ? 'is-focused' : 'is-unfocused'}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      onFocusCapture={handleMouseEnter}
+      onFocusCapture={() => {
+        if (!isManuallyCollapsed) {
+          handleMouseEnter();
+        }
+      }}
       onBlurCapture={(e) => {
         if (!e.currentTarget.contains(e.relatedTarget)) {
           handleMouseLeave();
@@ -169,13 +199,13 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
       role="region"
       aria-roledescription="turntable-dock"
     >
-      {/* Mobile & Tablet Expand / Collapse Control Pill */}
+      {/* Expand / Collapse Control Pill (Desktop, Tablet, & Mobile) */}
       <div className="dock-mobile-control-bar">
         {!isDockOpen ? (
           <button
             type="button"
             className="touch-expand-pill"
-            onClick={toggleExpand}
+            onClick={handleExpand}
             aria-label="Expand turntable dock"
           >
             <span className="expand-pill-arrow" aria-hidden="true">
@@ -187,7 +217,7 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
           <button
             type="button"
             className="touch-collapse-pill"
-            onClick={toggleExpand}
+            onClick={handleCollapse}
             aria-label="Collapse turntable dock"
           >
             <span>Collapse</span>
@@ -202,9 +232,9 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
       <div
         className="turntable-viewport"
         onClick={() => {
-          // If peeking on mobile, tapping anywhere on the peeking disc expands it
+          // If peeking, clicking/tapping anywhere on the peeking disc expands it
           if (!isDockOpen) {
-            setIsExpanded(true);
+            handleExpand();
           }
         }}
       >

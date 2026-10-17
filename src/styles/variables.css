@@ -37,9 +37,9 @@
   --radius-full: 9999px;
 
   /* Turntable Dimensions */
-  --turntable-height-desktop: 320px;
-  --turntable-height-tablet: 280px;
-  --turntable-height-mobile: 240px;
+  --turntable-height-desktop: 385px;
+  --turntable-height-tablet: 340px;
+  --turntable-height-mobile: 295px;
   --turntable-diameter-desktop: 1000px;
   --turntable-diameter-tablet: 860px;
   --turntable-diameter-mobile: 720px;

@@ -159,8 +159,6 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
         <div className="disc-center-hub" />
       </div>
 
-      {/* Apex indicator mark */}
-      <div className="disc-apex-indicator" />
 
       {/* Radially Mounted Carousel Cards */}
       <div className="turntable-cards-layer">

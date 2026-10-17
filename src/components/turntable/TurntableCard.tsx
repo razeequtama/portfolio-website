@@ -47,13 +47,17 @@ export const TurntableCard: React.FC<TurntableCardProps> = ({
           }
         }}
       >
-        {isActive && <div className="card-active-accent-bar" aria-hidden="true" />}
+        {/* Card Header: Number & Category Badge */}
         <div className="turntable-card-header">
           <span className="card-number">{section.number}</span>
           <span className="card-badge">{section.badge}</span>
         </div>
-        <div className="card-title">{section.title}</div>
-        <div className="card-subtitle">{section.subtitle}</div>
+
+        {/* Card Body: Clean, Large Title & Expanded Subtitle */}
+        <div className="turntable-card-body">
+          <div className="card-title">{section.title}</div>
+          <div className="card-subtitle">{section.subtitle}</div>
+        </div>
       </article>
     </div>
   );

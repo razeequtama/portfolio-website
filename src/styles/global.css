@@ -69,7 +69,19 @@ textarea:focus-visible {
   width: 100%;
   max-width: 1100px;
   margin: 0 auto;
-  padding: 5.5rem 1.5rem 320px 1.5rem; /* 320px bottom padding to clear the circular turntable dock */
+  padding: 5.5rem 1.5rem 400px 1.5rem; /* bottom padding to clear the circular turntable dock */
+}
+
+@media (max-width: 1024px) {
+  .main-viewport {
+    padding-bottom: 350px;
+  }
+}
+
+@media (max-width: 640px) {
+  .main-viewport {
+    padding-bottom: 310px;
+  }
 }
 
 /* Subtle, polished page entrance transition */
