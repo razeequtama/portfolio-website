@@ -31,6 +31,7 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
   // Mobile/Tablet vertical touch drag-up / drag-down state
   const touchStartYRef = useRef<number | null>(null);
   const touchStartXRef = useRef<number | null>(null);
+  const touchStartTimeRef = useRef<number>(0);
 
   // Dock is open if either hovered or explicitly expanded, unless manually collapsed
   const isDockOpen = !isManuallyCollapsed && (isHovered || isExpanded);
@@ -90,8 +91,17 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
     };
   }, [onNext, onPrev]);
 
-  // Desktop hover handlers with exit buffer
+  const lastToggleTimeRef = useRef<number>(0);
+
+  // Check if device uses fine pointer (desktop mouse)
+  const isFinePointer = () =>
+    typeof window !== 'undefined' &&
+    window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  // Desktop hover handlers with exit buffer (only active for fine pointer / mouse)
   const handleMouseEnter = () => {
+    if (!isFinePointer()) return;
+
     if (hoverTimeoutRef.current) {
       clearTimeout(hoverTimeoutRef.current);
       hoverTimeoutRef.current = null;
@@ -103,6 +113,8 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
   };
 
   const handleMouseLeave = () => {
+    if (!isFinePointer()) return;
+
     hoverTimeoutRef.current = window.setTimeout(() => {
       setIsHovered(false);
       setIsExpanded(false);
@@ -110,10 +122,20 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
     }, 180);
   };
 
-  // Explicit Collapse handler (works on both desktop and mobile/tablet)
-  const handleCollapse = useCallback((e?: React.MouseEvent) => {
+  // Explicit Collapse handler (works on desktop, tablet, and mobile)
+  const handleCollapse = useCallback((e?: React.MouseEvent | React.TouchEvent) => {
     if (e) {
       e.stopPropagation();
+    }
+    const now = performance.now();
+    if (now - lastToggleTimeRef.current < 320) {
+      return;
+    }
+    lastToggleTimeRef.current = now;
+
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
     }
     setIsManuallyCollapsed(true);
     setIsExpanded(false);
@@ -124,21 +146,47 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
     }
   }, []);
 
-  // Explicit Expand handler (works on both desktop and mobile/tablet)
-  const handleExpand = useCallback((e?: React.MouseEvent) => {
+  // Explicit Expand handler (works on desktop, tablet, and mobile)
+  const handleExpand = useCallback((e?: React.MouseEvent | React.TouchEvent) => {
     if (e) {
       e.stopPropagation();
+    }
+    const now = performance.now();
+    if (now - lastToggleTimeRef.current < 320) {
+      return;
+    }
+    lastToggleTimeRef.current = now;
+
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
     }
     setIsManuallyCollapsed(false);
     setIsExpanded(true);
     setIsHovered(true);
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
   }, []);
 
-  // Mobile & Tablet Drag-Up to Expand and Drag-Down to Collapse
+  // Unified Toggle handler for single stable button element (prevents mobile ghost clicks)
+  const toggleDock = useCallback((e?: React.MouseEvent | React.TouchEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
+    if (isDockOpen) {
+      handleCollapse(e);
+    } else {
+      handleExpand(e);
+    }
+  }, [isDockOpen, handleCollapse, handleExpand]);
+
+  // Mobile & Tablet Drag-Up to Expand and Drag-Down to Collapse with fluid thresholds
   const handleTouchStart = (e: React.TouchEvent) => {
     if (e.touches.length === 1) {
       touchStartYRef.current = e.touches[0].clientY;
       touchStartXRef.current = e.touches[0].clientX;
+      touchStartTimeRef.current = performance.now();
     }
   };
 
@@ -149,22 +197,46 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
     const deltaY = currentY - touchStartYRef.current;
     const deltaX = Math.abs(currentX - (touchStartXRef.current || currentX));
 
-    // When peeking: Dragging up expands the disc
+    // When peeking (closed): fluid upward drag expands the disc effortlessly
     if (!isDockOpen) {
-      if (deltaY < -20 && Math.abs(deltaY) > deltaX) {
+      if (deltaY < -12 && Math.abs(deltaY) > deltaX * 0.7) {
         handleExpand();
         touchStartYRef.current = null;
+        touchStartXRef.current = null;
       }
     } else {
-      // When expanded: Swiping down from top handle collapses it
-      if (deltaY > 40 && Math.abs(deltaY) > deltaX * 1.5) {
+      // When expanded (open): fluid downward drag collapses it easily
+      if (deltaY > 18 && deltaY > deltaX * 0.9) {
         handleCollapse();
         touchStartYRef.current = null;
+        touchStartXRef.current = null;
       }
     }
   };
 
-  const handleTouchEnd = () => {
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartYRef.current !== null && e.changedTouches.length === 1) {
+      const endY = e.changedTouches[0].clientY;
+      const endX = e.changedTouches[0].clientX;
+      const deltaY = endY - touchStartYRef.current;
+      const deltaX = Math.abs(endX - (touchStartXRef.current || endX));
+      const duration = performance.now() - touchStartTimeRef.current;
+      const isQuickFlick = duration < 350;
+
+      if (!isDockOpen) {
+        if ((deltaY < -10 && isQuickFlick) || deltaY < -16) {
+          if (Math.abs(deltaY) > deltaX * 0.6) {
+            handleExpand();
+          }
+        }
+      } else {
+        if ((deltaY > 14 && isQuickFlick) || deltaY > 20) {
+          if (deltaY > deltaX * 0.7) {
+            handleCollapse();
+          }
+        }
+      }
+    }
     touchStartYRef.current = null;
     touchStartXRef.current = null;
   };
@@ -183,12 +255,12 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onFocusCapture={() => {
-        if (!isManuallyCollapsed) {
+        if (isFinePointer() && !isManuallyCollapsed) {
           handleMouseEnter();
         }
       }}
       onBlurCapture={(e) => {
-        if (!e.currentTarget.contains(e.relatedTarget)) {
+        if (isFinePointer() && !e.currentTarget.contains(e.relatedTarget)) {
           handleMouseLeave();
         }
       }}
@@ -201,31 +273,28 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
     >
       {/* Expand / Collapse Control Pill (Desktop, Tablet, & Mobile) */}
       <div className="dock-mobile-control-bar">
-        {!isDockOpen ? (
-          <button
-            type="button"
-            className="touch-expand-pill"
-            onClick={handleExpand}
-            aria-label="Expand turntable dock"
-          >
-            <span className="expand-pill-arrow" aria-hidden="true">
-              ▴
-            </span>
-            <span>Expand</span>
-          </button>
-        ) : (
-          <button
-            type="button"
-            className="touch-collapse-pill"
-            onClick={handleCollapse}
-            aria-label="Collapse turntable dock"
-          >
-            <span>Collapse</span>
-            <span className="collapse-pill-arrow" aria-hidden="true">
-              ▾
-            </span>
-          </button>
-        )}
+        <button
+          type="button"
+          className={`touch-pill-btn ${isDockOpen ? 'touch-collapse-pill' : 'touch-expand-pill'}`}
+          onClick={toggleDock}
+          aria-label={isDockOpen ? 'Collapse turntable dock' : 'Expand turntable dock'}
+        >
+          {!isDockOpen ? (
+            <>
+              <span className="expand-pill-arrow" aria-hidden="true">
+                ▴
+              </span>
+              <span>Expand</span>
+            </>
+          ) : (
+            <>
+              <span>Collapse</span>
+              <span className="collapse-pill-arrow" aria-hidden="true">
+                ▾
+              </span>
+            </>
+          )}
+        </button>
       </div>
 
       {/* Transparent Circular Turntable Viewport */}

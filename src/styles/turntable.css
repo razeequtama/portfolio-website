@@ -39,14 +39,21 @@
 /* Mobile & Tablet Control Bar (Expand / Collapse Pills) */
 .dock-mobile-control-bar {
   position: absolute;
-  top: -16px;
+  top: -18px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 120;
+  z-index: 200;
   pointer-events: none;
+  touch-action: manipulation;
+}
+
+.touch-pill-btn {
+  border: none;
+  background: none;
+  outline: none;
 }
 
 .touch-expand-pill {
@@ -54,17 +61,21 @@
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  padding: 0.38rem 1.15rem;
+  padding: 0.45rem 1.25rem;
+  min-height: 38px;
   background-color: var(--bg-surface);
   border: 1px solid var(--accent-color);
   color: var(--text-primary);
   border-radius: var(--radius-full);
   font-family: var(--font-mono);
-  font-size: 0.74rem;
+  font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45), 0 0 12px var(--accent-light);
   cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
   animation: expandPillPulse 2.4s infinite ease-in-out;
   transition: all 0.2s ease;
 }
@@ -98,7 +109,8 @@
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  padding: 0.35rem 1.05rem;
+  padding: 0.4rem 1.15rem;
+  min-height: 38px;
   background-color: var(--bg-surface);
   border: 1px solid var(--border-strong);
   color: var(--text-secondary);
@@ -109,8 +121,10 @@
   letter-spacing: 0.03em;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  touch-action: manipulation;
   user-select: none;
+  -webkit-user-select: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .touch-collapse-pill:hover,
