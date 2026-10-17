@@ -1,6 +1,7 @@
 import React from 'react';
 import { developerProfile } from '../data/portfolioData';
 import mePhoto from '../assets/Me.png';
+import { HeroTechGlows } from '../components/welcome/HeroTechGlows';
 
 interface WelcomePageProps {
   onNavigate: (sectionIndex: number) => void;
@@ -11,6 +12,9 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onNavigate }) => {
     <div className="page-welcome">
       {/* === CHANGE HERE: Main Hero Intro & Heading === */}
       <section className="welcome-hero">
+        {/* Subtle Interactive Tech Logo Background Glows */}
+        <HeroTechGlows />
+
         <div className="welcome-hero-content">
           <h2 className="hero-main-title">
             <span className="hero-title-line">
