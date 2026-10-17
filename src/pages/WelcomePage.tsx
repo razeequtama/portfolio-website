@@ -13,7 +13,9 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onNavigate }) => {
       <section className="welcome-hero">
         <div className="welcome-hero-content">
           <h2 className="hero-main-title">
-            Hi, I'm <span className="hero-highlight-name">{developerProfile.name}</span>.
+            <span className="hero-title-line">
+              Hi, I'm <span className="hero-highlight-name">{developerProfile.name}</span>.
+            </span>
             <br />
             {developerProfile.role}.
           </h2>
