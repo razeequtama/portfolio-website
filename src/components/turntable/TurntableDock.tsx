@@ -181,6 +181,46 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
     }
   }, [isDockOpen, handleCollapse, handleExpand]);
 
+  // Collapse turntable on phone and tablet when clicking/tapping outside
+  useEffect(() => {
+    if (!isDockOpen) return;
+
+    const handlePointerDownOutside = (e: PointerEvent) => {
+      const target = e.target;
+      if (!(target instanceof Node)) return;
+
+      const dockEl = dockRef.current;
+      if (!dockEl) return;
+
+      // Check whether tap/click was on interactive turntable components:
+      // 1. The wheel container (circle disc, mounted cards, graphics, center hub)
+      // 2. The mobile control bar (Expand / Collapse button)
+      // 3. The flanking controls (Next / Prev buttons)
+      const wheelEl = dockEl.querySelector('.turntable-wheel-container');
+      const controlBarEl = dockEl.querySelector('.dock-mobile-control-bar');
+      const flankingEl = dockEl.querySelector('.disc-flanking-controls');
+
+      const isInsideInteractiveTurntable =
+        Boolean(wheelEl?.contains(target)) ||
+        Boolean(controlBarEl?.contains(target)) ||
+        Boolean(flankingEl?.contains(target));
+
+      if (!isInsideInteractiveTurntable) {
+        handleCollapse();
+      }
+    };
+
+    // Attach after a brief tick so the tap that opened the dock doesn't immediately collapse it
+    const timer = window.setTimeout(() => {
+      document.addEventListener('pointerdown', handlePointerDownOutside, { capture: true });
+    }, 60);
+
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener('pointerdown', handlePointerDownOutside, { capture: true });
+    };
+  }, [isDockOpen, handleCollapse]);
+
   // Mobile & Tablet Drag-Up to Expand and Drag-Down to Collapse with fluid thresholds
   const handleTouchStart = (e: React.TouchEvent) => {
     if (e.touches.length === 1) {
