@@ -8,6 +8,7 @@ interface TurntableWheelProps {
   isDockOpen: boolean;
   swipeProgress?: number | null;
   openedBySwipe?: boolean;
+  showFirstVisitCue?: boolean;
   onSelectIndex: (index: number) => void;
   onNext?: () => void;
   onPrev?: () => void;
@@ -27,6 +28,7 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
   isDockOpen,
   swipeProgress,
   openedBySwipe,
+  showFirstVisitCue,
   onSelectIndex,
 }) => {
   // Screen width responsive radius initialized with window width
@@ -319,6 +321,15 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
       aria-roledescription="carousel"
       aria-label="Portfolio Sections Carousel Disc"
     >
+      {/* First-Visit Smooth Blinking Outward-Moving Outline Cue */}
+      {showFirstVisitCue && !isDockOpen && (
+        <div className="turntable-cue-beacon" aria-hidden="true">
+          <div className="turntable-cue-ring cue-wave-1" />
+          <div className="turntable-cue-ring cue-wave-2" />
+          <div className="turntable-cue-ring cue-wave-3" />
+        </div>
+      )}
+
       {/* Physical Cogwheel Gear Table Surface */}
       <GearTableSurface
         rotation={wheelVisualRotation}

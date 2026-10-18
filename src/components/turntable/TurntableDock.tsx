@@ -10,6 +10,8 @@ interface TurntableDockProps {
   onPrev: () => void;
 }
 
+const CUE_STORAGE_KEY = 'portfolio_turntable_cue_dismissed';
+
 export const TurntableDock: React.FC<TurntableDockProps> = ({
   activeIndex,
   onSelectIndex,
@@ -20,6 +22,28 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [isManuallyCollapsed, setIsManuallyCollapsed] = useState<boolean>(false);
+
+  // First-visit cue state: displays a smoothly blinking, moving-outward outline until hovered or swiped up
+  const [showFirstVisitCue, setShowFirstVisitCue] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    try {
+      return localStorage.getItem(CUE_STORAGE_KEY) !== 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const dismissCue = useCallback(() => {
+    setShowFirstVisitCue((prev) => {
+      if (!prev) return false;
+      try {
+        localStorage.setItem(CUE_STORAGE_KEY, 'true');
+      } catch {
+        // Safe catch for storage quota or privacy mode
+      }
+      return false;
+    });
+  }, []);
 
   const hoverTimeoutRef = useRef<number | null>(null);
   const dockRef = useRef<HTMLElement>(null);
@@ -38,6 +62,20 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
 
   // Dock is open if either hovered or explicitly expanded, unless manually collapsed
   const isDockOpen = !isManuallyCollapsed && (isHovered || isExpanded);
+
+  // The first-visit cue is active only if not dismissed and dock is peeking
+  const isCueActive = showFirstVisitCue && !isDockOpen;
+
+  // Sync external storage if dock is opened
+  useEffect(() => {
+    if (isDockOpen) {
+      try {
+        localStorage.setItem(CUE_STORAGE_KEY, 'true');
+      } catch {
+        // Safe catch
+      }
+    }
+  }, [isDockOpen]);
 
   // Global keyboard navigation: ArrowLeft (prev) and ArrowRight (next)
   useEffect(() => {
@@ -110,6 +148,7 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
 
   // Desktop hover handlers with exit buffer (only active for fine pointer / mouse)
   const handleMouseEnter = () => {
+    dismissCue();
     if (!isFinePointer()) return;
 
     if (hoverTimeoutRef.current) {
@@ -134,6 +173,7 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
 
   // Explicit Collapse handler (works on desktop, tablet, and mobile)
   const handleCollapse = useCallback((e?: React.MouseEvent | React.TouchEvent) => {
+    dismissCue();
     if (e) {
       e.stopPropagation();
     }
@@ -154,10 +194,11 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
-  }, []);
+  }, [dismissCue]);
 
   // Explicit Expand handler (works on desktop, tablet, and mobile)
   const handleExpand = useCallback((e?: React.MouseEvent | React.TouchEvent) => {
+    dismissCue();
     if (e) {
       e.stopPropagation();
     }
@@ -177,10 +218,11 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
-  }, []);
+  }, [dismissCue]);
 
   // Unified Toggle handler for single stable button element (prevents mobile ghost clicks)
   const toggleDock = useCallback((e?: React.MouseEvent | React.TouchEvent) => {
+    dismissCue();
     if (e) {
       e.stopPropagation();
     }
@@ -189,7 +231,7 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
     } else {
       handleExpand(e);
     }
-  }, [isDockOpen, handleCollapse, handleExpand]);
+  }, [isDockOpen, handleCollapse, handleExpand, dismissCue]);
 
   // Collapse turntable on phone and tablet when clicking/tapping outside
   useEffect(() => {
@@ -233,6 +275,7 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
 
   // Mobile & Tablet Drag-Up to Expand and Drag-Down to Collapse with fluid thresholds
   const handleTouchStart = (e: React.TouchEvent) => {
+    dismissCue();
     if (e.touches.length === 1) {
       touchStartYRef.current = e.touches[0].clientY;
       touchStartXRef.current = e.touches[0].clientX;
@@ -251,6 +294,7 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
     // When peeking (closed): fluid upward drag expands the disc and drives the card animation
     if (!isDockOpen) {
       if (deltaY < -2 && Math.abs(deltaY) > deltaX * 0.45) {
+        dismissCue();
         isSwipingUpRef.current = true;
         const maxDragDistance = window.innerWidth <= 640 ? 140 : 180;
         const progress = Math.min(1, Math.max(0, -deltaY / maxDragDistance));
@@ -321,11 +365,12 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
   return (
     <nav
       ref={dockRef}
-      className={`turntable-dock ${isDockOpen ? 'is-focused' : 'is-unfocused'}`}
+      className={`turntable-dock ${isDockOpen ? 'is-focused' : 'is-unfocused'} ${isCueActive ? 'has-first-visit-cue' : ''}`}
       style={dockSwipeStyle}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onFocusCapture={() => {
+        dismissCue();
         if (isFinePointer() && !isManuallyCollapsed) {
           handleMouseEnter();
         }
@@ -344,28 +389,36 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
     >
       {/* Expand / Collapse Control Pill (Desktop, Tablet, & Mobile) */}
       <div className="dock-mobile-control-bar">
-        <button
-          type="button"
-          className={`touch-pill-btn ${isDockOpen ? 'touch-collapse-pill' : 'touch-expand-pill'}`}
-          onClick={toggleDock}
-          aria-label={isDockOpen ? 'Collapse turntable dock' : 'Expand turntable dock'}
-        >
-          {!isDockOpen ? (
-            <>
-              <span className="expand-pill-arrow" aria-hidden="true">
-                ▴
-              </span>
-              <span>Expand</span>
-            </>
-          ) : (
-            <>
-              <span>Collapse</span>
-              <span className="collapse-pill-arrow" aria-hidden="true">
-                ▾
-              </span>
-            </>
+        <div className="expand-pill-wrapper">
+          {isCueActive && (
+            <div className="pill-cue-beacon" aria-hidden="true">
+              <span className="pill-cue-ring pill-wave-1" />
+              <span className="pill-cue-ring pill-wave-2" />
+            </div>
           )}
-        </button>
+          <button
+            type="button"
+            className={`touch-pill-btn ${isDockOpen ? 'touch-collapse-pill' : 'touch-expand-pill'} ${isCueActive ? 'has-cue-glow' : ''}`}
+            onClick={toggleDock}
+            aria-label={isDockOpen ? 'Collapse turntable dock' : 'Expand turntable dock'}
+          >
+            {!isDockOpen ? (
+              <>
+                <span className="expand-pill-arrow" aria-hidden="true">
+                  ▴
+                </span>
+                <span>Expand</span>
+              </>
+            ) : (
+              <>
+                <span>Collapse</span>
+                <span className="collapse-pill-arrow" aria-hidden="true">
+                  ▾
+                </span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Transparent Circular Turntable Viewport */}
@@ -392,6 +445,7 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
           isDockOpen={isDockOpen}
           swipeProgress={swipeProgress}
           openedBySwipe={openedBySwipe}
+          showFirstVisitCue={isCueActive}
           onSelectIndex={onSelectIndex}
           onNext={onNext}
           onPrev={onPrev}
