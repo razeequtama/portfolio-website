@@ -39,7 +39,7 @@ const FlipCardLetter: React.FC<FlipCardLetterProps> = ({ char, suit }) => {
     timerRef.current = window.setTimeout(() => {
       setIsFlipped(false);
       timerRef.current = null;
-    }, 2000);
+    }, 1000);
   };
 
   // Phone / Tablet tap (or click): flips to card, pauses for 2 seconds, then automatically flips back
