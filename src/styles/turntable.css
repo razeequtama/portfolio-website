@@ -951,7 +951,7 @@
 }
 
 .term-accent {
-  color: #60a5fa;
+  color: var(--accent-color);
   font-weight: 600;
 }
 

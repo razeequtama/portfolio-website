@@ -1,4 +1,4 @@
-/* === HERO BACKGROUND TECH GLOWS === */
+/* === HERO BACKGROUND TECH GLOWS: MICRO-CARD CONSTELLATION === */
 
 .hero-tech-glows-canvas {
   position: absolute;
@@ -12,54 +12,182 @@
   user-select: none;
 }
 
-.hero-glow-node {
+/* Individual Micro-Card Node */
+.hero-card-node {
   position: absolute;
   top: 0;
   left: 0;
-  width: 50px;
-  height: 50px;
-  margin-top: -25px;
-  margin-left: -25px;
-  border-radius: 50%;
+  width: 38px;
+  height: 52px;
+  margin-top: -26px;
+  margin-left: -19px;
+  border-radius: 5px;
+  box-sizing: border-box;
+  padding: 3px 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+  will-change: transform, box-shadow, border-color;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+/* Dark Theme Playing Card Stock */
+[data-theme='dark'] .hero-card-node,
+:root .hero-card-node {
+  background: linear-gradient(155deg, #23201d 0%, #161413 100%);
+  border: 1px solid rgba(212, 175, 55, 0.35); /* Gilded gold foil hairline */
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.65), 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* Light Theme Playing Card Stock */
+[data-theme='light'] .hero-card-node {
+  background: linear-gradient(155deg, #ffffff 0%, #f7f3ec 100%);
+  border: 1px solid rgba(197, 160, 89, 0.55);
+  box-shadow: 0 4px 14px rgba(68, 50, 30, 0.14), 0 1px 2px rgba(68, 50, 30, 0.08);
+}
+
+/* Miniature Gold Hairline Inner Frame */
+.micro-card-frame {
+  position: absolute;
+  inset: 2px;
+  border: 0.5px solid rgba(212, 175, 55, 0.22);
+  border-radius: 3px;
+  pointer-events: none;
+}
+
+[data-theme='light'] .micro-card-frame {
+  border-color: rgba(197, 160, 89, 0.32);
+}
+
+/* Micro Corner Pips (Rank Initial + Suit) */
+.micro-card-pip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+  user-select: none;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.pip-tl {
+  align-self: flex-start;
+}
+
+.pip-br {
+  align-self: flex-end;
+  transform: rotate(180deg);
+}
+
+.micro-pip-rank {
+  font-family: var(--font-display);
+  font-size: 0.55rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.micro-pip-suit {
+  font-size: 0.42rem;
+  line-height: 1;
+  margin-top: 1px;
+}
+
+/* Center Area: Watermark Suit + Tech Logo */
+.micro-card-center {
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  will-change: transform, opacity, box-shadow;
-  transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+  z-index: 2;
 }
 
-[data-theme='light'] .hero-glow-node {
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-}
-
-.hero-glow-icon-wrap {
-  width: 26px;
-  height: 26px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+.micro-card-watermark {
+  position: absolute;
+  font-size: 1.55rem;
+  line-height: 1;
+  opacity: 0.09;
+  user-select: none;
   pointer-events: none;
 }
 
-.hero-glow-icon-wrap svg {
+[data-theme='light'] .micro-card-watermark {
+  opacity: 0.08;
+}
+
+.micro-card-icon-wrap {
+  width: 17px;
+  height: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+}
+
+.micro-card-icon-wrap svg {
   width: 100%;
   height: 100%;
   display: block;
 }
 
+/* Red Suits (Hearts ♥, Diamonds ♦) */
+.card-suit-red {
+  color: var(--accent-color);
+}
+
+.card-suit-red .micro-card-watermark {
+  color: var(--accent-color);
+}
+
+/* Black Suits (Spades ♠, Clubs ♣) */
+[data-theme='dark'] .card-suit-black,
+:root .card-suit-black {
+  color: #f5f0e8;
+}
+
+[data-theme='dark'] .card-suit-black .micro-card-watermark,
+:root .card-suit-black .micro-card-watermark {
+  color: #f5f0e8;
+}
+
+[data-theme='light'] .card-suit-black {
+  color: #1c1917;
+}
+
+[data-theme='light'] .card-suit-black .micro-card-watermark {
+  color: #1c1917;
+}
+
+/* Highlighted closest card state */
+.hero-card-node.is-closest {
+  z-index: 20;
+}
+
+[data-theme='dark'] .hero-card-node.is-closest,
+:root .hero-card-node.is-closest {
+  border-color: rgba(212, 175, 55, 0.9);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.85), 0 0 16px rgba(212, 175, 55, 0.35);
+}
+
+[data-theme='light'] .hero-card-node.is-closest {
+  border-color: rgba(197, 160, 89, 0.95);
+  box-shadow: 0 10px 24px rgba(68, 50, 30, 0.25), 0 0 16px rgba(197, 160, 89, 0.35);
+}
+
+/* Tooltip Badge for Technology Name */
 .hero-glow-label {
   position: absolute;
-  top: 54px;
+  top: 58px;
   left: 50%;
   transform: translateX(-50%);
   font-family: var(--font-mono);
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.03em;
-  padding: 0.22rem 0.6rem;
+  padding: 0.22rem 0.65rem;
   border-radius: var(--radius-sm);
   background: var(--bg-overlay);
   border: 1px solid var(--border-color);
@@ -71,11 +199,10 @@
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
-  z-index: 5;
+  z-index: 30;
 }
 
-.hero-glow-node.is-closest .hero-glow-label {
+.hero-card-node.is-closest .hero-glow-label {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
-

@@ -2,6 +2,23 @@ import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { TECH_LOGOS, type TechLogo } from '../../data/techLogos';
 import '../../styles/heroTechGlows.css';
 
+type SuitType = 'spades' | 'hearts' | 'clubs' | 'diamonds';
+
+const SUIT_CYCLE: SuitType[] = ['spades', 'hearts', 'clubs', 'diamonds'];
+
+const SUIT_GLYPHS: Record<SuitType, string> = {
+  spades: '♠',
+  hearts: '♥',
+  clubs: '♣',
+  diamonds: '♦',
+};
+
+// Natural deterministic resting rotations (degrees) to simulate cards suspended in zero-gravity
+const BASE_ROTATIONS = [
+  -8, 11, -5, 9, -12, 6, -14, 10, -7, 12,
+  -9, 7, -6, 11, -11, 8, -10, 13, -8, 5,
+];
+
 // 20 distinct anchor coordinates (in percentages of the hero section, with safe boundary margins)
 const ANCHOR_POINTS = [
   { xPercent: 10, yPercent: 16 },  // Top-left
@@ -35,19 +52,10 @@ function shuffleArray<T>(array: T[]): T[] {
   return arr;
 }
 
-// Adjust colors for light mode so yellows, cyans, and whites have high contrast on light backgrounds
-function getEffectiveColor(color: string, isLight: boolean): string {
-  const upper = color.toUpperCase();
-  if (isLight) {
-    if (upper === '#FFFFFF') return '#1e293b';
-    if (upper === '#F7DF1E' || upper === '#FCC624') return '#b45309'; // rich amber gold for clear contrast on light
-    if (upper === '#61DAFB') return '#0284c7'; // deeper sky-blue for clear contrast on light
-  }
-  return color;
-}
-
 interface ParticleState {
   logo: TechLogo;
+  suit: SuitType;
+  rank: string;
   xPercent: number;
   yPercent: number;
   baseX: number;
@@ -57,21 +65,23 @@ interface ParticleState {
   vx: number;
   vy: number;
   phase: number;
+  baseRot: number;
+  currentRot: number;
 }
 
 export const HeroTechGlows: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const iconWrapRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const iconWrapRefs = useRef<(HTMLElement | null)[]>([]);
 
-  // Randomize what logo each glow has JUST ONCE on mount
+  // Randomize logo distribution once on mount
   const randomizedLogos = useMemo(() => shuffleArray(TECH_LOGOS), []);
 
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
   });
 
-  // Track theme changes for white logo adaptation
+  // Track theme changes
   useEffect(() => {
     const observer = new MutationObserver(() => {
       const current = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
@@ -81,12 +91,18 @@ export const HeroTechGlows: React.FC = () => {
     return () => observer.disconnect();
   }, []);
 
-  // Persistent physics particles initialized deterministically once
+  // Persistent micro-card particles initialized deterministically once
   const [initialParticles] = useState<ParticleState[]>(() =>
     ANCHOR_POINTS.map((pt, i) => {
       const logo = randomizedLogos[i % randomizedLogos.length];
+      const suit = SUIT_CYCLE[i % SUIT_CYCLE.length];
+      const baseRot = BASE_ROTATIONS[i % BASE_ROTATIONS.length];
+      const rank = logo.name.charAt(0).toUpperCase();
+
       return {
         logo,
+        suit,
+        rank,
         xPercent: pt.xPercent,
         yPercent: pt.yPercent,
         baseX: 0,
@@ -96,9 +112,12 @@ export const HeroTechGlows: React.FC = () => {
         vx: 0,
         vy: 0,
         phase: (i * 1.61803398875) % (Math.PI * 2),
+        baseRot,
+        currentRot: baseRot,
       };
     })
   );
+
   const particlesRef = useRef<ParticleState[]>(initialParticles);
   const mouseRef = useRef<{ x: number; y: number }>({ x: -9999, y: -9999 });
 
@@ -150,12 +169,12 @@ export const HeroTechGlows: React.FC = () => {
     document.addEventListener('mouseleave', handleMouseLeave);
 
     let animationFrameId: number;
-    const REPEL_RADIUS = 205; // Balanced radius of mouse influence
+    const REPEL_RADIUS = 210;
 
-    // Boundary margins to ensure neither circular glows nor text labels ever get cropped
-    const PADDING_X = 62;
-    const PADDING_TOP = 38;
-    const PADDING_BOTTOM = 48;
+    // Boundary margins to ensure micro-cards and labels never clip
+    const PADDING_X = 52;
+    const PADDING_TOP = 40;
+    const PADDING_BOTTOM = 52;
 
     const loop = (time: number) => {
       const mx = mouseRef.current.x;
@@ -167,7 +186,7 @@ export const HeroTechGlows: React.FC = () => {
       const minY = PADDING_TOP;
       const maxY = Math.max(minY, height - PADDING_BOTTOM);
 
-      // 1. Calculate distances and determine the single closest node to cursor
+      // 1. Calculate distances and determine the single closest card to cursor
       let closestIdx = -1;
       let minDistance = Infinity;
 
@@ -183,12 +202,11 @@ export const HeroTechGlows: React.FC = () => {
         }
       }
 
-      // If closest node is outside the influence radius, no node is active as closest
       if (minDistance > REPEL_RADIUS || mx < -500) {
         closestIdx = -1;
       }
 
-      // 2. Physics & DOM updates for all 20 nodes
+      // 2. Physics & DOM updates for all 20 micro-cards
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
         const nodeEl = nodeRefs.current[i];
@@ -199,7 +217,7 @@ export const HeroTechGlows: React.FC = () => {
         const ambX = Math.sin(time * 0.0012 + p.phase) * 6;
         const ambY = Math.cos(time * 0.001 + p.phase) * 6;
 
-        // Mouse repulsion - toned down aggression for smooth, controlled gliding
+        // Mouse repulsion
         const dx = p.x - mx;
         const dy = p.y - my;
         const dist = Math.sqrt(dx * dx + dy * dy) || 1;
@@ -208,20 +226,19 @@ export const HeroTechGlows: React.FC = () => {
         let repelY = 0;
 
         if (dist < REPEL_RADIUS && mx > -500) {
-          // Smooth progressive force (toned down from 48 to 26)
           const pushForce = Math.pow(1 - dist / REPEL_RADIUS, 1.6) * 26;
           repelX = (dx / dist) * pushForce;
           repelY = (dy / dist) * pushForce;
         }
 
-        // Spring pulling back toward base anchor with smooth damping
+        // Spring pulling back toward base anchor
         const springX = (p.baseX + ambX - p.x) * 0.07;
         const springY = (p.baseY + ambY - p.y) * 0.07;
 
         p.vx = (p.vx + springX + repelX) * 0.85;
         p.vy = (p.vy + springY + repelY) * 0.85;
 
-        // Speed cap to prevent any erratic or aggressive jumps
+        // Speed cap
         const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
         const MAX_SPEED = 9;
         if (speed > MAX_SPEED) {
@@ -232,7 +249,7 @@ export const HeroTechGlows: React.FC = () => {
         p.x += p.vx;
         p.y += p.vy;
 
-        // Boundary safety constraint: keeps nodes completely inside view bounds
+        // Boundary safety constraint
         if (p.x < minX) {
           p.x = minX;
           p.vx = Math.abs(p.vx) * 0.25;
@@ -249,72 +266,35 @@ export const HeroTechGlows: React.FC = () => {
           p.vy = -Math.abs(p.vy) * 0.25;
         }
 
-        // Visual states: Closest vs Nearby within radius vs Ambient
+        // Dynamic rotation: tilts with horizontal velocity; straightens up when closest
         const isClosest = i === closestIdx;
         const isWithinRadius = dist < REPEL_RADIUS && mx > -500;
         const proximity = isWithinRadius ? Math.max(0, 1 - dist / REPEL_RADIUS) : 0;
 
-        const isLight = theme === 'light';
-        const effectiveColor = getEffectiveColor(p.logo.color, isLight);
+        const targetRot = isClosest ? p.baseRot * 0.25 : p.baseRot + p.vx * 1.3;
+        p.currentRot += (targetRot - p.currentRot) * 0.12;
 
-        // Scale & translation
+        // Scale & opacity
         let scale: number;
-        let logoOpacity: number;
+        let iconOpacity: number;
 
         if (isClosest) {
-          scale = 1.25;
-          logoOpacity = 1.0; // prominent & fully visible
+          scale = 1.28;
+          iconOpacity = 1.0;
           nodeEl.classList.add('is-closest');
-          if (isLight) {
-            nodeEl.style.boxShadow = `0 4px 18px rgba(0, 0, 0, 0.12), 0 0 28px ${effectiveColor}70, inset 0 0 10px ${effectiveColor}18`;
-            nodeEl.style.borderColor = `${effectiveColor}aa`;
-            nodeEl.style.background = `#ffffff`;
-          } else {
-            nodeEl.style.boxShadow = `0 0 32px ${effectiveColor}99, 0 0 65px ${effectiveColor}44, inset 0 0 16px ${effectiveColor}33`;
-            nodeEl.style.borderColor = `${effectiveColor}bb`;
-            nodeEl.style.background = `radial-gradient(circle, ${effectiveColor}40 0%, ${effectiveColor}14 60%, transparent 75%)`;
-          }
         } else if (isWithinRadius) {
-          // Around the closest one within radius: softer, but distinctly "there"
-          scale = 1.0 + proximity * 0.12;
+          scale = 1.0 + proximity * 0.15;
+          iconOpacity = 0.38 + proximity * 0.52;
           nodeEl.classList.remove('is-closest');
-          if (isLight) {
-            logoOpacity = 0.40 + proximity * 0.44; // 0.40 to 0.84
-            const alphaHex = Math.round((0.25 + proximity * 0.4) * 255).toString(16).padStart(2, '0');
-            nodeEl.style.boxShadow = `0 2px 10px rgba(0, 0, 0, 0.08), 0 0 ${14 + proximity * 14}px ${effectiveColor}${alphaHex}`;
-            nodeEl.style.borderColor = `${effectiveColor}${Math.round((0.35 + proximity * 0.4) * 255).toString(16).padStart(2, '0')}`;
-            nodeEl.style.background = `radial-gradient(circle, rgba(255, 255, 255, 0.95) 45%, ${effectiveColor}22 80%, transparent 100%)`;
-          } else {
-            logoOpacity = 0.28 + proximity * 0.50; // 0.28 to 0.78
-            const alphaHex = Math.round((0.2 + proximity * 0.45) * 255).toString(16).padStart(2, '0');
-            nodeEl.style.boxShadow = `0 0 ${16 + proximity * 18}px ${effectiveColor}${alphaHex}`;
-            nodeEl.style.borderColor = `${effectiveColor}${Math.round((0.25 + proximity * 0.4) * 255).toString(16).padStart(2, '0')}`;
-            nodeEl.style.background = `radial-gradient(circle, ${effectiveColor}${Math.round((0.16 + proximity * 0.22) * 255).toString(16).padStart(2, '0')} 0%, transparent 70%)`;
-          }
         } else {
-          // Ambient resting state
           scale = 1.0;
+          iconOpacity = theme === 'light' ? 0.42 : 0.28;
           nodeEl.classList.remove('is-closest');
-          if (isLight) {
-            // Light mode idle: frosted circular glass disc with subtle color halo and crisp logo
-            logoOpacity = 0.32;
-            nodeEl.style.boxShadow = `0 2px 10px rgba(0, 0, 0, 0.06), 0 0 16px ${effectiveColor}36`;
-            nodeEl.style.borderColor = `${effectiveColor}48`;
-            nodeEl.style.background = `radial-gradient(circle, rgba(255, 255, 255, 0.92) 42%, ${effectiveColor}24 78%, transparent 100%)`;
-          } else {
-            // Dark mode idle: noticeably more visible (0.18 vs previous 0.04), but NOT SO MUCH to distract
-            logoOpacity = 0.18;
-            nodeEl.style.boxShadow = `0 0 18px ${effectiveColor}30`;
-            nodeEl.style.borderColor = `${effectiveColor}30`;
-            nodeEl.style.background = `radial-gradient(circle, ${effectiveColor}28 0%, ${effectiveColor}0e 60%, transparent 72%)`;
-          }
         }
 
-        nodeEl.style.transform = `translate3d(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px, 0) scale(${scale.toFixed(3)})`;
+        nodeEl.style.transform = `translate3d(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px, 0) rotate(${p.currentRot.toFixed(1)}deg) scale(${scale.toFixed(3)})`;
         if (iconWrapEl) {
-          iconWrapEl.style.opacity = logoOpacity.toFixed(2);
-          iconWrapEl.style.color = effectiveColor;
-          iconWrapEl.style.transform = isClosest ? 'scale(1.1)' : 'scale(1)';
+          iconWrapEl.style.opacity = iconOpacity.toFixed(2);
         }
       }
 
@@ -334,28 +314,49 @@ export const HeroTechGlows: React.FC = () => {
   return (
     <div className="hero-tech-glows-canvas" ref={containerRef} aria-hidden="true">
       {initialParticles.map((particle, idx) => {
-        const { logo } = particle;
-        const effectiveColor = getEffectiveColor(logo.color, theme === 'light');
+        const { logo, suit, rank } = particle;
+        const isRed = suit === 'hearts' || suit === 'diamonds';
+        const suitGlyph = SUIT_GLYPHS[suit];
 
         return (
           <div
-            key={logo.id}
+            key={`micro-card-${logo.id}-${idx}`}
             ref={(el) => { nodeRefs.current[idx] = el; }}
-            className="hero-glow-node"
+            className={`hero-card-node ${isRed ? 'card-suit-red' : 'card-suit-black'}`}
           >
-            <div
-              ref={(el) => { iconWrapRefs.current[idx] = el; }}
-              className="hero-glow-icon-wrap"
-              style={{ color: effectiveColor }}
-            >
-              <svg
-                viewBox={logo.viewBox || '0 0 24 24'}
-                fill="currentColor"
-                xmlns="http://www.w3.org/2000/svg"
+            {/* Gilded Gold Foil Hairline Inner Frame */}
+            <span className="micro-card-frame" />
+
+            {/* Top-Left Pip: Rank Initial + Suit */}
+            <span className="micro-card-pip pip-tl">
+              <span className="micro-pip-rank">{rank}</span>
+              <span className="micro-pip-suit">{suitGlyph}</span>
+            </span>
+
+            {/* Center Area: Translucent Watermark Suit + SVG Tech Logo */}
+            <span className="micro-card-center">
+              <span className="micro-card-watermark">{suitGlyph}</span>
+              <span
+                ref={(el) => { iconWrapRefs.current[idx] = el; }}
+                className="micro-card-icon-wrap"
               >
-                <path d={logo.path} />
-              </svg>
-            </div>
+                <svg
+                  viewBox={logo.viewBox || '0 0 24 24'}
+                  fill="currentColor"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d={logo.path} />
+                </svg>
+              </span>
+            </span>
+
+            {/* Bottom-Right Inverted Pip */}
+            <span className="micro-card-pip pip-br">
+              <span className="micro-pip-rank">{rank}</span>
+              <span className="micro-pip-suit">{suitGlyph}</span>
+            </span>
+
+            {/* Tooltip Label on Hover / Closest */}
             <div className="hero-glow-label">
               {logo.name}
             </div>
