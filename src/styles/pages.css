@@ -176,20 +176,62 @@
 
 .hero-main-title {
   font-family: var(--font-display);
-  font-size: clamp(2.55rem, 4.4vw, 3.85rem);
+  font-size: clamp(2.85rem, 5.4vw, 4.25rem);
   font-weight: 400;
   line-height: 1.1;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
   color: var(--text-primary);
 }
 
-.hero-title-line {
+.hero-title-greeting {
+  display: inline;
+}
+
+.hero-title-space {
+  display: none;
+}
+
+.hero-title-break-mobile {
+  display: block;
+}
+
+.hero-title-name {
   display: inline-block;
+  white-space: nowrap;
+}
+
+.hero-title-role {
+  display: inline;
 }
 
 @media (min-width: 768px) {
-  .hero-title-line {
-    white-space: nowrap;
+  .hero-title-space {
+    display: inline;
+  }
+
+  .hero-title-break-mobile {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero-main-title {
+    font-size: clamp(2.4rem, 7.8vw, 3.25rem);
+    line-height: 1.12;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-main-title {
+    font-size: clamp(2.2rem, 8.8vw, 2.75rem);
+    line-height: 1.14;
+  }
+}
+
+@media (max-width: 360px) {
+  .hero-main-title {
+    font-size: clamp(1.95rem, 8.4vw, 2.25rem);
+    line-height: 1.15;
   }
 }
 

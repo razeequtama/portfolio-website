@@ -18,11 +18,14 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onNavigate }) => {
 
         <div className="welcome-hero-content">
           <h2 className="hero-main-title">
-            <span className="hero-title-line">
-              Hi, I'm <FlipCardName name={developerProfile.name} suffix="." />
+            <span className="hero-title-greeting">Hi, I'm</span>
+            <span className="hero-title-space"> </span>
+            <br className="hero-title-break-mobile" />
+            <span className="hero-title-name">
+              <FlipCardName name={developerProfile.name} suffix="." />
             </span>
             <br />
-            {developerProfile.role}.
+            <span className="hero-title-role">{developerProfile.role}.</span>
           </h2>
 
           {/* === CHANGE HERE: Bio Summary Text === */}
