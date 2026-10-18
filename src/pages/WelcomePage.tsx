@@ -2,6 +2,7 @@ import React from 'react';
 import { developerProfile } from '../data/portfolioData';
 import mePhoto from '../assets/Me.png';
 import { HeroTechGlows } from '../components/welcome/HeroTechGlows';
+import { FlipCardName } from '../components/welcome/FlipCardName';
 
 interface WelcomePageProps {
   onNavigate: (sectionIndex: number) => void;
@@ -18,7 +19,7 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onNavigate }) => {
         <div className="welcome-hero-content">
           <h2 className="hero-main-title">
             <span className="hero-title-line">
-              Hi, I'm <span className="hero-highlight-name">{developerProfile.name}</span>.
+              Hi, I'm <FlipCardName name={developerProfile.name} suffix="." />
             </span>
             <br />
             {developerProfile.role}.

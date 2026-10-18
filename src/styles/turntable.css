@@ -91,8 +91,8 @@
   border-radius: var(--radius-full);
   border: 1.5px solid var(--accent-color);
   box-shadow:
-    0 0 14px rgba(59, 130, 246, 0.7),
-    0 0 28px rgba(59, 130, 246, 0.35);
+    0 0 14px rgba(225, 29, 72, 0.7),
+    0 0 28px rgba(225, 29, 72, 0.35);
   pointer-events: none;
   opacity: 0;
   will-change: transform, opacity;
@@ -122,8 +122,8 @@
     transform: scale(1.24, 1.4);
     opacity: 0;
     box-shadow:
-      0 0 24px rgba(59, 130, 246, 0.45),
-      0 0 40px rgba(59, 130, 246, 0.15);
+      0 0 24px rgba(225, 29, 72, 0.45),
+      0 0 40px rgba(225, 29, 72, 0.15);
   }
 }
 
@@ -176,8 +176,8 @@
     border-color: var(--accent-color);
   }
   50% {
-    box-shadow: 0 4px 22px rgba(59, 130, 246, 0.4), 0 0 18px var(--accent-color);
-    border-color: #60a5fa;
+    box-shadow: 0 4px 22px rgba(225, 29, 72, 0.4), 0 0 18px var(--accent-color);
+    border-color: #f43f5e;
   }
 }
 
@@ -436,9 +436,9 @@
   border-radius: 50%;
   border: 2px solid var(--accent-color);
   box-shadow:
-    0 0 16px rgba(59, 130, 246, 0.65),
-    0 0 36px rgba(59, 130, 246, 0.35),
-    inset 0 0 14px rgba(59, 130, 246, 0.25);
+    0 0 16px rgba(225, 29, 72, 0.65),
+    0 0 36px rgba(225, 29, 72, 0.35),
+    inset 0 0 14px rgba(225, 29, 72, 0.25);
   pointer-events: none;
   opacity: 0;
   will-change: transform, opacity;
@@ -472,9 +472,9 @@
     transform: scale(1.042);
     opacity: 0;
     box-shadow:
-      0 0 32px rgba(59, 130, 246, 0.5),
-      0 0 64px rgba(59, 130, 246, 0.15),
-      inset 0 0 20px rgba(59, 130, 246, 0.1);
+      0 0 32px rgba(225, 29, 72, 0.5),
+      0 0 64px rgba(225, 29, 72, 0.15),
+      inset 0 0 20px rgba(225, 29, 72, 0.1);
   }
 }
 
@@ -605,35 +605,35 @@
 .card-inner-frame {
   position: absolute;
   inset: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.22);
   border-radius: 12px;
   pointer-events: none;
   transition: border-color 0.25s ease, opacity 0.25s ease;
 }
 
 [data-theme='light'] .card-inner-frame {
-  border-color: rgba(0, 0, 0, 0.09);
+  border-color: rgba(197, 160, 89, 0.38);
 }
 
 /* Playing Card Suit Color Variables */
 .turntable-card.suit-red {
   --card-suit-color: #f43f5e;
-  --card-suit-glow: rgba(244, 63, 94, 0.35);
+  --card-suit-glow: rgba(244, 63, 94, 0.4);
 }
 
 .turntable-card.suit-black {
-  --card-suit-color: #60a5fa;
-  --card-suit-glow: rgba(96, 165, 250, 0.35);
+  --card-suit-color: #f5f0e8;
+  --card-suit-glow: rgba(245, 240, 232, 0.28);
 }
 
 [data-theme='light'] .turntable-card.suit-red {
   --card-suit-color: #dc2626;
-  --card-suit-glow: rgba(220, 38, 38, 0.25);
+  --card-suit-glow: rgba(220, 38, 38, 0.3);
 }
 
 [data-theme='light'] .turntable-card.suit-black {
-  --card-suit-color: #1e293b;
-  --card-suit-glow: rgba(30, 41, 59, 0.22);
+  --card-suit-color: #1c1917;
+  --card-suit-glow: rgba(28, 25, 23, 0.25);
 }
 
 /* Active Card Highlight & Spring Animation with Suit Aura */
@@ -1015,8 +1015,8 @@
 }
 
 .bp-card-hero {
-  fill: rgba(59, 130, 246, 0.1);
-  stroke: rgba(59, 130, 246, 0.35);
+  fill: rgba(225, 29, 72, 0.12);
+  stroke: rgba(225, 29, 72, 0.4);
   stroke-width: 1;
 }
 
@@ -1050,7 +1050,7 @@
 }
 
 .bp-gateway {
-  fill: rgba(59, 130, 246, 0.15);
+  fill: rgba(225, 29, 72, 0.15);
   stroke: var(--accent-color);
   stroke-width: 1.2;
 }
@@ -1093,7 +1093,7 @@
 }
 
 .bp-milestone-halo {
-  fill: rgba(59, 130, 246, 0.2);
+  fill: rgba(225, 29, 72, 0.2);
   stroke: var(--accent-color);
   stroke-width: 1;
   stroke-dasharray: 2 2;
@@ -1158,8 +1158,8 @@
 
 .turntable-card.is-active .matrix-badge {
   color: var(--text-primary);
-  border-color: rgba(59, 130, 246, 0.35);
-  background: rgba(59, 130, 246, 0.08);
+  border-color: rgba(225, 29, 72, 0.4);
+  background: rgba(225, 29, 72, 0.1);
 }
 
 .tech-matrix-footer {
@@ -1204,7 +1204,7 @@
 }
 
 .bp-diamond {
-  fill: rgba(59, 130, 246, 0.12);
+  fill: rgba(225, 29, 72, 0.14);
   stroke: var(--accent-color);
   stroke-width: 1.4;
 }
@@ -1226,24 +1226,24 @@
 }
 
 .bp-radar-arc.arc-1 {
-  stroke: rgba(59, 130, 246, 0.6);
+  stroke: rgba(225, 29, 72, 0.65);
   stroke-width: 1.2;
 }
 
 .bp-radar-arc.arc-2 {
-  stroke: rgba(59, 130, 246, 0.35);
+  stroke: rgba(225, 29, 72, 0.4);
   stroke-width: 1;
   stroke-dasharray: 3 3;
 }
 
 .bp-radar-arc.arc-3 {
-  stroke: rgba(59, 130, 246, 0.18);
+  stroke: rgba(225, 29, 72, 0.2);
   stroke-width: 0.8;
   stroke-dasharray: 2 4;
 }
 
 .bp-transmitter {
-  fill: rgba(59, 130, 246, 0.2);
+  fill: rgba(225, 29, 72, 0.2);
   stroke: var(--accent-color);
   stroke-width: 1.4;
 }

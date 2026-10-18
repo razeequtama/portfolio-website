@@ -166,8 +166,8 @@ export const GearTableSurface: React.FC<GearTableSurfaceProps> = ({
           cy="500"
           r="38"
           fill="var(--bg-elevated)"
-          stroke="var(--accent-color)"
-          strokeWidth="2"
+          stroke="var(--color-gold, var(--accent-color))"
+          strokeWidth="2.5"
         />
         <circle
           cx="500"

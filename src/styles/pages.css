@@ -99,7 +99,7 @@
   background: radial-gradient(
     circle,
     var(--accent-light) 0%,
-    rgba(59, 130, 246, 0.08) 40%,
+    rgba(225, 29, 72, 0.08) 40%,
     transparent 70%
   );
   filter: blur(36px);
