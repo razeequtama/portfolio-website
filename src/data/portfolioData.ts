@@ -250,23 +250,23 @@ export const engineeringPatterns: ArchitecturePattern[] = [
       filename: 'turntable-math.ts',
       language: 'typescript',
       code: `export function calculateCardPlacement(
-  index: number,
-  activeContinuousIndex: number,
-  totalItems: number = 7,
-  stepAngle: number = 26,
-  radius: number = 420
-) {
-  // Compute shortest wrapped angular distance
-  let diff = ((index - activeContinuousIndex) % totalItems + totalItems) % totalItems;
-  if (diff > totalItems / 2) diff -= totalItems;
+        index: number,
+        activeContinuousIndex: number,
+        totalItems: number = 7,
+        stepAngle: number = 26,
+        radius: number = 420
+      ) {
+        // Compute shortest wrapped angular distance
+        let diff = ((index - activeContinuousIndex) % totalItems + totalItems) % totalItems;
+        if (diff > totalItems / 2) diff -= totalItems;
 
-  const netAngle = diff * stepAngle;
-  const isApex = Math.abs(netAngle) < 1.0;
-  const scale = Math.max(0.65, 1 - Math.abs(diff) * 0.12);
-  const opacity = Math.abs(netAngle) > 85 ? 0 : Math.max(0.2, 1 - Math.abs(diff) * 0.25);
+        const netAngle = diff * stepAngle;
+        const isApex = Math.abs(netAngle) < 1.0;
+        const scale = Math.max(0.65, 1 - Math.abs(diff) * 0.12);
+        const opacity = Math.abs(netAngle) > 85 ? 0 : Math.max(0.2, 1 - Math.abs(diff) * 0.25);
 
-  return { netAngle, scale, opacity, isApex, zIndex: Math.round(10 - Math.abs(diff) * 2) };
-}`,
+        return { netAngle, scale, opacity, isApex, zIndex: Math.round(10 - Math.abs(diff) * 2) };
+      }`,
     },
   },
 ];

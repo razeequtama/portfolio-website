@@ -60,17 +60,17 @@ export const TurntableCard: React.FC<TurntableCardProps> = ({
         {/* Authentic Casino Card Inner Border Hairline Frame */}
         <div className="card-inner-frame" aria-hidden="true" />
 
+        {/* Subtle Large Center Watermark Playing Card Suit Symbol */}
+        <div className="card-center-watermark" aria-hidden="true">
+          <PlayingCardSuitIcon suit={suit} />
+        </div>
+
         {/* Top-Left Corner Pip (Rank above Suit) */}
         <div className="card-corner-pip pip-top-left" aria-hidden="true">
           <span className="pip-rank">{rank}</span>
           <span className="pip-suit">
             <PlayingCardSuitIcon suit={suit} />
           </span>
-        </div>
-
-        {/* Top-Right Suit Emblem */}
-        <div className="card-top-suit" aria-hidden="true">
-          <PlayingCardSuitIcon suit={suit} />
         </div>
 
         {/* Card Body: Title & Subtitle */}
