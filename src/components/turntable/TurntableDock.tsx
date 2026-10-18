@@ -32,6 +32,9 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
   const touchStartYRef = useRef<number | null>(null);
   const touchStartXRef = useRef<number | null>(null);
   const touchStartTimeRef = useRef<number>(0);
+  const isSwipingUpRef = useRef<boolean>(false);
+  const [swipeProgress, setSwipeProgress] = useState<number | null>(null);
+  const [openedBySwipe, setOpenedBySwipe] = useState<boolean>(false);
 
   // Dock is open if either hovered or explicitly expanded, unless manually collapsed
   const isDockOpen = !isManuallyCollapsed && (isHovered || isExpanded);
@@ -234,6 +237,7 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
       touchStartYRef.current = e.touches[0].clientY;
       touchStartXRef.current = e.touches[0].clientX;
       touchStartTimeRef.current = performance.now();
+      isSwipingUpRef.current = false;
     }
   };
 
@@ -244,12 +248,13 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
     const deltaY = currentY - touchStartYRef.current;
     const deltaX = Math.abs(currentX - (touchStartXRef.current || currentX));
 
-    // When peeking (closed): fluid upward drag expands the disc effortlessly
+    // When peeking (closed): fluid upward drag expands the disc and drives the card animation
     if (!isDockOpen) {
-      if (deltaY < -12 && Math.abs(deltaY) > deltaX * 0.7) {
-        handleExpand();
-        touchStartYRef.current = null;
-        touchStartXRef.current = null;
+      if (deltaY < -2 && Math.abs(deltaY) > deltaX * 0.45) {
+        isSwipingUpRef.current = true;
+        const maxDragDistance = window.innerWidth <= 640 ? 140 : 180;
+        const progress = Math.min(1, Math.max(0, -deltaY / maxDragDistance));
+        setSwipeProgress(progress);
       }
     } else {
       // When expanded (open): fluid downward drag collapses it easily
@@ -257,6 +262,7 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
         handleCollapse();
         touchStartYRef.current = null;
         touchStartXRef.current = null;
+        setSwipeProgress(null);
       }
     }
   };
@@ -271,10 +277,17 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
       const isQuickFlick = duration < 350;
 
       if (!isDockOpen) {
-        if ((deltaY < -10 && isQuickFlick) || deltaY < -16) {
-          if (Math.abs(deltaY) > deltaX * 0.6) {
-            handleExpand();
-          }
+        const isCommitted =
+          (swipeProgress !== null && swipeProgress > 0.35) ||
+          ((deltaY < -10 && isQuickFlick) || deltaY < -20);
+
+        if (isCommitted && Math.abs(deltaY) > deltaX * 0.45) {
+          setOpenedBySwipe(true);
+          setSwipeProgress(null);
+          handleExpand();
+          window.setTimeout(() => setOpenedBySwipe(false), 550);
+        } else {
+          setSwipeProgress(null);
         }
       } else {
         if ((deltaY > 14 && isQuickFlick) || deltaY > 20) {
@@ -286,6 +299,7 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
     }
     touchStartYRef.current = null;
     touchStartXRef.current = null;
+    isSwipingUpRef.current = false;
   };
 
   // Section metadata for previous and next cards (Linear bounded, no loop)
@@ -293,10 +307,22 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
   const prevSection = activeIndex > 0 ? portfolioSections[activeIndex - 1] : null;
   const nextSection = activeIndex < totalCards - 1 ? portfolioSections[activeIndex + 1] : null;
 
+  // Real-time direct manipulation dock position during swipe-up
+  const dockSwipeStyle: React.CSSProperties | undefined =
+    swipeProgress !== null
+      ? {
+          transform: `translateY(calc((100% - ${window.innerWidth <= 640 ? '60px' : '78px'}) * ${1 - swipeProgress}))`,
+          filter: `brightness(${0.48 + swipeProgress * 0.52}) grayscale(${0.4 * (1 - swipeProgress)})`,
+          opacity: 0.72 + swipeProgress * 0.28,
+          transition: 'none',
+        }
+      : undefined;
+
   return (
     <nav
       ref={dockRef}
       className={`turntable-dock ${isDockOpen ? 'is-focused' : 'is-unfocused'}`}
+      style={dockSwipeStyle}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onFocusCapture={() => {
@@ -364,6 +390,8 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
         <TurntableWheel
           activeIndex={activeIndex}
           isDockOpen={isDockOpen}
+          swipeProgress={swipeProgress}
+          openedBySwipe={openedBySwipe}
           onSelectIndex={onSelectIndex}
           onNext={onNext}
           onPrev={onPrev}

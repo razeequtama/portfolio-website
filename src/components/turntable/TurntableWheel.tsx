@@ -6,6 +6,8 @@ import { GearTableSurface } from './GearTableSurface';
 interface TurntableWheelProps {
   activeIndex: number;
   isDockOpen: boolean;
+  swipeProgress?: number | null;
+  openedBySwipe?: boolean;
   onSelectIndex: (index: number) => void;
   onNext?: () => void;
   onPrev?: () => void;
@@ -23,6 +25,8 @@ function getResponsiveRadius(width: number): number {
 export const TurntableWheel: React.FC<TurntableWheelProps> = ({
   activeIndex,
   isDockOpen,
+  swipeProgress,
+  openedBySwipe,
   onSelectIndex,
 }) => {
   // Screen width responsive radius initialized with window width
@@ -74,8 +78,17 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
     }
 
     if (!wasOpen && isDockOpen) {
-      // DOCK JUST OPENED: Animate from Card 01 (index 0) to current section (activeIndex)
-      if (activeIndex > 0) {
+      // DOCK JUST OPENED
+      if (openedBySwipe) {
+        // User interactively scrubbed from 0 to activeIndex with their swipe gesture:
+        // Settle smoothly on activeIndex without triggering redundant timer animation
+        startSpinTimerRef.current = window.setTimeout(() => {
+          setIsImmediateReset(false);
+          setIsIntroSpinning(false);
+          setVisualIndex(activeIndex);
+        }, 0);
+      } else if (activeIndex > 0) {
+        // Opened via click/tap (e.g. Expand button or desktop): Animate from Card 01 to activeIndex
         startSpinTimerRef.current = window.setTimeout(() => {
           setIsImmediateReset(true);
           setIsIntroSpinning(false);
@@ -122,7 +135,7 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
         setVisualIndex(activeIndex);
       }, 0);
     }
-  }, [isDockOpen, activeIndex]);
+  }, [isDockOpen, activeIndex, openedBySwipe]);
 
   // Clean up timers on unmount
   useEffect(() => {
@@ -135,6 +148,8 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
 
   // Touch and Mouse Drag handlers with linear boundary resistance
   const handleStart = (clientX: number) => {
+    if (!isDockOpen) return; // Prevent horizontal card dragging while dock is collapsed
+
     if (isIntroSpinning) {
       if (introSpinTimerRef.current) {
         clearTimeout(introSpinTimerRef.current);
@@ -250,6 +265,12 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
     };
   }, [isDragging, handleMove, handleEnd]);
 
+  // Active interactive scrub from Card 0 to activeIndex when swiping up dock
+  const isInteractivelySwiping = swipeProgress !== null && swipeProgress !== undefined;
+  const effectiveVisualIndex = isInteractivelySwiping
+    ? swipeProgress * activeIndex
+    : visualIndex;
+
   // Dynamic synchronized transitions for wheel and cards
   const spinDurationMs = Math.min(480 + activeIndex * 85, 950);
   const spinDurationSec = (spinDurationMs / 1000).toFixed(2);
@@ -257,7 +278,7 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
   let wheelTransition: string;
   let cardTransition: string;
 
-  if (isDragging || isImmediateReset) {
+  if (isInteractivelySwiping || isDragging || isImmediateReset) {
     wheelTransition = 'none';
     cardTransition = 'none';
   } else if (isIntroSpinning) {
@@ -272,7 +293,7 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
   }
 
   // Visual wheel rotation with custom spring easing
-  const wheelVisualRotation = -visualIndex * STEP_ANGLE + dragOffsetAngle;
+  const wheelVisualRotation = -effectiveVisualIndex * STEP_ANGLE + dragOffsetAngle;
 
   return (
     <div
@@ -307,16 +328,19 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
       {/* Radially Mounted Carousel Cards: Strictly Linear Track (01 WELCOME to 07 CONTACT) */}
       <div className="turntable-cards-layer">
         {portfolioSections.map((section, idx) => {
-          // Strictly linear offset from visualIndex: NO CIRCULAR LOOP
-          const diff = idx - visualIndex;
+          // Strictly linear offset from effective visualIndex
+          const diff = idx - effectiveVisualIndex;
 
           // Net angle includes step angle + dynamic drag offset
           const netAngle = diff * STEP_ANGLE + dragOffsetAngle;
           const absAngle = Math.abs(netAngle);
 
-          // Active card sits at netAngle = 0° (top center, upright) when not intro spinning
+          // Active card sits at netAngle = 0° (top center, upright) when not intro spinning/swiping
           const isActive =
-            idx === activeIndex && !isIntroSpinning && Math.abs(dragOffsetAngle) < 13;
+            idx === activeIndex &&
+            !isIntroSpinning &&
+            !isInteractivelySwiping &&
+            Math.abs(dragOffsetAngle) < 13;
 
           // Compute scale, opacity, and zIndex along the perimeter
           let scale: number;

@@ -7,10 +7,14 @@ export type SectionId =
   | 'about'
   | 'contact';
 
+export type PlayingCardSuit = 'spades' | 'diamonds' | 'clubs' | 'hearts';
+
 export interface SectionMeta {
   id: SectionId;
   index: number;
   number: string;
+  cardSuit?: PlayingCardSuit;
+  cardRank?: string;
   title: string;
   subtitle: string;
   shortDesc: string;

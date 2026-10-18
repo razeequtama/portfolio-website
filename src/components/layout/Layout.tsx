@@ -1,6 +1,6 @@
 import React from 'react';
 import type { ReactNode } from 'react';
-import { Navbar } from './Navbar';
+import { ThemeToggle } from './ThemeToggle';
 import type { SectionMeta } from '../../types/portfolio';
 
 interface LayoutProps {
@@ -20,8 +20,7 @@ export const Layout: React.FC<LayoutProps> = ({
 }) => {
   return (
     <div className="app-container">
-      <Navbar
-        currentSection={currentSection}
+      <ThemeToggle
         theme={theme}
         onToggleTheme={onToggleTheme}
       />

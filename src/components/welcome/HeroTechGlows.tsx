@@ -81,13 +81,9 @@ export const HeroTechGlows: React.FC = () => {
     return () => observer.disconnect();
   }, []);
 
-  // Persistent physics particles
-  const particlesRef = useRef<ParticleState[]>([]);
-  const mouseRef = useRef<{ x: number; y: number }>({ x: -9999, y: -9999 });
-
-  // Initialize particles once
-  if (particlesRef.current.length === 0) {
-    particlesRef.current = ANCHOR_POINTS.map((pt, i) => {
+  // Persistent physics particles initialized deterministically once
+  const [initialParticles] = useState<ParticleState[]>(() =>
+    ANCHOR_POINTS.map((pt, i) => {
       const logo = randomizedLogos[i % randomizedLogos.length];
       return {
         logo,
@@ -99,10 +95,12 @@ export const HeroTechGlows: React.FC = () => {
         y: 0,
         vx: 0,
         vy: 0,
-        phase: Math.random() * Math.PI * 2,
+        phase: (i * 1.61803398875) % (Math.PI * 2),
       };
-    });
-  }
+    })
+  );
+  const particlesRef = useRef<ParticleState[]>(initialParticles);
+  const mouseRef = useRef<{ x: number; y: number }>({ x: -9999, y: -9999 });
 
   // Animation and physics loop
   useEffect(() => {
@@ -260,8 +258,8 @@ export const HeroTechGlows: React.FC = () => {
         const effectiveColor = getEffectiveColor(p.logo.color, isLight);
 
         // Scale & translation
-        let scale = 1.0;
-        let logoOpacity = isLight ? 0.32 : 0.18; // Idle visibility: 0.32 in light mode, 0.18 in dark mode
+        let scale: number;
+        let logoOpacity: number;
 
         if (isClosest) {
           scale = 1.25;
@@ -335,7 +333,7 @@ export const HeroTechGlows: React.FC = () => {
 
   return (
     <div className="hero-tech-glows-canvas" ref={containerRef} aria-hidden="true">
-      {particlesRef.current.map((particle, idx) => {
+      {initialParticles.map((particle, idx) => {
         const { logo } = particle;
         const effectiveColor = getEffectiveColor(logo.color, theme === 'light');
 
