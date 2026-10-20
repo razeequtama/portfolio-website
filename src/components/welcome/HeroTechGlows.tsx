@@ -60,11 +60,21 @@ interface VinylParticle {
   variation: 'var-1' | 'var-2';
 }
 
+// Helper to compute responsive hit-test radius for the vinyl records
+const getHitRadius = (canvasWidth: number): number => {
+  if (canvasWidth <= 640) return 46; // Mobile radius 42px (+4px buffer)
+  if (canvasWidth <= 1024) return 60; // Tablet radius 55px (+5px buffer)
+  return 76; // Desktop radius 70px (+6px buffer)
+};
+
 export const HeroTechGlows: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const hoveredIdxRef = useRef<number | null>(null);
+  const cursorPosRef = useRef<{ x: number; y: number } | null>(null);
+  const isHoverLockedByClickRef = useRef<boolean>(false);
+  const clickTimeoutRef = useRef<number | null>(null);
 
   // Randomize logo distribution once on mount
   const randomizedLogos = useMemo(() => shuffleArray(TECH_LOGOS), []);
@@ -105,13 +115,53 @@ export const HeroTechGlows: React.FC = () => {
 
   const particlesRef = useRef<VinylParticle[]>(initialParticles);
 
-  // Smooth floating animation loop
+  // Helper to trigger active state (with 1s reset on mobile/tablet)
+  const triggerActive = (idx: number) => {
+    const isTabletOrPhone =
+      typeof window !== 'undefined' &&
+      (window.innerWidth <= 1024 || window.matchMedia('(hover: none)').matches);
+
+    if (isTabletOrPhone) {
+      if (clickTimeoutRef.current) {
+        window.clearTimeout(clickTimeoutRef.current);
+        clickTimeoutRef.current = null;
+      }
+
+      isHoverLockedByClickRef.current = true;
+      hoveredIdxRef.current = idx;
+      setHoveredIdx(idx);
+
+      clickTimeoutRef.current = window.setTimeout(() => {
+        hoveredIdxRef.current = null;
+        setHoveredIdx(null);
+        isHoverLockedByClickRef.current = false;
+        nodeRefs.current[idx]?.blur();
+        clickTimeoutRef.current = null;
+      }, 1000);
+    } else {
+      hoveredIdxRef.current = idx;
+      setHoveredIdx(idx);
+    }
+  };
+
+  // Clean up timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (clickTimeoutRef.current) {
+        window.clearTimeout(clickTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Smooth floating animation loop & global proximity hit-testing
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     let width = container.clientWidth || 1200;
     let height = container.clientHeight || 600;
+
+    const heroSection = (container.closest('.welcome-hero') as HTMLElement) || container;
 
     const updateBasePositions = () => {
       if (!container) return;
@@ -136,10 +186,113 @@ export const HeroTechGlows: React.FC = () => {
     });
     resizeObserver.observe(container);
 
+    // Track pointer position across the entire hero section (even when over photo or text)
+    const handlePointerMove = (e: PointerEvent) => {
+      const isDesktop =
+        typeof window !== 'undefined' &&
+        window.innerWidth > 1024 &&
+        window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+      if (!isDesktop) return;
+
+      const target = e.target as HTMLElement | null;
+      // Do not trigger vinyl hover if interacting with actual buttons, links, or flip cards
+      if (target?.closest('button, a, input, textarea, select, .flip-card-letter')) {
+        cursorPosRef.current = null;
+        heroSection.style.cursor = '';
+        return;
+      }
+
+      const rect = container.getBoundingClientRect();
+      cursorPosRef.current = {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+      };
+    };
+
+    const handlePointerLeave = () => {
+      cursorPosRef.current = null;
+      heroSection.style.cursor = '';
+      if (!isHoverLockedByClickRef.current) {
+        hoveredIdxRef.current = null;
+        setHoveredIdx(null);
+      }
+    };
+
+    // Global click listener on hero section so vinyls behind text or photo are clickable/tappable
+    const handleHeroClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+      // Never intercept clicks on real buttons, links, or flip cards
+      if (target?.closest('button, a, input, textarea, select, .flip-card-letter')) {
+        return;
+      }
+
+      const rect = container.getBoundingClientRect();
+      const cx = e.clientX - rect.left;
+      const cy = e.clientY - rect.top;
+
+      const hitRadius = getHitRadius(width);
+      const radiusSq = hitRadius * hitRadius;
+
+      let hitIdx: number | null = null;
+      let minDistSq = radiusSq;
+
+      const particles = particlesRef.current;
+      for (let i = 0; i < particles.length; i++) {
+        const dx = cx - particles[i].x;
+        const dy = cy - particles[i].y;
+        const d2 = dx * dx + dy * dy;
+        if (d2 < minDistSq) {
+          minDistSq = d2;
+          hitIdx = i;
+        }
+      }
+
+      if (hitIdx !== null) {
+        triggerActive(hitIdx);
+      }
+    };
+
+    heroSection.addEventListener('pointermove', handlePointerMove);
+    heroSection.addEventListener('pointerleave', handlePointerLeave);
+    heroSection.addEventListener('click', handleHeroClick);
+    window.addEventListener('blur', handlePointerLeave);
+
     let animationFrameId: number;
 
     const loop = (time: number) => {
       const particles = particlesRef.current;
+
+      // Global proximity hit-testing: checks if cursor is over a vinyl (even when behind text/photo)
+      if (!isHoverLockedByClickRef.current) {
+        const isDesktop =
+          width > 1024 && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+        let hitIdx: number | null = null;
+
+        if (cursorPosRef.current && isDesktop) {
+          const { x: cx, y: cy } = cursorPosRef.current;
+          const hitRadius = getHitRadius(width);
+          let minDistSq = hitRadius * hitRadius;
+
+          for (let i = 0; i < particles.length; i++) {
+            const dx = cx - particles[i].x;
+            const dy = cy - particles[i].y;
+            const d2 = dx * dx + dy * dy;
+            if (d2 < minDistSq) {
+              minDistSq = d2;
+              hitIdx = i;
+            }
+          }
+        }
+
+        if (hitIdx !== hoveredIdxRef.current) {
+          hoveredIdxRef.current = hitIdx;
+          setHoveredIdx(hitIdx);
+          heroSection.style.cursor = hitIdx !== null ? 'pointer' : '';
+        }
+      }
+
       const hovered = hoveredIdxRef.current;
 
       // Generous bounds allowing discs to float off-screen naturally
@@ -184,70 +337,15 @@ export const HeroTechGlows: React.FC = () => {
     animationFrameId = requestAnimationFrame(loop);
 
     return () => {
+      heroSection.removeEventListener('pointermove', handlePointerMove);
+      heroSection.removeEventListener('pointerleave', handlePointerLeave);
+      heroSection.removeEventListener('click', handleHeroClick);
+      window.removeEventListener('blur', handlePointerLeave);
+      heroSection.style.cursor = '';
       cancelAnimationFrame(animationFrameId);
       resizeObserver.disconnect();
     };
   }, []);
-
-  const clickTimeoutRef = useRef<number | null>(null);
-
-  // Clean up timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (clickTimeoutRef.current) {
-        window.clearTimeout(clickTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  const handleMouseEnter = (idx: number) => {
-    // Only apply hover state if not on mobile/tablet (desktop with fine pointer)
-    const isDesktop =
-      typeof window !== 'undefined' &&
-      window.innerWidth > 1024 &&
-      window.matchMedia('(hover: hover)').matches;
-
-    if (isDesktop) {
-      hoveredIdxRef.current = idx;
-      setHoveredIdx(idx);
-    }
-  };
-
-  const handleMouseLeave = () => {
-    const isDesktop =
-      typeof window !== 'undefined' &&
-      window.innerWidth > 1024 &&
-      window.matchMedia('(hover: hover)').matches;
-
-    if (isDesktop) {
-      hoveredIdxRef.current = null;
-      setHoveredIdx(null);
-    }
-  };
-
-  // On tablet and phone mode: clicking a vinyl animates it, then returns to original display after 1 second
-  const handleClick = (idx: number) => {
-    const isTabletOrPhone =
-      typeof window !== 'undefined' &&
-      (window.innerWidth <= 1024 || window.matchMedia('(hover: none)').matches);
-
-    if (isTabletOrPhone) {
-      if (clickTimeoutRef.current) {
-        window.clearTimeout(clickTimeoutRef.current);
-        clickTimeoutRef.current = null;
-      }
-
-      hoveredIdxRef.current = idx;
-      setHoveredIdx(idx);
-
-      clickTimeoutRef.current = window.setTimeout(() => {
-        hoveredIdxRef.current = null;
-        setHoveredIdx(null);
-        nodeRefs.current[idx]?.blur();
-        clickTimeoutRef.current = null;
-      }, 1000);
-    }
-  };
 
   return (
     <div className="hero-tech-glows-canvas" ref={containerRef}>
@@ -260,17 +358,26 @@ export const HeroTechGlows: React.FC = () => {
             key={`hero-vinyl-${logo.id}-${idx}`}
             ref={(el) => { nodeRefs.current[idx] = el; }}
             className={`hero-vinyl-node ${variation} ${isHovered ? 'is-hovered' : ''}`}
-            onMouseEnter={() => handleMouseEnter(idx)}
-            onMouseLeave={handleMouseLeave}
-            onClick={() => handleClick(idx)}
+            onClick={(e) => {
+              e.stopPropagation();
+              triggerActive(idx);
+            }}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                handleClick(idx);
+                triggerActive(idx);
               }
             }}
-            onFocus={() => handleMouseEnter(idx)}
-            onBlur={handleMouseLeave}
+            onFocus={() => {
+              hoveredIdxRef.current = idx;
+              setHoveredIdx(idx);
+            }}
+            onBlur={() => {
+              if (!isHoverLockedByClickRef.current) {
+                hoveredIdxRef.current = null;
+                setHoveredIdx(null);
+              }
+            }}
             tabIndex={0}
             role="button"
             aria-label={`Technology: ${logo.name}`}
