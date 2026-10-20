@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { SectionHeader } from '../components/common/SectionHeader';
 import { portfolioSections, contactData } from '../data/portfolioData';
+import { handleDownloadCV } from '../utils/downloadCV';
 
 export const ContactPage: React.FC = () => {
   const contactMeta = portfolioSections[6];
@@ -84,9 +85,7 @@ export const ContactPage: React.FC = () => {
                 type="button"
                 className="btn-primary"
                 style={{ width: '100%', justifyContent: 'center' }}
-                onClick={() => {
-                  alert(`Downloading CV placeholder. Replace '${contactData.resumeUrl}' in portfolioData.ts with your real resume link!`);
-                }}
+                onClick={handleDownloadCV}
               >
                 <span>Download Curriculum Vitae (PDF) ↓</span>
               </button>
@@ -120,7 +119,8 @@ export const ContactPage: React.FC = () => {
             Send a Direct Message
           </h2>
           <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
-            Have a project, advisory inquiry, or architecture question? Fill out the form below.
+            Interested in discussing an internship opportunity, collaboration, or software project?
+            Send a message below.
           </p>
 
           {formSubmitted ? (
@@ -129,7 +129,6 @@ export const ContactPage: React.FC = () => {
             </div>
           ) : (
             <form className="contact-form" onSubmit={handleSubmit}>
-              {/* === CHANGE HERE: Form Fields Definition === */}
               <div className="form-group">
                 <label htmlFor="contact-name" className="form-label">
                   Your Name
@@ -138,7 +137,7 @@ export const ContactPage: React.FC = () => {
                   id="contact-name"
                   type="text"
                   required
-                  placeholder="e.g. Linus Torvalds"
+                  placeholder="e.g. Alex Chen"
                   className="form-input"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -153,7 +152,7 @@ export const ContactPage: React.FC = () => {
                   id="contact-email"
                   type="email"
                   required
-                  placeholder="name@example.com"
+                  placeholder="name@company.com"
                   className="form-input"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -168,7 +167,7 @@ export const ContactPage: React.FC = () => {
                   id="contact-subject"
                   type="text"
                   required
-                  placeholder="e.g. Distributed Systems Consulting / Advisory"
+                  placeholder="e.g. Software Engineering Internship Opportunity"
                   className="form-input"
                   value={formData.subject}
                   onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
@@ -182,7 +181,7 @@ export const ContactPage: React.FC = () => {
                 <textarea
                   id="contact-message"
                   required
-                  placeholder="Briefly describe what you would like to collaborate on..."
+                  placeholder="Feel free to share details about the opportunity or what you'd like to collaborate on..."
                   className="form-textarea"
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}

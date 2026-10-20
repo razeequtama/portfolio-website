@@ -8,7 +8,7 @@ export const ProjectsPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
   // Categories list for quick filtering
-  const categories = ['All', 'Systems', 'Frontend', 'Cloud', 'DevTools'];
+  const categories = ['All', 'Full Stack', 'Cloud', 'Systems', 'Frontend'];
 
   const filteredProjects =
     selectedCategory === 'All'

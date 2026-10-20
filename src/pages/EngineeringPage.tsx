@@ -17,12 +17,12 @@ export const EngineeringPage: React.FC = () => {
       {/* Engineering Philosophy Summary */}
       <section className="surface-card engineering-philosophy">
         <h2 style={{ fontSize: 'var(--text-xl)', marginBottom: '0.5rem', fontWeight: 700 }}>
-          System Architecture Philosophy
+          Engineering & Architecture Principles
         </h2>
         <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-          Building sustainable software requires treating architecture as an evolving set of
-          deliberate trade-offs rather than dogmatic rules. Below are core architectural case studies
-          and technical patterns implemented across recent distributed platforms and client systems.
+          Writing clean, sustainable software requires thoughtful modularity, disciplined typing, and
+          clear trade-off evaluation. Below are architectural case studies and design patterns
+          implemented across recent full-stack applications and interactive systems.
         </p>
       </section>
 

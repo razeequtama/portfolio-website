@@ -4,6 +4,7 @@ import mePhoto from '../assets/Me.png';
 import { HeroTechGlows } from '../components/welcome/HeroTechGlows';
 import { FlipCardName } from '../components/welcome/FlipCardName';
 import { HeroPortrait } from '../components/welcome/HeroPortrait';
+import { handleDownloadCV } from '../utils/downloadCV';
 
 interface WelcomePageProps {
   onNavigate: (sectionIndex: number) => void;
@@ -29,11 +30,11 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onNavigate }) => {
             <span className="hero-title-role">{developerProfile.role}.</span>
           </h2>
 
-          {/* === CHANGE HERE: Bio Summary Text === */}
+          {/* Hero Bio Summary */}
           <p className="hero-bio">
-            I design and build resilient distributed systems, high-performance web applications,
-            and robust developer tooling. Focused on deterministic architectures, strict typing,
-            and fluid interactive experiences.
+            Aspiring Software Engineer focused on building robust full-stack web applications,
+            scalable backend APIs, and efficient systems. Passionate about clean code, strong typing,
+            and continuous learning — eager to contribute, deliver impact, and grow as a software engineering intern.
           </p>
 
           {/* Action Buttons to Jump Directly to Other Sections */}
@@ -58,12 +59,9 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onNavigate }) => {
 
             {/* Direct CV Download Link */}
             <a
-              href="#cv-download"
+              href="#download-cv"
               className="btn-secondary"
-              onClick={(e) => {
-                e.preventDefault();
-                alert('CV download placeholder. Replace with your hosted resume PDF link!');
-              }}
+              onClick={handleDownloadCV}
             >
               Download CV ↓
             </a>
@@ -76,60 +74,54 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onNavigate }) => {
 
       {/* Metrics / At-a-Glance Statistics Grid */}
       <section className="metrics-grid" aria-label="Key Highlights and Metrics">
-        {/* === DUPLICATE THIS BLOCK OF CODE TO ADD A NEW Metric Card === */}
         <div className="surface-card metric-card">
           <div className="metric-value">{developerProfile.yearsExperience}</div>
-          <div className="metric-label">Engineering Experience</div>
+          <div className="metric-label">Academic Foundation</div>
         </div>
 
-        {/* === DUPLICATE THIS BLOCK OF CODE TO ADD A NEW Metric Card === */}
         <div className="surface-card metric-card">
           <div className="metric-value">{developerProfile.projectsShipped}</div>
-          <div className="metric-label">Shipped to Production</div>
+          <div className="metric-label">Technical Focus</div>
         </div>
 
-        {/* === DUPLICATE THIS BLOCK OF CODE TO ADD A NEW Metric Card === */}
         <div className="surface-card metric-card">
           <div className="metric-value">{developerProfile.systemReliability}</div>
-          <div className="metric-label">Uptime & Reliability SLA</div>
+          <div className="metric-label">Internship Status</div>
         </div>
       </section>
 
       {/* Quick Callouts Grid */}
       <section className="welcome-callouts" aria-label="Engineering Focus Callouts">
-        {/* === DUPLICATE THIS BLOCK OF CODE TO ADD A NEW Callout Card === */}
         <div className="surface-card callout-card">
           <div className="callout-icon-title">
             <span>⚡</span>
-            <span>Frontend & Interactive Systems</span>
+            <span>Modern Frontend Engineering</span>
           </div>
           <p className="callout-desc">
-            Deep expertise in React 19, TypeScript, state synchronization, canvas rendering,
-            and 60fps gesture-driven interfaces like the turntable dock below.
+            Building fluid, responsive web interfaces with React, TypeScript, and modern CSS.
+            Dedicated to modular component architecture, accessible keyboard navigation, and smooth user experiences.
           </p>
         </div>
 
-        {/* === DUPLICATE THIS BLOCK OF CODE TO ADD A NEW Callout Card === */}
         <div className="surface-card callout-card">
           <div className="callout-icon-title">
-            <span>🛡️</span>
-            <span>System Design & Architecture</span>
+            <span>⚙️</span>
+            <span>Backend APIs & Databases</span>
           </div>
           <p className="callout-desc">
-            Proven track record designing scalable microservices, event-driven CQRS pipelines,
-            and caching tiers that handle high concurrency with predictable latency.
+            Developing structured RESTful services with Python, FastAPI, Express.js, and relational SQL / MongoDB databases.
+            Focused on data validation, clean API contracts, and robust CRUD design.
           </p>
         </div>
 
-        {/* === DUPLICATE THIS BLOCK OF CODE TO ADD A NEW Callout Card === */}
         <div className="surface-card callout-card">
           <div className="callout-icon-title">
-            <span>🔧</span>
-            <span>Developer Tooling & DX</span>
+            <span>🔍</span>
+            <span>Algorithms & Systems Foundations</span>
           </div>
           <p className="callout-desc">
-            Obsessed with fast iteration loops: AST transforms, monorepos, automated regression suites,
-            and comprehensive architectural RFCs.
+            Firm grounding in computer science fundamentals: C++ memory management, data structures,
+            algorithmic efficiency, and Linux terminal development environments.
           </p>
         </div>
       </section>
