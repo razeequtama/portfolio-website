@@ -2,28 +2,36 @@ import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { TECH_LOGOS, type TechLogo } from '../../data/techLogos';
 import '../../styles/heroTechGlows.css';
 
-// 20 distinct anchor coordinates (in percentages of the hero section, with safe boundary margins)
+// 20 distinct anchor coordinates (in percentages of the hero section)
+// Placed so vinyls float across the canvas and naturally glide partially or fully off screen
 const ANCHOR_POINTS = [
-  { xPercent: 10, yPercent: 16 },  // Top-left
-  { xPercent: 28, yPercent: 12 },  // Top-left-center
-  { xPercent: 48, yPercent: 14 },  // Top-center
-  { xPercent: 68, yPercent: 13 },  // Top-right-center
-  { xPercent: 88, yPercent: 16 },  // Top-right
-  { xPercent: 8,  yPercent: 36 },  // Far left upper-mid
-  { xPercent: 26, yPercent: 38 },  // Left-mid behind text
-  { xPercent: 46, yPercent: 34 },  // Center upper-mid
-  { xPercent: 66, yPercent: 38 },  // Mid-gap right
-  { xPercent: 88, yPercent: 35 },  // Far right upper-mid
-  { xPercent: 10, yPercent: 60 },  // Far left lower-mid
-  { xPercent: 30, yPercent: 64 },  // Left-mid below bio
-  { xPercent: 50, yPercent: 58 },  // Center lower-mid
-  { xPercent: 70, yPercent: 62 },  // Right-mid below portrait
-  { xPercent: 89, yPercent: 57 },  // Far right lower-mid
-  { xPercent: 9,  yPercent: 84 },  // Bottom left below buttons
-  { xPercent: 28, yPercent: 86 },  // Bottom left-center
-  { xPercent: 48, yPercent: 82 },  // Bottom center
-  { xPercent: 68, yPercent: 85 },  // Bottom right-center
-  { xPercent: 87, yPercent: 80 },  // Bottom right corner
+  // Top perimeter (float in and out of the top edge & corners)
+  { xPercent: 2,   yPercent: 4  }, // Top-left corner / glides partially off-screen
+  { xPercent: 25,  yPercent: 7  }, // Top-left-center
+  { xPercent: 49,  yPercent: 3  }, // Top-center / glides past top
+  { xPercent: 73,  yPercent: 6  }, // Top-right-center
+  { xPercent: 98,  yPercent: 2  }, // Top-right corner / glides partially off-screen
+
+  // Upper-mid perimeter & backdrop
+  { xPercent: -1,  yPercent: 28 }, // Left edge / glides off left
+  { xPercent: 22,  yPercent: 33 }, // Left-mid behind text
+  { xPercent: 45,  yPercent: 26 }, // Center upper-mid gap
+  { xPercent: 68,  yPercent: 32 }, // Mid-gap right
+  { xPercent: 101, yPercent: 27 }, // Right edge / glides off right
+
+  // Lower-mid perimeter & backdrop
+  { xPercent: 1,   yPercent: 56 }, // Left edge mid / glides off left
+  { xPercent: 20,  yPercent: 60 }, // Left-mid below bio
+  { xPercent: 46,  yPercent: 54 }, // Center lower-mid
+  { xPercent: 67,  yPercent: 59 }, // Right-mid below portrait
+  { xPercent: 101, yPercent: 57 }, // Right edge mid / glides off right
+
+  // Bottom perimeter (float in and out of the bottom edge & corners)
+  { xPercent: 3,   yPercent: 88 }, // Bottom-left corner / glides partially off-screen
+  { xPercent: 26,  yPercent: 93 }, // Bottom-left-center
+  { xPercent: 49,  yPercent: 97 }, // Bottom-center / glides past bottom
+  { xPercent: 73,  yPercent: 91 }, // Bottom-right-center
+  { xPercent: 98,  yPercent: 86 }, // Bottom-right corner / glides partially off-screen
 ];
 
 function shuffleArray<T>(array: T[]): T[] {
@@ -45,6 +53,10 @@ interface VinylParticle {
   y: number;
   phase: number;
   spinDuration: number;
+  ampX: number;
+  ampY: number;
+  freqX: number;
+  freqY: number;
   variation: 'var-1' | 'var-2';
 }
 
@@ -61,10 +73,16 @@ export const HeroTechGlows: React.FC = () => {
   const [initialParticles] = useState<VinylParticle[]>(() =>
     ANCHOR_POINTS.map((pt, i) => {
       const logo = randomizedLogos[i % randomizedLogos.length];
-      // Varied rotation duration for organic turntable feel (14s to 22s)
-      const spinDuration = 14 + (i % 5) * 2;
+      // Varied rotation duration for organic turntable feel (16s to 26s)
+      const spinDuration = 16 + (i % 5) * 2.5;
 
       const variation: 'var-1' | 'var-2' = i % 2 === 0 ? 'var-1' : 'var-2';
+
+      // Soft harmonic drift amplitudes and frequencies
+      const ampX = 30 + (i % 4) * 5; // 30px to 45px
+      const ampY = 24 + (i % 3) * 6; // 24px to 36px
+      const freqX = 0.00045 + (i % 3) * 0.0001;
+      const freqY = 0.00038 + ((i + 1) % 3) * 0.0001;
 
       return {
         logo,
@@ -76,6 +94,10 @@ export const HeroTechGlows: React.FC = () => {
         y: 0,
         phase: (i * 1.61803398875) % (Math.PI * 2),
         spinDuration,
+        ampX,
+        ampY,
+        freqX,
+        freqY,
         variation,
       };
     })
@@ -116,19 +138,16 @@ export const HeroTechGlows: React.FC = () => {
 
     let animationFrameId: number;
 
-    // Safety margins to ensure discs and tooltip badges never clip
-    const PADDING_X = 64;
-    const PADDING_TOP = 48;
-    const PADDING_BOTTOM = 64;
-
     const loop = (time: number) => {
       const particles = particlesRef.current;
       const hovered = hoveredIdxRef.current;
 
-      const minX = PADDING_X;
-      const maxX = Math.max(minX, width - PADDING_X);
-      const minY = PADDING_TOP;
-      const maxY = Math.max(minY, height - PADDING_BOTTOM);
+      // Generous bounds allowing discs to float off-screen naturally
+      const MARGIN_OFFSCREEN = 140;
+      const minX = -MARGIN_OFFSCREEN;
+      const maxX = width + MARGIN_OFFSCREEN;
+      const minY = -MARGIN_OFFSCREEN;
+      const maxY = height + MARGIN_OFFSCREEN;
 
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
@@ -136,24 +155,39 @@ export const HeroTechGlows: React.FC = () => {
         if (!nodeEl) continue;
 
         // Smooth harmonic floating drift (gentle, organic zero-gravity float)
-        const floatX = Math.sin(time * 0.0009 + p.phase) * 11 + Math.cos(time * 0.0005 + p.phase * 1.5) * 5;
-        const floatY = Math.cos(time * 0.0007 + p.phase) * 9 + Math.sin(time * 0.0006 + p.phase * 1.2) * 4;
+        const floatX = Math.sin(time * p.freqX + p.phase) * p.ampX + Math.cos(time * (p.freqX * 0.55) + p.phase * 1.4) * (p.ampX * 0.4);
+        const floatY = Math.cos(time * p.freqY + p.phase * 1.1) * p.ampY + Math.sin(time * (p.freqY * 0.6) + p.phase * 0.8) * (p.ampY * 0.35);
 
         const targetX = p.baseX + floatX;
         const targetY = p.baseY + floatY;
 
         // Smooth spring interpolation
-        p.x += (targetX - p.x) * 0.06;
-        p.y += (targetY - p.y) * 0.06;
+        p.x += (targetX - p.x) * 0.05;
+        p.y += (targetY - p.y) * 0.05;
 
-        // Boundary containment
+        // Bounded within off-screen margins
         p.x = Math.max(minX, Math.min(maxX, p.x));
         p.y = Math.max(minY, Math.min(maxY, p.y));
 
         const isHovered = i === hovered;
-        const scale = isHovered ? 1.25 : 1.0;
+        const scale = isHovered ? 1.10 : 1.0;
 
         nodeEl.style.transform = `translate3d(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px, 0) scale(${scale.toFixed(3)})`;
+
+        if (isHovered) {
+          // If hovered near screen edges, shift tooltip horizontally to keep it cleanly in view
+          let shiftX = 0;
+          if (p.x < 70) shiftX = Math.round(70 - p.x);
+          else if (p.x > width - 70) shiftX = Math.round((width - 70) - p.x);
+          nodeEl.style.setProperty('--label-shift-x', `${shiftX}px`);
+
+          // If hovered near bottom of container, flip tooltip above the vinyl
+          if (p.y > height - 130) {
+            nodeEl.classList.add('tooltip-top');
+          } else {
+            nodeEl.classList.remove('tooltip-top');
+          }
+        }
       }
 
       animationFrameId = requestAnimationFrame(loop);
@@ -201,7 +235,8 @@ export const HeroTechGlows: React.FC = () => {
               className="vinyl-disc-body"
               style={{ animationDuration: `${spinDuration}s` }}
             >
-              <div className="vinyl-grooves-ring" />
+              <div className="vinyl-grooves-ring-1" />
+              <div className="vinyl-grooves-ring-2" />
             </div>
 
             {/* Red Center Record Label Hub with Spindle Hole & Tech SVG Logo */}

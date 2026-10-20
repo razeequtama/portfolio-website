@@ -12,23 +12,27 @@
   user-select: none;
 }
 
-/* Individual Vinyl Record Node (Reasonably Big Default: 82px) */
+/* Individual Vinyl Record Node (Big Default: 140px, ~30% Idle Opacity) */
 .hero-vinyl-node {
   position: absolute;
   top: 0;
   left: 0;
-  width: 82px;
-  height: 82px;
-  margin-top: -41px;
-  margin-left: -41px;
+  width: 140px;
+  height: 140px;
+  margin-top: -70px;
+  margin-left: -70px;
   border-radius: 50%;
   pointer-events: auto; /* Fully hover-able */
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  will-change: transform, box-shadow;
-  transition: box-shadow 0.28s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, box-shadow, opacity;
+  opacity: 0.30; /* ~30% visible idle so big records float softly without overwhelming */
+  transition:
+    opacity 0.35s ease,
+    box-shadow 0.28s ease,
+    transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 5;
 }
 
@@ -201,24 +205,36 @@
   color: #e11d48;
 }
 
-/* Outer Groove Highlight Ring */
-.vinyl-grooves-ring {
+/* Dual Vinyl Grooves Rings for LP Authenticity */
+.vinyl-grooves-ring-1 {
   position: absolute;
-  inset: 6px;
+  inset: 12px;
   border-radius: 50%;
   border: 1px solid rgba(255, 255, 255, 0.08);
   pointer-events: none;
 }
 
-[data-theme='light'] .vinyl-grooves-ring {
-  border-color: rgba(0, 0, 0, 0.06);
+.vinyl-grooves-ring-2 {
+  position: absolute;
+  inset: 26px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+}
+
+[data-theme='light'] .vinyl-grooves-ring-1 {
+  border-color: rgba(0, 0, 0, 0.07);
+}
+
+[data-theme='light'] .vinyl-grooves-ring-2 {
+  border-color: rgba(0, 0, 0, 0.04);
 }
 
 /* Center Record Label Hub */
 .vinyl-center-label {
   position: relative;
-  width: 40px;
-  height: 40px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -230,7 +246,7 @@
 .vinyl-center-label::before {
   content: '';
   position: absolute;
-  inset: 3px;
+  inset: 4px;
   border-radius: 50%;
   border: 0.5px dashed rgba(255, 255, 255, 0.35);
   pointer-events: none;
@@ -243,8 +259,8 @@
 /* Center Spindle Hole */
 .vinyl-spindle-hole {
   position: absolute;
-  width: 5px;
-  height: 5px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: #0d0f12;
   border: 0.5px solid rgba(255, 255, 255, 0.3);
@@ -259,16 +275,16 @@
 
 /* Tech SVG Logo inside Center Label */
 .vinyl-icon-wrap {
-  width: 22px;
-  height: 22px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #ffffff;
-  opacity: 0.9;
+  opacity: 0.92;
   z-index: 3;
   transition: all 0.25s ease;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.7));
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.7));
   pointer-events: none;
 }
 
@@ -283,6 +299,7 @@
    ========================================================================= */
 .hero-vinyl-node:hover,
 .hero-vinyl-node.is-hovered {
+  opacity: 1; /* Pops to 100% full opacity on hover */
   z-index: 35;
 }
 
@@ -291,24 +308,24 @@
 [data-theme='dark'] .hero-vinyl-node.is-hovered,
 :root .hero-vinyl-node.is-hovered {
   box-shadow:
-    0 0 32px rgba(220, 38, 38, 0.8),
-    0 0 65px rgba(220, 38, 38, 0.4),
-    0 12px 28px rgba(0, 0, 0, 0.9);
+    0 0 38px rgba(220, 38, 38, 0.85),
+    0 0 75px rgba(220, 38, 38, 0.45),
+    0 14px 32px rgba(0, 0, 0, 0.95);
 }
 
 [data-theme='dark'] .hero-vinyl-node:hover .vinyl-disc-body,
 :root .hero-vinyl-node:hover .vinyl-disc-body,
 [data-theme='dark'] .hero-vinyl-node.is-hovered .vinyl-disc-body,
 :root .hero-vinyl-node.is-hovered .vinyl-disc-body {
-  border-color: rgba(239, 68, 68, 0.8);
+  border-color: rgba(239, 68, 68, 0.85);
 }
 
 [data-theme='light'] .hero-vinyl-node:hover,
 [data-theme='light'] .hero-vinyl-node.is-hovered {
   box-shadow:
-    0 0 32px rgba(225, 29, 72, 0.55),
-    0 0 65px rgba(225, 29, 72, 0.25),
-    0 12px 28px rgba(0, 0, 0, 0.15);
+    0 0 38px rgba(225, 29, 72, 0.6),
+    0 0 75px rgba(225, 29, 72, 0.3),
+    0 14px 32px rgba(0, 0, 0, 0.18);
 }
 
 [data-theme='light'] .hero-vinyl-node:hover .vinyl-disc-body,
@@ -318,27 +335,27 @@
 
 .hero-vinyl-node:hover .vinyl-center-label,
 .hero-vinyl-node.is-hovered .vinyl-center-label {
-  box-shadow: 0 0 16px rgba(239, 68, 68, 0.95);
+  box-shadow: 0 0 18px rgba(239, 68, 68, 0.95);
 }
 
 .hero-vinyl-node:hover .vinyl-icon-wrap,
 .hero-vinyl-node.is-hovered .vinyl-icon-wrap {
   opacity: 1;
-  transform: scale(1.14);
-  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.95));
+  transform: scale(1.12);
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.95));
 }
 
 [data-theme='light'] .hero-vinyl-node.var-2:hover .vinyl-icon-wrap,
 [data-theme='light'] .hero-vinyl-node.var-2.is-hovered .vinyl-icon-wrap {
-  filter: drop-shadow(0 0 8px rgba(225, 29, 72, 0.8));
+  filter: drop-shadow(0 0 10px rgba(225, 29, 72, 0.85));
 }
 
 /* Tooltip Badge for Technology Name */
 .hero-vinyl-label {
   position: absolute;
-  top: 90px;
+  top: 150px;
   left: 50%;
-  transform: translateX(-50%) translateY(-4px);
+  transform: translateX(calc(-50% + var(--label-shift-x, 0px))) translateY(-4px);
   font-family: var(--font-mono, ui-monospace, monospace);
   font-size: 0.74rem;
   font-weight: 600;
@@ -358,6 +375,12 @@
   z-index: 40;
 }
 
+.hero-vinyl-node.tooltip-top .hero-vinyl-label {
+  top: auto;
+  bottom: 150px;
+  transform: translateX(calc(-50% + var(--label-shift-x, 0px))) translateY(4px);
+}
+
 [data-theme='light'] .hero-vinyl-label {
   background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(0, 0, 0, 0.12);
@@ -368,7 +391,13 @@
 .hero-vinyl-node:hover .hero-vinyl-label,
 .hero-vinyl-node.is-hovered .hero-vinyl-label {
   opacity: 1;
-  transform: translateX(-50%) translateY(0);
+  transform: translateX(calc(-50% + var(--label-shift-x, 0px))) translateY(0);
+}
+
+.hero-vinyl-node.tooltip-top:hover .hero-vinyl-label,
+.hero-vinyl-node.tooltip-top.is-hovered .hero-vinyl-label {
+  opacity: 1;
+  transform: translateX(calc(-50% + var(--label-shift-x, 0px))) translateY(0);
 }
 
 /* =========================================================================
@@ -376,84 +405,59 @@
    ========================================================================= */
 @media (max-width: 1024px) {
   .hero-vinyl-node {
-    width: 68px;
-    height: 68px;
-    margin-top: -34px;
-    margin-left: -34px;
+    width: 110px;
+    height: 110px;
+    margin-top: -55px;
+    margin-left: -55px;
+  }
+  .vinyl-grooves-ring-1 {
+    inset: 9px;
+  }
+  .vinyl-grooves-ring-2 {
+    inset: 20px;
   }
   .vinyl-center-label {
-    width: 34px;
-    height: 34px;
+    width: 48px;
+    height: 48px;
   }
   .vinyl-icon-wrap {
-    width: 18px;
-    height: 18px;
+    width: 25px;
+    height: 25px;
   }
   .hero-vinyl-label {
-    top: 76px;
+    top: 120px;
+  }
+  .hero-vinyl-node.tooltip-top .hero-vinyl-label {
+    bottom: 120px;
   }
 }
 
 @media (max-width: 640px) {
   .hero-vinyl-node {
-    width: 56px;
-    height: 56px;
-    margin-top: -28px;
-    margin-left: -28px;
+    width: 84px;
+    height: 84px;
+    margin-top: -42px;
+    margin-left: -42px;
+  }
+  .vinyl-grooves-ring-1 {
+    inset: 7px;
+  }
+  .vinyl-grooves-ring-2 {
+    inset: 15px;
   }
   .vinyl-center-label {
-    width: 28px;
-    height: 28px;
+    width: 38px;
+    height: 38px;
   }
   .vinyl-icon-wrap {
-    width: 15px;
-    height: 15px;
+    width: 20px;
+    height: 20px;
   }
   .hero-vinyl-label {
-    top: 64px;
+    top: 94px;
   }
-}
-
-/* =========================================================================
-   RESPONSIVE SCALING
-   ========================================================================= */
-@media (max-width: 1024px) {
-  .hero-vinyl-node {
-    width: 68px;
-    height: 68px;
-    margin-top: -34px;
-    margin-left: -34px;
-  }
-  .vinyl-center-label {
-    width: 34px;
-    height: 34px;
-  }
-  .vinyl-icon-wrap {
-    width: 18px;
-    height: 18px;
-  }
-  .hero-vinyl-label {
-    top: 76px;
-  }
-}
-
-@media (max-width: 640px) {
-  .hero-vinyl-node {
-    width: 56px;
-    height: 56px;
-    margin-top: -28px;
-    margin-left: -28px;
-  }
-  .vinyl-center-label {
-    width: 28px;
-    height: 28px;
-  }
-  .vinyl-icon-wrap {
-    width: 15px;
-    height: 15px;
-  }
-  .hero-vinyl-label {
-    top: 64px;
+  .hero-vinyl-node.tooltip-top .hero-vinyl-label {
+    bottom: 94px;
   }
 }
 
