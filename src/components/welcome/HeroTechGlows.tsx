@@ -176,21 +176,6 @@ export const HeroTechGlows: React.FC = () => {
         const scale = isHovered ? 1.10 : 1.0;
 
         nodeEl.style.transform = `translate3d(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px, 0) scale(${scale.toFixed(3)})`;
-
-        if (isHovered) {
-          // If hovered near screen edges, shift tooltip horizontally to keep it cleanly in view
-          let shiftX = 0;
-          if (p.x < 70) shiftX = Math.round(70 - p.x);
-          else if (p.x > width - 70) shiftX = Math.round((width - 70) - p.x);
-          nodeEl.style.setProperty('--label-shift-x', `${shiftX}px`);
-
-          // If hovered near bottom of container, flip tooltip above the vinyl
-          if (p.y > height - 130) {
-            nodeEl.classList.add('tooltip-top');
-          } else {
-            nodeEl.classList.remove('tooltip-top');
-          }
-        }
       }
 
       animationFrameId = requestAnimationFrame(loop);
@@ -204,18 +189,68 @@ export const HeroTechGlows: React.FC = () => {
     };
   }, []);
 
+  const clickTimeoutRef = useRef<number | null>(null);
+
+  // Clean up timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (clickTimeoutRef.current) {
+        window.clearTimeout(clickTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const handleMouseEnter = (idx: number) => {
-    hoveredIdxRef.current = idx;
-    setHoveredIdx(idx);
+    // Only apply hover state if not on mobile/tablet (desktop with fine pointer)
+    const isDesktop =
+      typeof window !== 'undefined' &&
+      window.innerWidth > 1024 &&
+      window.matchMedia('(hover: hover)').matches;
+
+    if (isDesktop) {
+      hoveredIdxRef.current = idx;
+      setHoveredIdx(idx);
+    }
   };
 
   const handleMouseLeave = () => {
-    hoveredIdxRef.current = null;
-    setHoveredIdx(null);
+    const isDesktop =
+      typeof window !== 'undefined' &&
+      window.innerWidth > 1024 &&
+      window.matchMedia('(hover: hover)').matches;
+
+    if (isDesktop) {
+      hoveredIdxRef.current = null;
+      setHoveredIdx(null);
+    }
+  };
+
+  // On tablet and phone mode: clicking a vinyl animates it, then returns to original display after 1 second
+  const handleClick = (idx: number) => {
+    const isTabletOrPhone =
+      typeof window !== 'undefined' &&
+      (window.innerWidth <= 1024 || window.matchMedia('(hover: none)').matches);
+
+    if (isTabletOrPhone) {
+      if (clickTimeoutRef.current) {
+        window.clearTimeout(clickTimeoutRef.current);
+        clickTimeoutRef.current = null;
+      }
+
+      hoveredIdxRef.current = idx;
+      setHoveredIdx(idx);
+
+      clickTimeoutRef.current = window.setTimeout(() => {
+        hoveredIdxRef.current = null;
+        setHoveredIdx(null);
+        nodeRefs.current[idx]?.blur();
+        clickTimeoutRef.current = null;
+      }, 1000);
+    }
   };
 
   return (
-    <div className="hero-tech-glows-canvas" ref={containerRef} aria-hidden="true">
+    <div className="hero-tech-glows-canvas" ref={containerRef}>
       {initialParticles.map((particle, idx) => {
         const { logo, spinDuration, variation } = particle;
         const isHovered = hoveredIdx === idx;
@@ -227,6 +262,13 @@ export const HeroTechGlows: React.FC = () => {
             className={`hero-vinyl-node ${variation} ${isHovered ? 'is-hovered' : ''}`}
             onMouseEnter={() => handleMouseEnter(idx)}
             onMouseLeave={handleMouseLeave}
+            onClick={() => handleClick(idx)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleClick(idx);
+              }
+            }}
             onFocus={() => handleMouseEnter(idx)}
             onBlur={handleMouseLeave}
             tabIndex={0}
@@ -254,11 +296,6 @@ export const HeroTechGlows: React.FC = () => {
                   <path d={logo.path} />
                 </svg>
               </div>
-            </div>
-
-            {/* Hover Tooltip Badge showing Tech Name */}
-            <div className="hero-vinyl-label">
-              {logo.name}
             </div>
           </div>
         );
