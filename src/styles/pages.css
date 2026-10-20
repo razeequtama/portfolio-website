@@ -197,7 +197,7 @@
 
 .hero-title-name {
   display: inline-block;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .hero-title-role {
@@ -237,7 +237,7 @@
 
 .hero-highlight-name {
   color: var(--accent-color);
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .hero-bio {
@@ -295,7 +295,7 @@
 /* Welcome Metrics Grid */
 .metrics-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
   gap: 1rem;
   margin-bottom: 3rem;
 }
@@ -321,7 +321,7 @@
 /* Quick Highlights List */
 .welcome-callouts {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
   gap: 1.25rem;
 }
 
@@ -374,7 +374,7 @@
 
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
   gap: 1.5rem;
 }
 
@@ -731,7 +731,7 @@
 /* --- 05. TECH STACK PAGE --- */
 .tech-stack-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 1.5rem;
 }
 
@@ -900,7 +900,7 @@
 /* --- 07. CONTACT PAGE --- */
 .contact-layout {
   display: grid;
-  grid-template-columns: minmax(320px, 440px) 1fr;
+  grid-template-columns: minmax(min(100%, 300px), 440px) 1fr;
   gap: 2rem;
 }
 

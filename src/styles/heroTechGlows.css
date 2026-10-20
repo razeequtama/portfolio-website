@@ -2,14 +2,28 @@
 
 .hero-tech-glows-canvas {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: -80px;
+  left: calc(clamp(1.5rem, 4.5vw, 4.5rem) * -1);
+  width: calc(100% + clamp(1.5rem, 4.5vw, 4.5rem) * 2);
+  height: calc(100% + 150px);
   pointer-events: none;
-  overflow: visible;
+  overflow: hidden;
   z-index: 1;
   user-select: none;
+
+  /* Smooth bottom fading gradient: leaves a soft line where vinyls go unseen/off-screen */
+  mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    black calc(100% - 150px),
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    black calc(100% - 150px),
+    transparent 100%
+  );
 }
 
 /* Individual Vinyl Record Node (Big Default: 140px, ~30% Idle Opacity) */
@@ -404,6 +418,22 @@
    RESPONSIVE SCALING
    ========================================================================= */
 @media (max-width: 1024px) {
+  .hero-tech-glows-canvas {
+    top: -70px;
+    height: calc(100% + 135px);
+    mask-image: linear-gradient(
+      to bottom,
+      black 0%,
+      black calc(100% - 135px),
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      black 0%,
+      black calc(100% - 135px),
+      transparent 100%
+    );
+  }
   .hero-vinyl-node {
     width: 110px;
     height: 110px;
@@ -433,6 +463,22 @@
 }
 
 @media (max-width: 640px) {
+  .hero-tech-glows-canvas {
+    top: -60px;
+    height: calc(100% + 120px);
+    mask-image: linear-gradient(
+      to bottom,
+      black 0%,
+      black calc(100% - 120px),
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      black 0%,
+      black calc(100% - 120px),
+      transparent 100%
+    );
+  }
   .hero-vinyl-node {
     width: 84px;
     height: 84px;

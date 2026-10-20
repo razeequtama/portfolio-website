@@ -3,35 +3,35 @@ import { TECH_LOGOS, type TechLogo } from '../../data/techLogos';
 import '../../styles/heroTechGlows.css';
 
 // 20 distinct anchor coordinates (in percentages of the hero section)
-// Placed so vinyls float across the canvas and naturally glide partially or fully off screen
+// Placed so top vinyls are fully uncropped and bottom vinyls gracefully dissolve in the bottom fade
 const ANCHOR_POINTS = [
-  // Top perimeter (float in and out of the top edge & corners)
-  { xPercent: 2,   yPercent: 4  }, // Top-left corner / glides partially off-screen
-  { xPercent: 25,  yPercent: 7  }, // Top-left-center
-  { xPercent: 49,  yPercent: 3  }, // Top-center / glides past top
-  { xPercent: 73,  yPercent: 6  }, // Top-right-center
-  { xPercent: 98,  yPercent: 2  }, // Top-right corner / glides partially off-screen
+  // Top row: comfortably below canvas top so discs are never cropped
+  { xPercent: 2,   yPercent: 12 }, // Top-left corner
+  { xPercent: 25,  yPercent: 15 }, // Top-left-center
+  { xPercent: 49,  yPercent: 11 }, // Top-center
+  { xPercent: 73,  yPercent: 14 }, // Top-right-center
+  { xPercent: 98,  yPercent: 10 }, // Top-right corner
 
   // Upper-mid perimeter & backdrop
-  { xPercent: -1,  yPercent: 28 }, // Left edge / glides off left
-  { xPercent: 22,  yPercent: 33 }, // Left-mid behind text
-  { xPercent: 45,  yPercent: 26 }, // Center upper-mid gap
-  { xPercent: 68,  yPercent: 32 }, // Mid-gap right
-  { xPercent: 101, yPercent: 27 }, // Right edge / glides off right
+  { xPercent: -1,  yPercent: 32 }, // Left edge
+  { xPercent: 22,  yPercent: 36 }, // Left-mid behind text
+  { xPercent: 45,  yPercent: 29 }, // Center upper-mid gap
+  { xPercent: 68,  yPercent: 34 }, // Mid-gap right
+  { xPercent: 101, yPercent: 30 }, // Right edge
 
   // Lower-mid perimeter & backdrop
-  { xPercent: 1,   yPercent: 56 }, // Left edge mid / glides off left
-  { xPercent: 20,  yPercent: 60 }, // Left-mid below bio
-  { xPercent: 46,  yPercent: 54 }, // Center lower-mid
-  { xPercent: 67,  yPercent: 59 }, // Right-mid below portrait
-  { xPercent: 101, yPercent: 57 }, // Right edge mid / glides off right
+  { xPercent: 1,   yPercent: 57 }, // Left edge mid
+  { xPercent: 20,  yPercent: 61 }, // Left-mid below bio
+  { xPercent: 46,  yPercent: 55 }, // Center lower-mid
+  { xPercent: 67,  yPercent: 60 }, // Right-mid below portrait
+  { xPercent: 101, yPercent: 58 }, // Right edge mid
 
-  // Bottom perimeter (float in and out of the bottom edge & corners)
-  { xPercent: 3,   yPercent: 88 }, // Bottom-left corner / glides partially off-screen
-  { xPercent: 26,  yPercent: 93 }, // Bottom-left-center
-  { xPercent: 49,  yPercent: 97 }, // Bottom-center / glides past bottom
-  { xPercent: 73,  yPercent: 91 }, // Bottom-right-center
-  { xPercent: 98,  yPercent: 86 }, // Bottom-right corner / glides partially off-screen
+  // Bottom row: enters the fading gradient zone where vinyls softly dissolve into transparency
+  { xPercent: 3,   yPercent: 86 }, // Bottom-left corner
+  { xPercent: 26,  yPercent: 90 }, // Bottom-left-center
+  { xPercent: 49,  yPercent: 93 }, // Bottom-center
+  { xPercent: 73,  yPercent: 89 }, // Bottom-right-center
+  { xPercent: 98,  yPercent: 85 }, // Bottom-right corner
 ];
 
 function shuffleArray<T>(array: T[]): T[] {
@@ -149,14 +149,17 @@ export const HeroTechGlows: React.FC = () => {
       const minY = -MARGIN_OFFSCREEN;
       const maxY = height + MARGIN_OFFSCREEN;
 
+      const isMobile = width <= 640;
+      const ampScale = isMobile ? 0.5 : width <= 1024 ? 0.75 : 1.0;
+
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
         const nodeEl = nodeRefs.current[i];
         if (!nodeEl) continue;
 
         // Smooth harmonic floating drift (gentle, organic zero-gravity float)
-        const floatX = Math.sin(time * p.freqX + p.phase) * p.ampX + Math.cos(time * (p.freqX * 0.55) + p.phase * 1.4) * (p.ampX * 0.4);
-        const floatY = Math.cos(time * p.freqY + p.phase * 1.1) * p.ampY + Math.sin(time * (p.freqY * 0.6) + p.phase * 0.8) * (p.ampY * 0.35);
+        const floatX = (Math.sin(time * p.freqX + p.phase) * p.ampX + Math.cos(time * (p.freqX * 0.55) + p.phase * 1.4) * (p.ampX * 0.4)) * ampScale;
+        const floatY = (Math.cos(time * p.freqY + p.phase * 1.1) * p.ampY + Math.sin(time * (p.freqY * 0.6) + p.phase * 0.8) * (p.ampY * 0.35)) * ampScale;
 
         const targetX = p.baseX + floatX;
         const targetY = p.baseY + floatY;
