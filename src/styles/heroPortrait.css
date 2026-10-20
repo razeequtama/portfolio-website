@@ -59,9 +59,9 @@
   top: 28px; /* Perfectly aligned at head level */
   right: calc(100% - 110px); /* Positioned closer to the portrait head */
   width: max-content;
-  max-width: 255px;
+  max-width: 290px;
   min-width: 170px;
-  padding: 0.85rem 1.25rem 0.9rem 1.25rem;
+  padding: 0.85rem 1.35rem 0.9rem 1.35rem;
   border-radius: 16px 16px 4px 16px;
   background: var(--bubble-bg);
   border: 1.5px solid var(--bubble-border);
@@ -76,15 +76,18 @@
   pointer-events: none;
   user-select: none;
 
-  /* Typography: Elegant vintage display serif italic */
+  /* Typography: Elegant vintage display serif (crisp natural weight, larger & non-italic) */
   font-family: var(--font-display, 'Instrument Serif', Georgia, serif);
-  font-style: italic;
-  font-size: 1.18rem;
+  font-style: normal;
+  font-size: 1.35rem;
   font-weight: 400;
-  line-height: 1.34;
-  letter-spacing: 0.02em;
+  line-height: 1.3;
+  letter-spacing: 0.012em;
   color: var(--bubble-text);
   text-align: center;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 
   /* Smooth reveal & exit */
   opacity: 0;
@@ -130,8 +133,9 @@
 /* Vintage curly quotation marks */
 .hero-speech-quote-mark {
   font-family: var(--font-display, 'Instrument Serif', Georgia, serif);
-  font-style: italic;
-  font-size: 1.25em;
+  font-style: normal;
+  font-size: 1.15em;
+  font-weight: 400;
   line-height: 1;
   color: var(--bubble-quote-glyph);
   vertical-align: baseline;
@@ -175,10 +179,10 @@
     top: -46px; /* Above portrait at head level */
     right: auto;
     left: 36px; /* Shifted closer to the centered head */
-    max-width: 225px;
+    max-width: 255px;
     min-width: 150px;
-    padding: 0.7rem 1.05rem 0.75rem 1.05rem;
-    font-size: 1.04rem;
+    padding: 0.75rem 1.15rem 0.8rem 1.15rem;
+    font-size: 1.18rem;
     border-radius: 14px 14px 14px 4px;
     transform: translate3d(0, -6px, 0) scale(0.92);
   }
@@ -206,10 +210,10 @@
 @media (max-width: 640px) {
   .hero-speech-bubble {
     top: -42px;
-    left: 28px; /* Closer to the head on mobile */
-    max-width: 200px;
-    padding: 0.6rem 0.9rem 0.65rem 0.9rem;
-    font-size: 0.96rem;
+    left: 24px; /* Closer to the head on mobile */
+    max-width: 220px;
+    padding: 0.65rem 0.95rem 0.7rem 0.95rem;
+    font-size: 1.08rem;
   }
 }
 
