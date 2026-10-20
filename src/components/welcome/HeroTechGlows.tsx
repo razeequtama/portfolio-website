@@ -196,8 +196,8 @@ export const HeroTechGlows: React.FC = () => {
       if (!isDesktop) return;
 
       const target = e.target as HTMLElement | null;
-      // Do not trigger vinyl hover if interacting with actual buttons, links, or flip cards
-      if (target?.closest('button, a, input, textarea, select, .flip-card-letter')) {
+      // Do not trigger vinyl hover if interacting with actual buttons, links, flip cards, or the hero portrait
+      if (target?.closest('button, a, input, textarea, select, .flip-card-letter, .welcome-hero-image-wrapper')) {
         cursorPosRef.current = null;
         heroSection.style.cursor = '';
         return;
@@ -222,8 +222,8 @@ export const HeroTechGlows: React.FC = () => {
     // Global click listener on hero section so vinyls behind text or photo are clickable/tappable
     const handleHeroClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement | null;
-      // Never intercept clicks on real buttons, links, or flip cards
-      if (target?.closest('button, a, input, textarea, select, .flip-card-letter')) {
+      // Never intercept clicks on real buttons, links, flip cards, or the hero portrait
+      if (target?.closest('button, a, input, textarea, select, .flip-card-letter, .welcome-hero-image-wrapper')) {
         return;
       }
 

@@ -120,20 +120,26 @@
   filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.45));
   mask-image: linear-gradient(to bottom, black 86%, transparent 100%);
   -webkit-mask-image: linear-gradient(to bottom, black 86%, transparent 100%);
-  transition: transform var(--transition-normal), filter var(--transition-normal);
+  transition:
+    transform 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.65s ease;
 }
 
+.welcome-hero-image-wrapper:hover .welcome-hero-image,
+.welcome-hero-image-wrapper.is-active .welcome-hero-image,
 .welcome-hero-image:hover {
-  transform: translateY(-4px) scale(1.015);
-  filter: drop-shadow(0 20px 36px rgba(0, 0, 0, 0.6));
+  transform: translateY(-8px) scale(1.04);
+  filter: drop-shadow(0 22px 42px rgba(0, 0, 0, 0.65));
 }
 
 [data-theme='light'] .welcome-hero-image {
   filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.12));
 }
 
+[data-theme='light'] .welcome-hero-image-wrapper:hover .welcome-hero-image,
+[data-theme='light'] .welcome-hero-image-wrapper.is-active .welcome-hero-image,
 [data-theme='light'] .welcome-hero-image:hover {
-  filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.18));
+  filter: drop-shadow(0 18px 32px rgba(0, 0, 0, 0.2));
 }
 
 @media (max-width: 960px) {

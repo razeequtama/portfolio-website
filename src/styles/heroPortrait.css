@@ -1,0 +1,215 @@
+/* =========================================================================
+   HERO PORTRAIT & VINTAGE SPEECH BUBBLE
+   ========================================================================= */
+
+:root {
+  --bubble-bg: rgba(18, 16, 18, 0.94);
+  --bubble-border: rgba(245, 215, 160, 0.42);
+  --bubble-inner-shadow: rgba(225, 29, 72, 0.12);
+  --bubble-text: #fef6e4;
+  --bubble-quote-glyph: rgba(245, 215, 160, 0.6);
+}
+
+[data-theme='light'] {
+  --bubble-bg: rgba(254, 252, 248, 0.96);
+  --bubble-border: rgba(139, 69, 19, 0.35);
+  --bubble-inner-shadow: rgba(225, 29, 72, 0.05);
+  --bubble-text: #1c1815;
+  --bubble-quote-glyph: rgba(139, 69, 19, 0.5);
+}
+
+/* Ensure wrapper can position speech bubble and has pointer */
+.welcome-hero-image-wrapper {
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.welcome-hero-image-wrapper:focus-visible {
+  outline: 2px dashed var(--accent-color, #e11d48);
+  outline-offset: 8px;
+  border-radius: var(--radius-lg, 12px);
+}
+
+/* Slow image enlargement */
+.welcome-hero-image {
+  transition:
+    transform 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.65s ease;
+  will-change: transform, filter;
+}
+
+.welcome-hero-image-wrapper:hover .welcome-hero-image,
+.welcome-hero-image-wrapper.is-active .welcome-hero-image {
+  transform: translateY(-8px) scale(1.04);
+  filter: drop-shadow(0 22px 42px rgba(0, 0, 0, 0.65));
+}
+
+[data-theme='light'] .welcome-hero-image-wrapper:hover .welcome-hero-image,
+[data-theme='light'] .welcome-hero-image-wrapper.is-active .welcome-hero-image {
+  filter: drop-shadow(0 18px 32px rgba(0, 0, 0, 0.2));
+}
+
+/* --- VINTAGE SPEECH BUBBLE --- */
+.hero-speech-bubble {
+  position: absolute;
+  top: 28px; /* Perfectly aligned at head level */
+  right: calc(100% - 24px); /* Positioned to the top-left of the portrait */
+  width: max-content;
+  max-width: 255px;
+  min-width: 170px;
+  padding: 0.85rem 1.25rem 0.9rem 1.25rem;
+  border-radius: 16px 16px 4px 16px;
+  background: var(--bubble-bg);
+  border: 1.5px solid var(--bubble-border);
+  box-shadow:
+    0 0 0 3px var(--bubble-bg),
+    0 0 0 4.5px var(--bubble-border),
+    0 16px 36px rgba(0, 0, 0, 0.65),
+    inset 0 0 16px var(--bubble-inner-shadow);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 50;
+  pointer-events: none;
+  user-select: none;
+
+  /* Typography: Elegant vintage display serif italic */
+  font-family: var(--font-display, 'Instrument Serif', Georgia, serif);
+  font-style: italic;
+  font-size: 1.18rem;
+  font-weight: 400;
+  line-height: 1.34;
+  letter-spacing: 0.02em;
+  color: var(--bubble-text);
+  text-align: center;
+
+  /* Smooth reveal & exit */
+  opacity: 0;
+  visibility: hidden;
+  transform: translate3d(-10px, 0, 0) scale(0.92);
+  transition:
+    opacity 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0.32s;
+}
+
+.hero-speech-bubble.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+/* Tail pointing toward the head (Desktop: points to the right) */
+.hero-speech-bubble::before {
+  content: '';
+  position: absolute;
+  bottom: 12px;
+  right: -13px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 8px 0 7px 13px;
+  border-color: transparent transparent transparent var(--bubble-border);
+}
+
+.hero-speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: 13.5px;
+  right: -10px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 6.5px 0 5.5px 10px;
+  border-color: transparent transparent transparent var(--bubble-bg);
+}
+
+/* Vintage curly quotation marks */
+.hero-speech-quote-mark {
+  font-family: var(--font-display, 'Instrument Serif', Georgia, serif);
+  font-style: italic;
+  font-size: 1.25em;
+  line-height: 1;
+  color: var(--bubble-quote-glyph);
+  vertical-align: baseline;
+  user-select: none;
+}
+
+.hero-speech-quote-mark.left {
+  margin-right: 0.18em;
+}
+
+.hero-speech-quote-mark.right {
+  margin-left: 0.18em;
+}
+
+.hero-speech-text {
+  display: inline;
+}
+
+/* Blinking typewriter ink cursor */
+.hero-speech-cursor {
+  display: inline-block;
+  margin-left: 2px;
+  font-family: var(--font-mono, monospace);
+  font-style: normal;
+  font-weight: 300;
+  font-size: 0.9em;
+  color: var(--accent-color, #e11d48);
+  animation: vintageCaret 0.7s step-start infinite;
+}
+
+@keyframes vintageCaret {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* =========================================================================
+   RESPONSIVE (TABLET & MOBILE)
+   ========================================================================= */
+@media (max-width: 960px) {
+  .hero-speech-bubble {
+    top: -50px; /* Above portrait at head level */
+    right: auto;
+    left: 4px;
+    max-width: 225px;
+    min-width: 150px;
+    padding: 0.7rem 1.05rem 0.75rem 1.05rem;
+    font-size: 1.04rem;
+    border-radius: 14px 14px 14px 4px;
+    transform: translate3d(0, -6px, 0) scale(0.92);
+  }
+
+  .hero-speech-bubble.is-visible {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  /* Tail pointing down-right toward the portrait head */
+  .hero-speech-bubble::before {
+    bottom: -12px;
+    right: 28px;
+    border-width: 12px 8px 0 8px;
+    border-color: var(--bubble-border) transparent transparent transparent;
+  }
+
+  .hero-speech-bubble::after {
+    bottom: -10px;
+    right: 29px;
+    border-width: 10px 7px 0 7px;
+    border-color: var(--bubble-bg) transparent transparent transparent;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-speech-bubble {
+    top: -44px;
+    left: 2px;
+    max-width: 200px;
+    padding: 0.6rem 0.9rem 0.65rem 0.9rem;
+    font-size: 0.96rem;
+  }
+}
+

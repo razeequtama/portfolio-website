@@ -3,6 +3,7 @@ import { developerProfile } from '../data/portfolioData';
 import mePhoto from '../assets/Me.png';
 import { HeroTechGlows } from '../components/welcome/HeroTechGlows';
 import { FlipCardName } from '../components/welcome/FlipCardName';
+import { HeroPortrait } from '../components/welcome/HeroPortrait';
 
 interface WelcomePageProps {
   onNavigate: (sectionIndex: number) => void;
@@ -69,16 +70,8 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onNavigate }) => {
           </div>
         </div>
 
-        {/* Hero Portrait: Profile image positioned to the right */}
-        <div className="welcome-hero-image-wrapper">
-          <div className="hero-image-glow" aria-hidden="true" />
-          <img
-            src={mePhoto}
-            alt={developerProfile.name}
-            className="welcome-hero-image"
-            loading="eager"
-          />
-        </div>
+        {/* Hero Portrait: Profile image positioned to the right with vintage speech bubble */}
+        <HeroPortrait imageSrc={mePhoto} alt={developerProfile.name} />
       </section>
 
       {/* Metrics / At-a-Glance Statistics Grid */}
