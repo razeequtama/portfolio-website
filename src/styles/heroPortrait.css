@@ -57,7 +57,7 @@
 .hero-speech-bubble {
   position: absolute;
   top: 28px; /* Perfectly aligned at head level */
-  right: calc(100% - 24px); /* Positioned to the top-left of the portrait */
+  right: calc(100% - 110px); /* Positioned closer to the portrait head */
   width: max-content;
   max-width: 255px;
   min-width: 170px;
@@ -172,9 +172,9 @@
    ========================================================================= */
 @media (max-width: 960px) {
   .hero-speech-bubble {
-    top: -50px; /* Above portrait at head level */
+    top: -46px; /* Above portrait at head level */
     right: auto;
-    left: 4px;
+    left: 36px; /* Shifted closer to the centered head */
     max-width: 225px;
     min-width: 150px;
     padding: 0.7rem 1.05rem 0.75rem 1.05rem;
@@ -205,8 +205,8 @@
 
 @media (max-width: 640px) {
   .hero-speech-bubble {
-    top: -44px;
-    left: 2px;
+    top: -42px;
+    left: 28px; /* Closer to the head on mobile */
     max-width: 200px;
     padding: 0.6rem 0.9rem 0.65rem 0.9rem;
     font-size: 0.96rem;

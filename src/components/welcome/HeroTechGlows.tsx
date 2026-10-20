@@ -58,6 +58,7 @@ interface VinylParticle {
   freqX: number;
   freqY: number;
   variation: 'var-1' | 'var-2';
+  pulseStartTime: number;
 }
 
 // Helper to compute responsive hit-test radius for the vinyl records
@@ -73,8 +74,6 @@ export const HeroTechGlows: React.FC = () => {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const hoveredIdxRef = useRef<number | null>(null);
   const cursorPosRef = useRef<{ x: number; y: number } | null>(null);
-  const isHoverLockedByClickRef = useRef<boolean>(false);
-  const clickTimeoutRef = useRef<number | null>(null);
 
   // Randomize logo distribution once on mount
   const randomizedLogos = useMemo(() => shuffleArray(TECH_LOGOS), []);
@@ -109,49 +108,20 @@ export const HeroTechGlows: React.FC = () => {
         freqX,
         freqY,
         variation,
+        pulseStartTime: -1,
       };
     })
   );
 
   const particlesRef = useRef<VinylParticle[]>(initialParticles);
 
-  // Helper to trigger active state (with 1s reset on mobile/tablet)
+  // Helper to trigger pulse (slightly bigger, immediately returns to original size)
   const triggerActive = (idx: number) => {
-    const isTabletOrPhone =
-      typeof window !== 'undefined' &&
-      (window.innerWidth <= 1024 || window.matchMedia('(hover: none)').matches);
-
-    if (isTabletOrPhone) {
-      if (clickTimeoutRef.current) {
-        window.clearTimeout(clickTimeoutRef.current);
-        clickTimeoutRef.current = null;
-      }
-
-      isHoverLockedByClickRef.current = true;
-      hoveredIdxRef.current = idx;
-      setHoveredIdx(idx);
-
-      clickTimeoutRef.current = window.setTimeout(() => {
-        hoveredIdxRef.current = null;
-        setHoveredIdx(null);
-        isHoverLockedByClickRef.current = false;
-        nodeRefs.current[idx]?.blur();
-        clickTimeoutRef.current = null;
-      }, 1000);
-    } else {
-      hoveredIdxRef.current = idx;
-      setHoveredIdx(idx);
+    const p = particlesRef.current[idx];
+    if (p) {
+      p.pulseStartTime = performance.now();
     }
   };
-
-  // Clean up timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (clickTimeoutRef.current) {
-        window.clearTimeout(clickTimeoutRef.current);
-      }
-    };
-  }, []);
 
   // Smooth floating animation loop & global proximity hit-testing
   useEffect(() => {
@@ -213,10 +183,8 @@ export const HeroTechGlows: React.FC = () => {
     const handlePointerLeave = () => {
       cursorPosRef.current = null;
       heroSection.style.cursor = '';
-      if (!isHoverLockedByClickRef.current) {
-        hoveredIdxRef.current = null;
-        setHoveredIdx(null);
-      }
+      hoveredIdxRef.current = null;
+      setHoveredIdx(null);
     };
 
     // Global click listener on hero section so vinyls behind text or photo are clickable/tappable
@@ -264,36 +232,36 @@ export const HeroTechGlows: React.FC = () => {
       const particles = particlesRef.current;
 
       // Global proximity hit-testing: checks if cursor is over a vinyl (even when behind text/photo)
-      if (!isHoverLockedByClickRef.current) {
-        const isDesktop =
-          width > 1024 && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+      const isDesktop =
+        width > 1024 && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-        let hitIdx: number | null = null;
+      let hitIdx: number | null = null;
 
-        if (cursorPosRef.current && isDesktop) {
-          const { x: cx, y: cy } = cursorPosRef.current;
-          const hitRadius = getHitRadius(width);
-          let minDistSq = hitRadius * hitRadius;
+      if (cursorPosRef.current && isDesktop) {
+        const { x: cx, y: cy } = cursorPosRef.current;
+        const hitRadius = getHitRadius(width);
+        let minDistSq = hitRadius * hitRadius;
 
-          for (let i = 0; i < particles.length; i++) {
-            const dx = cx - particles[i].x;
-            const dy = cy - particles[i].y;
-            const d2 = dx * dx + dy * dy;
-            if (d2 < minDistSq) {
-              minDistSq = d2;
-              hitIdx = i;
-            }
+        for (let i = 0; i < particles.length; i++) {
+          const dx = cx - particles[i].x;
+          const dy = cy - particles[i].y;
+          const d2 = dx * dx + dy * dy;
+          if (d2 < minDistSq) {
+            minDistSq = d2;
+            hitIdx = i;
           }
-        }
-
-        if (hitIdx !== hoveredIdxRef.current) {
-          hoveredIdxRef.current = hitIdx;
-          setHoveredIdx(hitIdx);
-          heroSection.style.cursor = hitIdx !== null ? 'pointer' : '';
         }
       }
 
-      const hovered = hoveredIdxRef.current;
+      if (hitIdx !== hoveredIdxRef.current) {
+        if (hitIdx !== null) {
+          // Trigger pop pulse: slightly bigger and immediately returns to original size
+          particles[hitIdx].pulseStartTime = time;
+        }
+        hoveredIdxRef.current = hitIdx;
+        setHoveredIdx(hitIdx);
+        heroSection.style.cursor = hitIdx !== null ? 'pointer' : '';
+      }
 
       // Generous bounds allowing discs to float off-screen naturally
       const MARGIN_OFFSCREEN = 140;
@@ -325,10 +293,24 @@ export const HeroTechGlows: React.FC = () => {
         p.x = Math.max(minX, Math.min(maxX, p.x));
         p.y = Math.max(minY, Math.min(maxY, p.y));
 
-        const isHovered = i === hovered;
-        const scale = isHovered ? 1.10 : 1.0;
+        // Pop pulse: slightly bigger and immediately returns to original size
+        let pulseScale = 0;
+        if (p.pulseStartTime > 0) {
+          const elapsed = time - p.pulseStartTime;
+          const PULSE_DURATION = 380; // 380ms total pop duration
+          if (elapsed >= 0 && elapsed < PULSE_DURATION) {
+            const progress = elapsed / PULSE_DURATION;
+            pulseScale = Math.sin(progress * Math.PI) * 0.12; // Peaks at +12% scale
+          } else {
+            p.pulseStartTime = -1;
+          }
+        }
+
+        const scale = 1.0 + pulseScale;
+        const opacity = (0.19 + pulseScale * 0.75).toFixed(2);
 
         nodeEl.style.transform = `translate3d(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px, 0) scale(${scale.toFixed(3)})`;
+        nodeEl.style.opacity = opacity;
       }
 
       animationFrameId = requestAnimationFrame(loop);
@@ -373,10 +355,8 @@ export const HeroTechGlows: React.FC = () => {
               setHoveredIdx(idx);
             }}
             onBlur={() => {
-              if (!isHoverLockedByClickRef.current) {
-                hoveredIdxRef.current = null;
-                setHoveredIdx(null);
-              }
+              hoveredIdxRef.current = null;
+              setHoveredIdx(null);
             }}
             tabIndex={0}
             role="button"
