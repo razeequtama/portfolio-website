@@ -1,4 +1,4 @@
-/* === HERO BACKGROUND TECH GLOWS: MICRO-CARD CONSTELLATION === */
+/* === HERO BACKGROUND: INTERACTIVE FLOATING VINYL RECORDS === */
 
 .hero-tech-glows-canvas {
   position: absolute;
@@ -12,197 +12,448 @@
   user-select: none;
 }
 
-/* Individual Micro-Card Node */
-.hero-card-node {
+/* Individual Vinyl Record Node (Reasonably Big Default: 82px) */
+.hero-vinyl-node {
   position: absolute;
   top: 0;
   left: 0;
-  width: 38px;
-  height: 52px;
-  margin-top: -26px;
-  margin-left: -19px;
-  border-radius: 5px;
-  box-sizing: border-box;
-  padding: 3px 4px;
+  width: 82px;
+  height: 82px;
+  margin-top: -41px;
+  margin-left: -41px;
+  border-radius: 50%;
+  pointer-events: auto; /* Fully hover-able */
+  cursor: pointer;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  pointer-events: none;
-  will-change: transform, box-shadow, border-color;
-  transition: box-shadow 0.25s ease, border-color 0.25s ease;
-}
-
-/* Dark Theme Playing Card Stock */
-[data-theme='dark'] .hero-card-node,
-:root .hero-card-node {
-  background: linear-gradient(155deg, #23201d 0%, #161413 100%);
-  border: 1px solid rgba(212, 175, 55, 0.35); /* Gilded gold foil hairline */
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.65), 0 1px 2px rgba(0, 0, 0, 0.4);
-}
-
-/* Light Theme Playing Card Stock */
-[data-theme='light'] .hero-card-node {
-  background: linear-gradient(155deg, #ffffff 0%, #f7f3ec 100%);
-  border: 1px solid rgba(197, 160, 89, 0.55);
-  box-shadow: 0 4px 14px rgba(68, 50, 30, 0.14), 0 1px 2px rgba(68, 50, 30, 0.08);
-}
-
-/* Miniature Gold Hairline Inner Frame */
-.micro-card-frame {
-  position: absolute;
-  inset: 2px;
-  border: 0.5px solid rgba(212, 175, 55, 0.22);
-  border-radius: 3px;
-  pointer-events: none;
-}
-
-[data-theme='light'] .micro-card-frame {
-  border-color: rgba(197, 160, 89, 0.32);
-}
-
-/* Micro Corner Pips (Rank Initial + Suit) */
-.micro-card-pip {
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  line-height: 1;
-  user-select: none;
-  pointer-events: none;
-  z-index: 3;
+  justify-content: center;
+  will-change: transform, box-shadow;
+  transition: box-shadow 0.28s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 5;
 }
 
-.pip-tl {
-  align-self: flex-start;
-}
-
-.pip-br {
-  align-self: flex-end;
-  transform: rotate(180deg);
-}
-
-.micro-pip-rank {
-  font-family: var(--font-display);
-  font-size: 0.55rem;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.micro-pip-suit {
-  font-size: 0.42rem;
-  line-height: 1;
-  margin-top: 1px;
-}
-
-/* Center Area: Watermark Suit + Tech Logo */
-.micro-card-center {
+/* Spinning Grooved Disc Platter */
+.vinyl-disc-body {
   position: absolute;
   inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border-radius: 50%;
   pointer-events: none;
-  z-index: 2;
+  animation: vinylSpin 18s linear infinite;
+  transition: border-color 0.28s ease;
 }
 
-.micro-card-watermark {
+@keyframes vinylSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================================
+   DARK MODE VARIATION 1: Classic Obsidian Black + Crimson Red Center Label
+   ========================================================================= */
+[data-theme='dark'] .hero-vinyl-node.var-1,
+:root .hero-vinyl-node.var-1 {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8), inset 0 0 3px rgba(255, 255, 255, 0.15);
+}
+
+[data-theme='dark'] .hero-vinyl-node.var-1 .vinyl-disc-body,
+:root .hero-vinyl-node.var-1 .vinyl-disc-body {
+  background:
+    conic-gradient(from 45deg,
+      rgba(255, 255, 255, 0.13) 0deg,
+      transparent 45deg,
+      rgba(255, 255, 255, 0.03) 90deg,
+      transparent 135deg,
+      rgba(255, 255, 255, 0.13) 225deg,
+      transparent 270deg,
+      rgba(255, 255, 255, 0.03) 315deg,
+      transparent 360deg
+    ),
+    repeating-radial-gradient(
+      circle at center,
+      #191b20 0px,
+      #191b20 2px,
+      #0b0c0f 3px,
+      #0b0c0f 4px
+    );
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+[data-theme='dark'] .hero-vinyl-node.var-1 .vinyl-center-label,
+:root .hero-vinyl-node.var-1 .vinyl-center-label {
+  background: radial-gradient(circle at 35% 35%, #ef4444 0%, #b91c1c 70%, #881337 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+}
+
+/* =========================================================================
+   DARK MODE VARIATION 2: Ruby-Red Tinted Platter + Obsidian Black Center Label
+   ========================================================================= */
+[data-theme='dark'] .hero-vinyl-node.var-2,
+:root .hero-vinyl-node.var-2 {
+  box-shadow: 0 6px 20px rgba(185, 28, 28, 0.25), 0 0 15px rgba(220, 38, 38, 0.15), inset 0 0 3px rgba(255, 100, 100, 0.25);
+}
+
+[data-theme='dark'] .hero-vinyl-node.var-2 .vinyl-disc-body,
+:root .hero-vinyl-node.var-2 .vinyl-disc-body {
+  background:
+    conic-gradient(from 45deg,
+      rgba(255, 255, 255, 0.16) 0deg,
+      transparent 45deg,
+      rgba(255, 80, 80, 0.1) 90deg,
+      transparent 135deg,
+      rgba(255, 255, 255, 0.16) 225deg,
+      transparent 270deg,
+      rgba(255, 80, 80, 0.1) 315deg,
+      transparent 360deg
+    ),
+    repeating-radial-gradient(
+      circle at center,
+      #380b10 0px,
+      #380b10 2px,
+      #180306 3px,
+      #180306 4px
+    );
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+[data-theme='dark'] .hero-vinyl-node.var-2 .vinyl-center-label,
+:root .hero-vinyl-node.var-2 .vinyl-center-label {
+  background: radial-gradient(circle at 35% 35%, #24272f 0%, #121418 70%, #090a0d 100%);
+  border: 1.5px solid rgba(239, 68, 68, 0.7);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.8), 0 0 6px rgba(239, 68, 68, 0.35);
+}
+
+/* =========================================================================
+   LIGHT MODE VARIATION 1: Pearlescent Silver-White + Rose-Red Center Label
+   ========================================================================= */
+[data-theme='light'] .hero-vinyl-node.var-1 {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1), inset 0 0 3px rgba(255, 255, 255, 0.9);
+}
+
+[data-theme='light'] .hero-vinyl-node.var-1 .vinyl-disc-body {
+  background:
+    conic-gradient(from 45deg,
+      rgba(255, 255, 255, 0.75) 0deg,
+      transparent 45deg,
+      rgba(255, 255, 255, 0.35) 90deg,
+      transparent 135deg,
+      rgba(255, 255, 255, 0.75) 225deg,
+      transparent 270deg,
+      rgba(255, 255, 255, 0.35) 315deg,
+      transparent 360deg
+    ),
+    repeating-radial-gradient(
+      circle at center,
+      #e2e8f0 0px,
+      #e2e8f0 2px,
+      #cbd5e1 3px,
+      #cbd5e1 4px
+    );
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+[data-theme='light'] .hero-vinyl-node.var-1 .vinyl-center-label {
+  background: radial-gradient(circle at 35% 35%, #f43f5e 0%, #e11d48 70%, #be123c 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 2px 6px rgba(190, 18, 60, 0.35);
+}
+
+/* =========================================================================
+   LIGHT MODE VARIATION 2: Rose-Tinted Platter + Platinum Silver Center Label
+   ========================================================================= */
+[data-theme='light'] .hero-vinyl-node.var-2 {
+  box-shadow: 0 6px 20px rgba(225, 29, 72, 0.15), 0 0 12px rgba(244, 63, 94, 0.1), inset 0 0 3px rgba(255, 255, 255, 0.9);
+}
+
+[data-theme='light'] .hero-vinyl-node.var-2 .vinyl-disc-body {
+  background:
+    conic-gradient(from 45deg,
+      rgba(255, 255, 255, 0.75) 0deg,
+      transparent 45deg,
+      rgba(244, 63, 94, 0.15) 90deg,
+      transparent 135deg,
+      rgba(255, 255, 255, 0.75) 225deg,
+      transparent 270deg,
+      rgba(244, 63, 94, 0.15) 315deg,
+      transparent 360deg
+    ),
+    repeating-radial-gradient(
+      circle at center,
+      #ffe4e6 0px,
+      #ffe4e6 2px,
+      #fecdd3 3px,
+      #fecdd3 4px
+    );
+  border: 1px solid rgba(244, 63, 94, 0.35);
+}
+
+[data-theme='light'] .hero-vinyl-node.var-2 .vinyl-center-label {
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #f1f5f9 70%, #e2e8f0 100%);
+  border: 1.5px solid rgba(225, 29, 72, 0.7);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1), 0 0 6px rgba(225, 29, 72, 0.25);
+}
+
+[data-theme='light'] .hero-vinyl-node.var-2 .vinyl-icon-wrap {
+  color: #e11d48;
+}
+
+/* Outer Groove Highlight Ring */
+.vinyl-grooves-ring {
   position: absolute;
-  font-size: 1.55rem;
-  line-height: 1;
-  opacity: 0.09;
-  user-select: none;
+  inset: 6px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   pointer-events: none;
 }
 
-[data-theme='light'] .micro-card-watermark {
-  opacity: 0.08;
+[data-theme='light'] .vinyl-grooves-ring {
+  border-color: rgba(0, 0, 0, 0.06);
 }
 
-.micro-card-icon-wrap {
-  width: 17px;
-  height: 17px;
+/* Center Record Label Hub */
+.vinyl-center-label {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  pointer-events: none;
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+  z-index: 2;
+  transition: all 0.25s ease;
 }
 
-.micro-card-icon-wrap svg {
+.vinyl-center-label::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  border: 0.5px dashed rgba(255, 255, 255, 0.35);
+  pointer-events: none;
+}
+
+[data-theme='light'] .hero-vinyl-node.var-2 .vinyl-center-label::before {
+  border-color: rgba(225, 29, 72, 0.35);
+}
+
+/* Center Spindle Hole */
+.vinyl-spindle-hole {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #0d0f12;
+  border: 0.5px solid rgba(255, 255, 255, 0.3);
+  z-index: 1;
+  pointer-events: none;
+}
+
+[data-theme='light'] .vinyl-spindle-hole {
+  background: #f8fafc;
+  border-color: rgba(0, 0, 0, 0.3);
+}
+
+/* Tech SVG Logo inside Center Label */
+.vinyl-icon-wrap {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  opacity: 0.9;
+  z-index: 3;
+  transition: all 0.25s ease;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.7));
+  pointer-events: none;
+}
+
+.vinyl-icon-wrap svg {
   width: 100%;
   height: 100%;
   display: block;
 }
 
-/* Red Suits (Hearts ♥, Diamonds ♦) */
-.card-suit-red {
-  color: var(--accent-color);
+/* =========================================================================
+   HOVER & ACTIVE HIGHLIGHT STATE
+   ========================================================================= */
+.hero-vinyl-node:hover,
+.hero-vinyl-node.is-hovered {
+  z-index: 35;
 }
 
-.card-suit-red .micro-card-watermark {
-  color: var(--accent-color);
+[data-theme='dark'] .hero-vinyl-node:hover,
+:root .hero-vinyl-node:hover,
+[data-theme='dark'] .hero-vinyl-node.is-hovered,
+:root .hero-vinyl-node.is-hovered {
+  box-shadow:
+    0 0 32px rgba(220, 38, 38, 0.8),
+    0 0 65px rgba(220, 38, 38, 0.4),
+    0 12px 28px rgba(0, 0, 0, 0.9);
 }
 
-/* Black Suits (Spades ♠, Clubs ♣) */
-[data-theme='dark'] .card-suit-black,
-:root .card-suit-black {
-  color: #f5f0e8;
+[data-theme='dark'] .hero-vinyl-node:hover .vinyl-disc-body,
+:root .hero-vinyl-node:hover .vinyl-disc-body,
+[data-theme='dark'] .hero-vinyl-node.is-hovered .vinyl-disc-body,
+:root .hero-vinyl-node.is-hovered .vinyl-disc-body {
+  border-color: rgba(239, 68, 68, 0.8);
 }
 
-[data-theme='dark'] .card-suit-black .micro-card-watermark,
-:root .card-suit-black .micro-card-watermark {
-  color: #f5f0e8;
+[data-theme='light'] .hero-vinyl-node:hover,
+[data-theme='light'] .hero-vinyl-node.is-hovered {
+  box-shadow:
+    0 0 32px rgba(225, 29, 72, 0.55),
+    0 0 65px rgba(225, 29, 72, 0.25),
+    0 12px 28px rgba(0, 0, 0, 0.15);
 }
 
-[data-theme='light'] .card-suit-black {
-  color: #1c1917;
+[data-theme='light'] .hero-vinyl-node:hover .vinyl-disc-body,
+[data-theme='light'] .hero-vinyl-node.is-hovered .vinyl-disc-body {
+  border-color: rgba(225, 29, 72, 0.85);
 }
 
-[data-theme='light'] .card-suit-black .micro-card-watermark {
-  color: #1c1917;
+.hero-vinyl-node:hover .vinyl-center-label,
+.hero-vinyl-node.is-hovered .vinyl-center-label {
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.95);
 }
 
-/* Highlighted closest card state */
-.hero-card-node.is-closest {
-  z-index: 20;
+.hero-vinyl-node:hover .vinyl-icon-wrap,
+.hero-vinyl-node.is-hovered .vinyl-icon-wrap {
+  opacity: 1;
+  transform: scale(1.14);
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.95));
 }
 
-[data-theme='dark'] .hero-card-node.is-closest,
-:root .hero-card-node.is-closest {
-  border-color: rgba(212, 175, 55, 0.9);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.85), 0 0 16px rgba(212, 175, 55, 0.35);
-}
-
-[data-theme='light'] .hero-card-node.is-closest {
-  border-color: rgba(197, 160, 89, 0.95);
-  box-shadow: 0 10px 24px rgba(68, 50, 30, 0.25), 0 0 16px rgba(197, 160, 89, 0.35);
+[data-theme='light'] .hero-vinyl-node.var-2:hover .vinyl-icon-wrap,
+[data-theme='light'] .hero-vinyl-node.var-2.is-hovered .vinyl-icon-wrap {
+  filter: drop-shadow(0 0 8px rgba(225, 29, 72, 0.8));
 }
 
 /* Tooltip Badge for Technology Name */
-.hero-glow-label {
+.hero-vinyl-label {
   position: absolute;
-  top: 58px;
+  top: 90px;
   left: 50%;
-  transform: translateX(-50%);
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
+  transform: translateX(-50%) translateY(-4px);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.74rem;
   font-weight: 600;
   letter-spacing: 0.03em;
-  padding: 0.22rem 0.65rem;
-  border-radius: var(--radius-sm);
-  background: var(--bg-overlay);
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
+  padding: 0.24rem 0.72rem;
+  border-radius: 4px;
+  background: var(--bg-overlay, rgba(13, 15, 18, 0.9));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.16));
+  color: var(--text-primary, #f3f4f6);
   white-space: nowrap;
   pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.22s ease, transform 0.22s ease;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
-  z-index: 30;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 40;
 }
 
-.hero-card-node.is-closest .hero-glow-label {
+[data-theme='light'] .hero-vinyl-label {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  color: #0f172a;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+}
+
+.hero-vinyl-node:hover .hero-vinyl-label,
+.hero-vinyl-node.is-hovered .hero-vinyl-label {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
+
+/* =========================================================================
+   RESPONSIVE SCALING
+   ========================================================================= */
+@media (max-width: 1024px) {
+  .hero-vinyl-node {
+    width: 68px;
+    height: 68px;
+    margin-top: -34px;
+    margin-left: -34px;
+  }
+  .vinyl-center-label {
+    width: 34px;
+    height: 34px;
+  }
+  .vinyl-icon-wrap {
+    width: 18px;
+    height: 18px;
+  }
+  .hero-vinyl-label {
+    top: 76px;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-vinyl-node {
+    width: 56px;
+    height: 56px;
+    margin-top: -28px;
+    margin-left: -28px;
+  }
+  .vinyl-center-label {
+    width: 28px;
+    height: 28px;
+  }
+  .vinyl-icon-wrap {
+    width: 15px;
+    height: 15px;
+  }
+  .hero-vinyl-label {
+    top: 64px;
+  }
+}
+
+/* =========================================================================
+   RESPONSIVE SCALING
+   ========================================================================= */
+@media (max-width: 1024px) {
+  .hero-vinyl-node {
+    width: 68px;
+    height: 68px;
+    margin-top: -34px;
+    margin-left: -34px;
+  }
+  .vinyl-center-label {
+    width: 34px;
+    height: 34px;
+  }
+  .vinyl-icon-wrap {
+    width: 18px;
+    height: 18px;
+  }
+  .hero-vinyl-label {
+    top: 76px;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-vinyl-node {
+    width: 56px;
+    height: 56px;
+    margin-top: -28px;
+    margin-left: -28px;
+  }
+  .vinyl-center-label {
+    width: 28px;
+    height: 28px;
+  }
+  .vinyl-icon-wrap {
+    width: 15px;
+    height: 15px;
+  }
+  .hero-vinyl-label {
+    top: 64px;
+  }
+}
+

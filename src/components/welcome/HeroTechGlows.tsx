@@ -2,23 +2,6 @@ import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { TECH_LOGOS, type TechLogo } from '../../data/techLogos';
 import '../../styles/heroTechGlows.css';
 
-type SuitType = 'spades' | 'hearts' | 'clubs' | 'diamonds';
-
-const SUIT_CYCLE: SuitType[] = ['spades', 'hearts', 'clubs', 'diamonds'];
-
-const SUIT_GLYPHS: Record<SuitType, string> = {
-  spades: '♠',
-  hearts: '♥',
-  clubs: '♣',
-  diamonds: '♦',
-};
-
-// Natural deterministic resting rotations (degrees) to simulate cards suspended in zero-gravity
-const BASE_ROTATIONS = [
-  -8, 11, -5, 9, -12, 6, -14, 10, -7, 12,
-  -9, 7, -6, 11, -11, 8, -10, 13, -8, 5,
-];
-
 // 20 distinct anchor coordinates (in percentages of the hero section, with safe boundary margins)
 const ANCHOR_POINTS = [
   { xPercent: 10, yPercent: 16 },  // Top-left
@@ -52,76 +35,55 @@ function shuffleArray<T>(array: T[]): T[] {
   return arr;
 }
 
-interface ParticleState {
+interface VinylParticle {
   logo: TechLogo;
-  suit: SuitType;
-  rank: string;
   xPercent: number;
   yPercent: number;
   baseX: number;
   baseY: number;
   x: number;
   y: number;
-  vx: number;
-  vy: number;
   phase: number;
-  baseRot: number;
-  currentRot: number;
+  spinDuration: number;
+  variation: 'var-1' | 'var-2';
 }
 
 export const HeroTechGlows: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const nodeRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const iconWrapRefs = useRef<(HTMLElement | null)[]>([]);
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const hoveredIdxRef = useRef<number | null>(null);
 
   // Randomize logo distribution once on mount
   const randomizedLogos = useMemo(() => shuffleArray(TECH_LOGOS), []);
 
-  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
-    return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
-  });
-
-  // Track theme changes
-  useEffect(() => {
-    const observer = new MutationObserver(() => {
-      const current = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
-      setTheme(current);
-    });
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-    return () => observer.disconnect();
-  }, []);
-
-  // Persistent micro-card particles initialized deterministically once
-  const [initialParticles] = useState<ParticleState[]>(() =>
+  // Persistent vinyl particles initialized once
+  const [initialParticles] = useState<VinylParticle[]>(() =>
     ANCHOR_POINTS.map((pt, i) => {
       const logo = randomizedLogos[i % randomizedLogos.length];
-      const suit = SUIT_CYCLE[i % SUIT_CYCLE.length];
-      const baseRot = BASE_ROTATIONS[i % BASE_ROTATIONS.length];
-      const rank = logo.name.charAt(0).toUpperCase();
+      // Varied rotation duration for organic turntable feel (14s to 22s)
+      const spinDuration = 14 + (i % 5) * 2;
+
+      const variation: 'var-1' | 'var-2' = i % 2 === 0 ? 'var-1' : 'var-2';
 
       return {
         logo,
-        suit,
-        rank,
         xPercent: pt.xPercent,
         yPercent: pt.yPercent,
         baseX: 0,
         baseY: 0,
         x: 0,
         y: 0,
-        vx: 0,
-        vy: 0,
         phase: (i * 1.61803398875) % (Math.PI * 2),
-        baseRot,
-        currentRot: baseRot,
+        spinDuration,
+        variation,
       };
     })
   );
 
-  const particlesRef = useRef<ParticleState[]>(initialParticles);
-  const mouseRef = useRef<{ x: number; y: number }>({ x: -9999, y: -9999 });
+  const particlesRef = useRef<VinylParticle[]>(initialParticles);
 
-  // Animation and physics loop
+  // Smooth floating animation loop
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -152,150 +114,46 @@ export const HeroTechGlows: React.FC = () => {
     });
     resizeObserver.observe(container);
 
-    // Mouse listener on parent hero
-    const handleMouseMove = (e: MouseEvent) => {
-      const rect = container.getBoundingClientRect();
-      mouseRef.current = {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
-      };
-    };
-
-    const handleMouseLeave = () => {
-      mouseRef.current = { x: -9999, y: -9999 };
-    };
-
-    window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    document.addEventListener('mouseleave', handleMouseLeave);
-
     let animationFrameId: number;
-    const REPEL_RADIUS = 210;
 
-    // Boundary margins to ensure micro-cards and labels never clip
-    const PADDING_X = 52;
-    const PADDING_TOP = 40;
-    const PADDING_BOTTOM = 52;
+    // Safety margins to ensure discs and tooltip badges never clip
+    const PADDING_X = 64;
+    const PADDING_TOP = 48;
+    const PADDING_BOTTOM = 64;
 
     const loop = (time: number) => {
-      const mx = mouseRef.current.x;
-      const my = mouseRef.current.y;
       const particles = particlesRef.current;
+      const hovered = hoveredIdxRef.current;
 
       const minX = PADDING_X;
       const maxX = Math.max(minX, width - PADDING_X);
       const minY = PADDING_TOP;
       const maxY = Math.max(minY, height - PADDING_BOTTOM);
 
-      // 1. Calculate distances and determine the single closest card to cursor
-      let closestIdx = -1;
-      let minDistance = Infinity;
-
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
-        const dx = p.x - mx;
-        const dy = p.y - my;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-
-        if (dist < minDistance) {
-          minDistance = dist;
-          closestIdx = i;
-        }
-      }
-
-      if (minDistance > REPEL_RADIUS || mx < -500) {
-        closestIdx = -1;
-      }
-
-      // 2. Physics & DOM updates for all 20 micro-cards
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
         const nodeEl = nodeRefs.current[i];
-        const iconWrapEl = iconWrapRefs.current[i];
         if (!nodeEl) continue;
 
-        // Ambient gentle floating drift
-        const ambX = Math.sin(time * 0.0012 + p.phase) * 6;
-        const ambY = Math.cos(time * 0.001 + p.phase) * 6;
+        // Smooth harmonic floating drift (gentle, organic zero-gravity float)
+        const floatX = Math.sin(time * 0.0009 + p.phase) * 11 + Math.cos(time * 0.0005 + p.phase * 1.5) * 5;
+        const floatY = Math.cos(time * 0.0007 + p.phase) * 9 + Math.sin(time * 0.0006 + p.phase * 1.2) * 4;
 
-        // Mouse repulsion
-        const dx = p.x - mx;
-        const dy = p.y - my;
-        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        const targetX = p.baseX + floatX;
+        const targetY = p.baseY + floatY;
 
-        let repelX = 0;
-        let repelY = 0;
+        // Smooth spring interpolation
+        p.x += (targetX - p.x) * 0.06;
+        p.y += (targetY - p.y) * 0.06;
 
-        if (dist < REPEL_RADIUS && mx > -500) {
-          const pushForce = Math.pow(1 - dist / REPEL_RADIUS, 1.6) * 26;
-          repelX = (dx / dist) * pushForce;
-          repelY = (dy / dist) * pushForce;
-        }
+        // Boundary containment
+        p.x = Math.max(minX, Math.min(maxX, p.x));
+        p.y = Math.max(minY, Math.min(maxY, p.y));
 
-        // Spring pulling back toward base anchor
-        const springX = (p.baseX + ambX - p.x) * 0.07;
-        const springY = (p.baseY + ambY - p.y) * 0.07;
+        const isHovered = i === hovered;
+        const scale = isHovered ? 1.25 : 1.0;
 
-        p.vx = (p.vx + springX + repelX) * 0.85;
-        p.vy = (p.vy + springY + repelY) * 0.85;
-
-        // Speed cap
-        const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
-        const MAX_SPEED = 9;
-        if (speed > MAX_SPEED) {
-          p.vx = (p.vx / speed) * MAX_SPEED;
-          p.vy = (p.vy / speed) * MAX_SPEED;
-        }
-
-        p.x += p.vx;
-        p.y += p.vy;
-
-        // Boundary safety constraint
-        if (p.x < minX) {
-          p.x = minX;
-          p.vx = Math.abs(p.vx) * 0.25;
-        } else if (p.x > maxX) {
-          p.x = maxX;
-          p.vx = -Math.abs(p.vx) * 0.25;
-        }
-
-        if (p.y < minY) {
-          p.y = minY;
-          p.vy = Math.abs(p.vy) * 0.25;
-        } else if (p.y > maxY) {
-          p.y = maxY;
-          p.vy = -Math.abs(p.vy) * 0.25;
-        }
-
-        // Dynamic rotation: tilts with horizontal velocity; straightens up when closest
-        const isClosest = i === closestIdx;
-        const isWithinRadius = dist < REPEL_RADIUS && mx > -500;
-        const proximity = isWithinRadius ? Math.max(0, 1 - dist / REPEL_RADIUS) : 0;
-
-        const targetRot = isClosest ? p.baseRot * 0.25 : p.baseRot + p.vx * 1.3;
-        p.currentRot += (targetRot - p.currentRot) * 0.12;
-
-        // Scale & opacity
-        let scale: number;
-        let iconOpacity: number;
-
-        if (isClosest) {
-          scale = 1.28;
-          iconOpacity = 1.0;
-          nodeEl.classList.add('is-closest');
-        } else if (isWithinRadius) {
-          scale = 1.0 + proximity * 0.15;
-          iconOpacity = 0.38 + proximity * 0.52;
-          nodeEl.classList.remove('is-closest');
-        } else {
-          scale = 1.0;
-          iconOpacity = theme === 'light' ? 0.42 : 0.28;
-          nodeEl.classList.remove('is-closest');
-        }
-
-        nodeEl.style.transform = `translate3d(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px, 0) rotate(${p.currentRot.toFixed(1)}deg) scale(${scale.toFixed(3)})`;
-        if (iconWrapEl) {
-          iconWrapEl.style.opacity = iconOpacity.toFixed(2);
-        }
+        nodeEl.style.transform = `translate3d(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px, 0) scale(${scale.toFixed(3)})`;
       }
 
       animationFrameId = requestAnimationFrame(loop);
@@ -306,40 +164,50 @@ export const HeroTechGlows: React.FC = () => {
     return () => {
       cancelAnimationFrame(animationFrameId);
       resizeObserver.disconnect();
-      window.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseleave', handleMouseLeave);
     };
-  }, [theme]);
+  }, []);
+
+  const handleMouseEnter = (idx: number) => {
+    hoveredIdxRef.current = idx;
+    setHoveredIdx(idx);
+  };
+
+  const handleMouseLeave = () => {
+    hoveredIdxRef.current = null;
+    setHoveredIdx(null);
+  };
 
   return (
     <div className="hero-tech-glows-canvas" ref={containerRef} aria-hidden="true">
       {initialParticles.map((particle, idx) => {
-        const { logo, suit, rank } = particle;
-        const isRed = suit === 'hearts' || suit === 'diamonds';
-        const suitGlyph = SUIT_GLYPHS[suit];
+        const { logo, spinDuration, variation } = particle;
+        const isHovered = hoveredIdx === idx;
 
         return (
           <div
-            key={`micro-card-${logo.id}-${idx}`}
+            key={`hero-vinyl-${logo.id}-${idx}`}
             ref={(el) => { nodeRefs.current[idx] = el; }}
-            className={`hero-card-node ${isRed ? 'card-suit-red' : 'card-suit-black'}`}
+            className={`hero-vinyl-node ${variation} ${isHovered ? 'is-hovered' : ''}`}
+            onMouseEnter={() => handleMouseEnter(idx)}
+            onMouseLeave={handleMouseLeave}
+            onFocus={() => handleMouseEnter(idx)}
+            onBlur={handleMouseLeave}
+            tabIndex={0}
+            role="button"
+            aria-label={`Technology: ${logo.name}`}
           >
-            {/* Gilded Gold Foil Hairline Inner Frame */}
-            <span className="micro-card-frame" />
+            {/* Spinning Vinyl Platter with Sound Grooves & Specular Sheen */}
+            <div
+              className="vinyl-disc-body"
+              style={{ animationDuration: `${spinDuration}s` }}
+            >
+              <div className="vinyl-grooves-ring" />
+            </div>
 
-            {/* Top-Left Pip: Rank Initial + Suit */}
-            <span className="micro-card-pip pip-tl">
-              <span className="micro-pip-rank">{rank}</span>
-              <span className="micro-pip-suit">{suitGlyph}</span>
-            </span>
-
-            {/* Center Area: Translucent Watermark Suit + SVG Tech Logo */}
-            <span className="micro-card-center">
-              <span className="micro-card-watermark">{suitGlyph}</span>
-              <span
-                ref={(el) => { iconWrapRefs.current[idx] = el; }}
-                className="micro-card-icon-wrap"
-              >
+            {/* Red Center Record Label Hub with Spindle Hole & Tech SVG Logo */}
+            <div className="vinyl-center-label">
+              <div className="vinyl-spindle-hole" />
+              <div className="vinyl-icon-wrap">
                 <svg
                   viewBox={logo.viewBox || '0 0 24 24'}
                   fill="currentColor"
@@ -347,17 +215,11 @@ export const HeroTechGlows: React.FC = () => {
                 >
                   <path d={logo.path} />
                 </svg>
-              </span>
-            </span>
+              </div>
+            </div>
 
-            {/* Bottom-Right Inverted Pip */}
-            <span className="micro-card-pip pip-br">
-              <span className="micro-pip-rank">{rank}</span>
-              <span className="micro-pip-suit">{suitGlyph}</span>
-            </span>
-
-            {/* Tooltip Label on Hover / Closest */}
-            <div className="hero-glow-label">
+            {/* Hover Tooltip Badge showing Tech Name */}
+            <div className="hero-vinyl-label">
               {logo.name}
             </div>
           </div>
