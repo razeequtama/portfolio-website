@@ -3,6 +3,12 @@ import { SectionHeader } from '../components/common/SectionHeader';
 import { portfolioSections, projectsData } from '../data/portfolioData';
 import type { ProjectItem } from '../types/portfolio';
 
+const projectSuits: Record<string, string> = {
+  mercury: '♠',
+  aegis: '♥',
+  lux: '♣',
+};
+
 interface ProjectCardProps {
   project: ProjectItem;
 }
@@ -50,7 +56,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
     >
       <div className={`project-card-inner${isFlipped ? ' is-flipped' : ''}`}>
         <div className="project-card-back" aria-hidden="true">
-          <span className="project-card-back-suit">♦</span>
+          <span className="project-card-back-suit">{projectSuits[project.id] ?? '♦'}</span>
           <span className="project-card-back-title">{project.title}</span>
         </div>
 
