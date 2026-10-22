@@ -2,7 +2,6 @@ import type {
   SectionMeta,
   DeveloperProfile,
   ProjectItem,
-  ArchitecturePattern,
   ExperienceItem,
   SkillCategory,
   AboutContent,
@@ -45,8 +44,8 @@ export const portfolioSections: SectionMeta[] = [
     cardSuit: 'spades',
     cardRank: '2',
     title: 'ENGINEERING\nFOCUS',
-    subtitle: 'Architecture and technical decisions',
-    shortDesc: 'Design patterns, clean code philosophy, and interactive mathematics.',
+    subtitle: 'How I choose an approach, think across boundaries, and check behavior.',
+    shortDesc: 'Problem fit, thoughtful implementation, and correctness with clear limits.',
     badge: 'Deep Dive',
   },
   {
@@ -169,101 +168,6 @@ export const projectsData: ProjectItem[] = [
     githubUrl: 'https://github.com/razeequtama',
     metrics: ['60 FPS smooth rendering', 'WCAG accessible navigation', 'Responsive mobile-first'],
     architectureNotes: 'Pure mathematical coordinate mapping without DOM cloning or layout thrashing.',
-  },
-];
-
-/* =========================================================================
-   03. ENGINEERING PATTERNS & ARCHITECTURAL DECISIONS
-   ========================================================================= */
-export const engineeringPatterns: ArchitecturePattern[] = [
-  {
-    id: 'clean-architecture-service',
-    title: 'Layered Separation of Concerns & Clean Contracts',
-    category: 'Software Architecture',
-    tagline: 'Decoupling presentation, business validation, and database operations',
-    overview:
-      'In building sustainable full-stack applications, directly coupling route handlers or UI components to database drivers leads to fragile code. By establishing explicit interfaces and separating business domain models from external drivers, code remains modular, discoverable, and easily testable.',
-    keyDecisions: [
-      'Strict input validation at boundaries via typed schemas (e.g., Pydantic in FastAPI or Zod in TypeScript).',
-      'Encapsulate database queries inside isolated repository functions rather than inlining them in request handlers.',
-      'Treat domain errors as explicit typed results rather than relying on uncontrolled runtime exceptions.',
-    ],
-    tradeoffs: {
-      pros: [
-        'High testability: business logic can be unit-tested without mocking entire database instances',
-        'Maintainability: database schemas or UI libraries can be refactored without breaking core business logic',
-      ],
-      cons: [
-        'Requires writing explicit interface definitions and mapping layers between database and DTO models',
-      ],
-    },
-    codeSample: {
-      filename: 'user-service.ts',
-      language: 'typescript',
-      code: `export interface UserRepository {
-  findById(id: string): Promise<User | null>;
-  create(userData: CreateUserDTO): Promise<User>;
-}
-
-export class UserService {
-  constructor(private userRepo: UserRepository) {}
-
-  async registerUser(dto: CreateUserDTO): Promise<ServiceResult<User>> {
-    // 1. Domain invariant validation
-    if (!dto.email.includes('@')) {
-      return { success: false, error: 'InvalidEmailFormat' };
-    }
-
-    // 2. Persist via repository interface
-    const newUser = await this.userRepo.create(dto);
-    return { success: true, data: newUser };
-  }
-}`,
-    },
-  },
-  {
-    id: 'resilient-resync-turntable',
-    title: 'Circular Polar Coordinate State Normalization',
-    category: 'Frontend Engineering',
-    tagline: 'Infinite carousel physics with continuous modular wrap-around',
-    overview:
-      'Implementing infinite circular navigation docks often suffers from jarring reset glitches. Using continuous angular coordinates with modular relative offset mapping yields seamless, jitter-free physics without DOM cloning.',
-    keyDecisions: [
-      'Maintain an unconstrained continuous rotation angle (in degrees) updated by drag delta or discrete step triggers.',
-      'Map each card to the shortest wrapped angular difference: diff = ((i - activeFloat + 3.5) % 7) - 3.5.',
-      'Mount radially via CSS transform: rotate(netAngle) translateY(-radius) scale(scale).',
-    ],
-    tradeoffs: {
-      pros: [
-        'Zero duplicate DOM nodes needed for circular infinite scrolling',
-        'Hardware-accelerated transforms for 60/120fps fluid interaction',
-      ],
-      cons: [
-        'Requires trigonometric radius calibration for multiple responsive screen widths',
-      ],
-    },
-    codeSample: {
-      filename: 'turntable-math.ts',
-      language: 'typescript',
-      code: `export function calculateCardPlacement(
-  index: number,
-  activeContinuousIndex: number,
-  totalItems: number = 7,
-  stepAngle: number = 26,
-  radius: number = 420
-) {
-  // Compute shortest wrapped angular distance
-  let diff = ((index - activeContinuousIndex) % totalItems + totalItems) % totalItems;
-  if (diff > totalItems / 2) diff -= totalItems;
-
-  const netAngle = diff * stepAngle;
-  const isApex = Math.abs(netAngle) < 1.0;
-  const scale = Math.max(0.65, 1 - Math.abs(diff) * 0.12);
-  const opacity = Math.abs(netAngle) > 85 ? 0 : Math.max(0.2, 1 - Math.abs(diff) * 0.25);
-
-  return { netAngle, scale, opacity, isApex, zIndex: Math.round(10 - Math.abs(diff) * 2) };
-}`,
-    },
   },
 ];
 

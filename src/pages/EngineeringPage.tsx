@@ -1,7 +1,26 @@
 import React from 'react';
 import { SectionHeader } from '../components/common/SectionHeader';
-import { portfolioSections, engineeringPatterns } from '../data/portfolioData';
-import type { ArchitecturePattern } from '../types/portfolio';
+import { portfolioSections } from '../data/portfolioData';
+
+const projectBoundaries = [
+  'Frontend',
+  'APIs',
+  'Data models',
+  'Processing',
+  'Forecasting',
+  'Integration',
+  'Testing',
+  'Debugging',
+];
+
+const forecastApiChecks = [
+  'HTTP status',
+  'Response schema',
+  'Forecast periods',
+  'Expected values',
+  'Error handling',
+  'Integration behavior',
+];
 
 export const EngineeringPage: React.FC = () => {
   const engineeringMeta = portfolioSections[1];
@@ -15,85 +34,82 @@ export const EngineeringPage: React.FC = () => {
         suit={engineeringMeta.cardSuit}
       />
 
-      {/* Engineering Philosophy Summary */}
-      <section className="surface-card engineering-philosophy">
-        <h2 style={{ fontSize: 'var(--text-xl)', marginBottom: '0.5rem', fontWeight: 700 }}>
-          Engineering & Architecture Principles
-        </h2>
-        <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-          Writing clean, sustainable software requires thoughtful modularity, disciplined typing, and
-          clear trade-off evaluation. Below are architectural case studies and design patterns
-          implemented across recent full-stack applications and interactive systems.
-        </p>
-      </section>
+      <section className="engineering-focus" aria-labelledby="engineering-focus-heading">
+        <header className="engineering-intro">
+          <h2 id="engineering-focus-heading">
+            Make it <span>fit</span>. Make it <span>work</span>.
+          </h2>
+          <p>
+            I start with the behavior a problem calls for, then look for an implementation
+            that is correct, understandable, and practical. Not complexity for its own sake.
+          </p>
+        </header>
 
-      {/* Architecture Patterns Deep Dive List */}
-      <div className="engineering-grid">
-        {/* === DUPLICATE THIS BLOCK OF CODE TO ADD A NEW Engineering Pattern === */}
-        {engineeringPatterns.map((pattern: ArchitecturePattern) => (
-          <article key={pattern.id} className="surface-card pattern-card">
-            {/* Header */}
-            <div className="pattern-header">
-              <div>
-                <h3 className="pattern-title">{pattern.title}</h3>
-                <div className="pattern-tagline">{pattern.tagline}</div>
-              </div>
-              <span className="pattern-category">{pattern.category}</span>
+        <div className="engineering-grid">
+          <article className="surface-card engineering-card">
+            <div className="engineering-card-heading">
+              <span className="engineering-card-number">01</span>
+              <h3>Fit the problem, not the pattern.</h3>
             </div>
-
-            {/* Overview */}
-            <p className="pattern-overview">{pattern.overview}</p>
-
-            {/* Key Decisions */}
-            <div style={{ marginBottom: '0.75rem', fontWeight: 600, fontSize: 'var(--text-sm)' }}>
-              Key Architectural Decisions:
+            <p>
+              Technical sophistication is not the goal. The constraints and intended
+              behavior should shape the solution.
+            </p>
+            <div className="engineering-sequence" aria-label="Start with the need, account for constraints, and check the behavior">
+              <span>Need</span>
+              <span aria-hidden="true">→</span>
+              <span>Constraints</span>
+              <span aria-hidden="true">→</span>
+              <span>Behavior</span>
             </div>
-            <ul className="pattern-decisions-list">
-              {pattern.keyDecisions.map((decision, idx) => (
-                <li key={idx} className="pattern-decision-item">
-                  <span className="pattern-decision-bullet">→</span>
-                  <span>{decision}</span>
-                </li>
+          </article>
+
+          <article className="surface-card engineering-card">
+            <div className="engineering-card-heading">
+              <span className="engineering-card-number">02</span>
+              <h3>Pay attention to the joins.</h3>
+            </div>
+            <p>
+              I’ve worked across these parts of projects, and I’m interested in how each
+              responsibility affects the next—without assuming one structure fits every system.
+            </p>
+            <ul className="engineering-boundaries" aria-label="Areas I've worked across">
+              {projectBoundaries.map((boundary) => (
+                <li key={boundary}>{boundary}</li>
               ))}
             </ul>
+          </article>
 
-            {/* Tradeoffs Pros & Cons */}
-            <div className="tradeoffs-split">
-              <div className="tradeoff-column">
-                <div className="tradeoff-header tradeoff-pros-header">✓ Advantages & Upsides</div>
-                <ul className="tradeoff-list">
-                  {pattern.tradeoffs.pros.map((pro, idx) => (
-                    <li key={idx}>+ {pro}</li>
-                  ))}
-                </ul>
+          <article className="surface-card engineering-card engineering-evidence">
+            <div className="engineering-evidence-copy">
+              <div className="engineering-card-heading">
+                <span className="engineering-card-number">03</span>
+                <h3>Check what the API promises.</h3>
               </div>
-
-              <div className="tradeoff-column">
-                <div className="tradeoff-header tradeoff-cons-header">⚠ Trade-offs & Complexities</div>
-                <ul className="tradeoff-list">
-                  {pattern.tradeoffs.cons.map((con, idx) => (
-                    <li key={idx}>- {con}</li>
-                  ))}
-                </ul>
-              </div>
+              <p>
+                I’ve worked on verifying Mercury’s forecast API. Its automated tests compare
+                responses with known expected outputs across these behaviors.
+              </p>
             </div>
 
-            {/* Code Implementation Box */}
-            {pattern.codeSample && (
-              <div className="code-snippet-box">
-                <div className="code-header">
-                  <span>📄 {pattern.codeSample.filename}</span>
-                  <span>{pattern.codeSample.language}</span>
-                </div>
-                <pre className="code-content">
-                  <code>{pattern.codeSample.code}</code>
-                </pre>
+            <div className="engineering-evidence-details">
+              <div className="engineering-checks">
+                <p className="engineering-detail-label">API contract checks</p>
+                <ul>
+                  {forecastApiChecks.map((check) => (
+                    <li key={check}>{check}</li>
+                  ))}
+                </ul>
               </div>
-            )}
+              <p className="engineering-scope-note">
+                <span>Different question</span>
+                A correct API response does not establish real-world forecast accuracy.
+                Model accuracy is not evaluated here.
+              </p>
+            </div>
           </article>
-        ))}
-        {/* === END OF ARCHITECTURE PATTERN BLOCK === */}
-      </div>
+        </div>
+      </section>
     </div>
   );
 };

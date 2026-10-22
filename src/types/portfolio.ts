@@ -36,24 +36,6 @@ export interface ProjectItem {
   architectureNotes?: string;
 }
 
-export interface ArchitecturePattern {
-  id: string;
-  title: string;
-  category: string;
-  tagline: string;
-  overview: string;
-  keyDecisions: string[];
-  tradeoffs: {
-    pros: string[];
-    cons: string[];
-  };
-  codeSample?: {
-    filename: string;
-    language: string;
-    code: string;
-  };
-}
-
 export interface ExperienceItem {
   id: string;
   role: string;
@@ -127,4 +109,3 @@ export interface DeveloperProfile {
   projectsShipped: string;
   systemReliability: string;
 }
-
