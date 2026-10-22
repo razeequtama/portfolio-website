@@ -4,7 +4,7 @@ import { portfolioSections, engineeringPatterns } from '../data/portfolioData';
 import type { ArchitecturePattern } from '../types/portfolio';
 
 export const EngineeringPage: React.FC = () => {
-  const engineeringMeta = portfolioSections[2];
+  const engineeringMeta = portfolioSections[1];
 
   return (
     <div className="page-engineering">
@@ -12,6 +12,7 @@ export const EngineeringPage: React.FC = () => {
         number={engineeringMeta.number}
         title={engineeringMeta.title}
         subtitle={engineeringMeta.subtitle}
+        suit={engineeringMeta.cardSuit}
       />
 
       {/* Engineering Philosophy Summary */}

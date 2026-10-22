@@ -43,15 +43,31 @@ export function App() {
     portfolioSections.map(() => null)
   );
 
-  // Scroll the viewport to a section smoothly
+  // When true, the IntersectionObserver ignores intersection events because
+  // we triggered a programmatic scroll — prevents the turntable from
+  // spinning through every intermediate section during navigation.
+  const isProgrammaticScrollRef = useRef<boolean>(false);
+  const programmaticScrollTimerRef = useRef<number | null>(null);
+
+  // Scroll the viewport to a section smoothly and lock IO for ~1 s
   const scrollToSection = useCallback((index: number) => {
+    // Suppress IO-driven activeIndex updates for the duration of the scroll
+    isProgrammaticScrollRef.current = true;
+    if (programmaticScrollTimerRef.current !== null) {
+      clearTimeout(programmaticScrollTimerRef.current);
+    }
+    programmaticScrollTimerRef.current = window.setTimeout(() => {
+      isProgrammaticScrollRef.current = false;
+      programmaticScrollTimerRef.current = null;
+    }, 1000);
+
     const el = sectionRefs.current[index];
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }, []);
 
-  // Navigation handlers: scroll-based
+  // Navigation handlers: update turntable immediately then scroll
   const handleNext = useCallback(() => {
     const next = Math.min(activeIndex + 1, portfolioSections.length - 1);
     setActiveIndex(next);
@@ -69,7 +85,8 @@ export function App() {
     scrollToSection(index);
   }, [scrollToSection]);
 
-  // IntersectionObserver: keep activeIndex in sync with the most-visible section
+  // IntersectionObserver: keep activeIndex in sync when user scrolls manually.
+  // Skipped while a programmatic scroll is in flight.
   useEffect(() => {
     const observers: IntersectionObserver[] = [];
 
@@ -79,7 +96,7 @@ export function App() {
 
       const obs = new IntersectionObserver(
         ([entry]) => {
-          if (entry.isIntersecting) {
+          if (entry.isIntersecting && !isProgrammaticScrollRef.current) {
             setActiveIndex(i);
           }
         },
@@ -101,8 +118,8 @@ export function App() {
 
   const pages = [
     <WelcomePage onNavigate={handleSelectIndex} />,
-    <ProjectsPage />,
     <EngineeringPage />,
+    <ProjectsPage />,
     <ExperiencePage />,
     <TechStackPage />,
     <AboutPage />,

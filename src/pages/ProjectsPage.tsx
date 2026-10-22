@@ -4,7 +4,7 @@ import { portfolioSections, projectsData } from '../data/portfolioData';
 import type { ProjectItem } from '../types/portfolio';
 
 export const ProjectsPage: React.FC = () => {
-  const projectsMeta = portfolioSections[1];
+  const projectsMeta = portfolioSections[2];
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
   // Categories list for quick filtering
@@ -21,6 +21,7 @@ export const ProjectsPage: React.FC = () => {
         number={projectsMeta.number}
         title={projectsMeta.title}
         subtitle={projectsMeta.subtitle}
+        suit={projectsMeta.cardSuit}
       />
 
       {/* Filter Tabs */}

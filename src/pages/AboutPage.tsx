@@ -11,6 +11,7 @@ export const AboutPage: React.FC = () => {
         number={aboutMeta.number}
         title={aboutMeta.title}
         subtitle={aboutMeta.subtitle}
+        suit={aboutMeta.cardSuit}
       />
 
       <div className="about-layout">

@@ -36,6 +36,7 @@ export const ContactPage: React.FC = () => {
         number={contactMeta.number}
         title={contactMeta.title}
         subtitle={contactMeta.subtitle}
+        suit={contactMeta.cardSuit}
       />
 
       <div className="contact-layout">

@@ -12,6 +12,7 @@ export const ExperiencePage: React.FC = () => {
         number={experienceMeta.number}
         title={experienceMeta.title}
         subtitle={experienceMeta.subtitle}
+        suit={experienceMeta.cardSuit}
       />
 
       {/* Experience Timeline */}
