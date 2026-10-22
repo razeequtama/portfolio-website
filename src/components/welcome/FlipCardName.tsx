@@ -14,9 +14,11 @@ const SUIT_GLYPHS: Record<SuitType, string> = {
 interface FlipCardLetterProps {
   char: string;
   suit: SuitType;
+  /** When true, the card is flipped by the parent intro animation */
+  introFlipped?: boolean;
 }
 
-const FlipCardLetter: React.FC<FlipCardLetterProps> = ({ char, suit }) => {
+const FlipCardLetter: React.FC<FlipCardLetterProps> = ({ char, suit, introFlipped = false }) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const timerRef = useRef<number | null>(null);
 
@@ -64,9 +66,12 @@ const FlipCardLetter: React.FC<FlipCardLetterProps> = ({ char, suit }) => {
   const isRed = suit === 'hearts' || suit === 'diamonds';
   const suitGlyph = SUIT_GLYPHS[suit];
 
+  // Combine intro-driven flip with user-interaction flip
+  const flipped = introFlipped || isFlipped;
+
   return (
     <span
-      className={`card-letter-slot ${isFlipped ? 'is-flipped' : ''}`}
+      className={`card-letter-slot ${flipped ? 'is-flipped' : ''}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={handleInteraction}
@@ -115,12 +120,52 @@ const FlipCardLetter: React.FC<FlipCardLetterProps> = ({ char, suit }) => {
   );
 };
 
+// Duration (ms) each letter stays flipped during the intro wave
+const INTRO_FLIP_HOLD_MS = 500;
+// Stagger delay (ms) between each consecutive letter starting to flip
+const INTRO_STAGGER_MS = 90;
+
 interface FlipCardNameProps {
   name: string;
   suffix?: string;
 }
 
 export const FlipCardName: React.FC<FlipCardNameProps> = ({ name, suffix }) => {
+  const totalLetters = Array.from(name.replace(/ /g, '')).length;
+
+  // introFlippedSet: set of letter indices currently flipped by the intro wave
+  const [introFlippedSet, setIntroFlippedSet] = useState<ReadonlySet<number>>(new Set());
+
+  useEffect(() => {
+    const timers: number[] = [];
+
+    for (let i = 0; i < totalLetters; i++) {
+      // Flip letter i ON
+      timers.push(
+        window.setTimeout(() => {
+          setIntroFlippedSet((prev) => new Set([...prev, i]));
+        }, i * INTRO_STAGGER_MS)
+      );
+
+      // Flip letter i OFF (after the hold period)
+      timers.push(
+        window.setTimeout(() => {
+          setIntroFlippedSet((prev) => {
+            const next = new Set(prev);
+            next.delete(i);
+            return next;
+          });
+        }, i * INTRO_STAGGER_MS + INTRO_FLIP_HOLD_MS)
+      );
+    }
+
+    return () => {
+      timers.forEach((t) => clearTimeout(t));
+    };
+    // Run only once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const words = name.split(' ');
   let letterCounter = 0;
 
@@ -138,9 +183,17 @@ export const FlipCardName: React.FC<FlipCardNameProps> = ({ name, suffix }) => {
                 const suitIndex = letterCounter % SUIT_CYCLE.length;
                 const suit = SUIT_CYCLE[suitIndex];
                 const key = `letter-${letterCounter}-${char}`;
+                const thisIndex = letterCounter;
                 letterCounter++;
 
-                return <FlipCardLetter key={key} char={char} suit={suit} />;
+                return (
+                  <FlipCardLetter
+                    key={key}
+                    char={char}
+                    suit={suit}
+                    introFlipped={introFlippedSet.has(thisIndex)}
+                  />
+                );
               })}
               {isLastWord && suffix && <span className="flip-card-suffix">{suffix}</span>}
             </span>
