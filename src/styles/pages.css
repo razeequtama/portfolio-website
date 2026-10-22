@@ -234,21 +234,21 @@
 
 @media (max-width: 767px) {
   .hero-main-title {
-    font-size: clamp(2.4rem, 7.8vw, 3.25rem);
+    font-size: clamp(2.9rem, 9.5vw, 3.9rem);
     line-height: 1.12;
   }
 }
 
 @media (max-width: 480px) {
   .hero-main-title {
-    font-size: clamp(2.2rem, 8.8vw, 2.75rem);
+    font-size: clamp(2.6rem, 10.5vw, 3.2rem);
     line-height: 1.14;
   }
 }
 
 @media (max-width: 360px) {
   .hero-main-title {
-    font-size: clamp(1.95rem, 8.4vw, 2.25rem);
+    font-size: clamp(2.3rem, 10vw, 2.7rem);
     line-height: 1.15;
   }
 }
