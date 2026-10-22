@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { portfolioSections } from './data/portfolioData';
 import { Layout } from './components/layout/Layout';
 import { TurntableDock } from './components/turntable/TurntableDock';
@@ -18,7 +18,7 @@ import './styles/turntable.css';
 import './styles/pages.css';
 
 export function App() {
-  // Active card index in the turntable (Single Source of Truth)
+  // Active card index tracks the currently-visible section (driven by scroll + IntersectionObserver)
   const [activeIndex, setActiveIndex] = useState<number>(0);
 
   // Theme state: 'dark' (default) or 'light'
@@ -38,47 +38,76 @@ export function App() {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
   };
 
-  // Linear Navigation Handlers (Bounded between 0 and 6, no circular loop)
-  const handleNext = () => {
-    setActiveIndex((prev) => Math.min(prev + 1, portfolioSections.length - 1));
-  };
+  // Refs to each section DOM element for scroll-into-view navigation
+  const sectionRefs = useRef<(HTMLElement | null)[]>(
+    portfolioSections.map(() => null)
+  );
 
-  const handlePrev = () => {
-    setActiveIndex((prev) => Math.max(prev - 1, 0));
-  };
+  // Scroll the viewport to a section smoothly
+  const scrollToSection = useCallback((index: number) => {
+    const el = sectionRefs.current[index];
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, []);
 
-  const handleSelectIndex = (index: number) => {
+  // Navigation handlers: scroll-based
+  const handleNext = useCallback(() => {
+    const next = Math.min(activeIndex + 1, portfolioSections.length - 1);
+    setActiveIndex(next);
+    scrollToSection(next);
+  }, [activeIndex, scrollToSection]);
+
+  const handlePrev = useCallback(() => {
+    const prev = Math.max(activeIndex - 1, 0);
+    setActiveIndex(prev);
+    scrollToSection(prev);
+  }, [activeIndex, scrollToSection]);
+
+  const handleSelectIndex = useCallback((index: number) => {
     setActiveIndex(index);
-  };
+    scrollToSection(index);
+  }, [scrollToSection]);
 
-  // Page Synchronization: Scroll to top smoothly when active card changes
+  // IntersectionObserver: keep activeIndex in sync with the most-visible section
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [activeIndex]);
+    const observers: IntersectionObserver[] = [];
+
+    portfolioSections.forEach((_, i) => {
+      const el = sectionRefs.current[i];
+      if (!el) return;
+
+      const obs = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setActiveIndex(i);
+          }
+        },
+        {
+          // Trigger when a section occupies at least 30% of the viewport
+          threshold: 0.3,
+        }
+      );
+      obs.observe(el);
+      observers.push(obs);
+    });
+
+    return () => {
+      observers.forEach((obs) => obs.disconnect());
+    };
+  }, []);
 
   const currentSection = portfolioSections[activeIndex];
 
-  // Render the dedicated page for the selected section
-  const renderCurrentPage = () => {
-    switch (activeIndex) {
-      case 0:
-        return <WelcomePage onNavigate={handleSelectIndex} />;
-      case 1:
-        return <ProjectsPage />;
-      case 2:
-        return <EngineeringPage />;
-      case 3:
-        return <ExperiencePage />;
-      case 4:
-        return <TechStackPage />;
-      case 5:
-        return <AboutPage />;
-      case 6:
-        return <ContactPage />;
-      default:
-        return <WelcomePage onNavigate={handleSelectIndex} />;
-    }
-  };
+  const pages = [
+    <WelcomePage onNavigate={handleSelectIndex} />,
+    <ProjectsPage />,
+    <EngineeringPage />,
+    <ExperiencePage />,
+    <TechStackPage />,
+    <AboutPage />,
+    <ContactPage />,
+  ];
 
   return (
     <Layout
@@ -94,7 +123,17 @@ export function App() {
         />
       }
     >
-      {renderCurrentPage()}
+      {pages.map((page, i) => (
+        <section
+          key={portfolioSections[i].id}
+          id={portfolioSections[i].id}
+          ref={(el) => { sectionRefs.current[i] = el; }}
+          className="portfolio-section-block"
+          aria-label={portfolioSections[i].title}
+        >
+          {page}
+        </section>
+      ))}
     </Layout>
   );
 }

@@ -100,8 +100,20 @@ textarea:focus-visible {
 .page-content-wrapper {
   width: 100%;
   max-width: 100%;
-  animation: pageContentFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  will-change: opacity, transform;
+}
+
+/* Individual section block in the single-page scroll layout */
+.portfolio-section-block {
+  width: 100%;
+  /* Offset for the sticky dock height so headings aren't hidden behind it */
+  scroll-margin-top: 5rem;
+  /* A thin visual divider between sections, except after the last */
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: clamp(3rem, 8vh, 6rem);
+}
+
+.portfolio-section-block:last-child {
+  border-bottom: none;
 }
 
 @keyframes pageContentFadeIn {

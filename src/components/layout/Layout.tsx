@@ -30,9 +30,7 @@ export const Layout: React.FC<LayoutProps> = ({
         role="main"
         aria-label={`${currentSection.title} Section Content`}
       >
-        <div key={currentSection.id} className="page-content-wrapper">
-          {children}
-        </div>
+        {children}
       </main>
       {dock}
     </div>
