@@ -83,6 +83,7 @@
   flex: 1 1 auto;
   max-width: 780px;
   z-index: 2;
+  transform: translateY(-clamp(3rem, 12vh, 8rem));
 }
 
 .welcome-hero-image-wrapper {
@@ -214,6 +215,20 @@
   display: inline;
 }
 
+.hero-title-greeting-word {
+  display: inline-block;
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 250ms ease,
+    transform 250ms ease;
+}
+
+.hero-title-greeting-word.is-changing {
+  opacity: 0;
+  transform: translateY(0.12em);
+}
+
 .hero-title-space {
   display: none;
 }
@@ -259,6 +274,13 @@
   .hero-main-title {
     font-size: clamp(2.3rem, 10vw, 2.7rem);
     line-height: 1.15;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-title-greeting-word {
+    transition: none;
+    transform: none;
   }
 }
 
