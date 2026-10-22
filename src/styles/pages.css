@@ -83,7 +83,8 @@
   flex: 1 1 auto;
   max-width: 780px;
   z-index: 2;
-  transform: translateY(-clamp(3rem, 12vh, 8rem));
+  position: relative;
+  top: calc(0px - clamp(3rem, 9vh, 5rem));
 }
 
 .welcome-hero-image-wrapper {
@@ -165,6 +166,7 @@
   .welcome-hero-content {
     flex: 1 1 auto;
     max-width: 100%;
+    top: calc(0px - clamp(1.5rem, 4vh, 2.5rem));
   }
 
   .welcome-hero-image-wrapper {
