@@ -99,7 +99,7 @@ export const portfolioSections: SectionMeta[] = [
     number: '07',
     cardSuit: 'diamonds',
     cardRank: '7',
-    title: 'CONTACT',
+    title: 'CONTACT ME',
     subtitle: 'Direct communication channels',
     shortDesc: 'Direct email, GitHub, LinkedIn, and collaboration inquiries.',
     badge: 'Connect',
