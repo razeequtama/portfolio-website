@@ -604,9 +604,11 @@
 
 .engineering-card-number {
   flex: 0 0 auto;
-  color: var(--accent-color);
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: 400;
+  line-height: 1;
 }
 
 .engineering-card h3 {
@@ -636,6 +638,10 @@
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
   overflow-wrap: anywhere;
+}
+
+.engineering-sequence span:nth-child(3) {
+  font-size: clamp(0.68rem, 0.95vw, var(--text-base));
 }
 
 .engineering-boundaries {
