@@ -111,7 +111,7 @@ export const portfolioSections: SectionMeta[] = [
 export const projectsData: ProjectItem[] = [
   {
     id: 'omnitrack-task-hub',
-    title: 'OmniTrack Workflow Platform',
+    title: 'MERCURY',
     subtitle: 'Full-stack task management & collaboration dashboard',
     description:
       'Engineered an end-to-end task management and productivity dashboard featuring responsive UI components, user authentication, role-based project workspaces, and persistent database storage.',
@@ -126,7 +126,7 @@ export const projectsData: ProjectItem[] = [
   },
   {
     id: 'fastapi-pulse-service',
-    title: 'Pulse Analytics REST API',
+    title: 'AEGIS',
     subtitle: 'Asynchronous backend microservice with automated validation',
     description:
       'Designed and built an asynchronous backend service using Python and FastAPI, featuring automated schema validation with Pydantic, structured SQL database queries, and interactive Swagger OpenAPI documentation.',
@@ -141,7 +141,7 @@ export const projectsData: ProjectItem[] = [
   },
   {
     id: 'corecraft-memory-engine',
-    title: 'CoreCraft Systems Buffer',
+    title: 'LUX',
     subtitle: 'High-performance C++ circular buffer & data structure library',
     description:
       'Implemented a modular C++ systems library exploring manual memory allocation, custom circular ring buffers, and cache-friendly data structures with deterministic performance and clean resource cleanup.',
@@ -153,21 +153,6 @@ export const projectsData: ProjectItem[] = [
     githubUrl: 'https://github.com/razeequtama',
     metrics: ['Zero memory leaks verified', 'O(1) circular buffer ops', 'Strict compiler warnings'],
     architectureNotes: 'RAII idiom ensuring deterministic deallocation and explicit ownership semantics.',
-  },
-  {
-    id: 'aura-interactive-ui',
-    title: 'Aura Interactive Web Lab',
-    subtitle: 'Fluid interactive user interface and physics playground',
-    description:
-      'Created a fluid, responsive interactive web application exploring 60fps animations, custom coordinate physics, accessible keyboard navigation, and dynamic dark/light theme customization.',
-    category: 'Frontend',
-    techStack: ['React', 'TypeScript', 'Vite', 'HTML5 & CSS3'],
-    featured: false,
-    previewGradient: 'linear-gradient(135deg, #701a75 0%, #4a044e 100%)',
-    liveUrl: 'https://github.com/razeequtama',
-    githubUrl: 'https://github.com/razeequtama',
-    metrics: ['60 FPS smooth rendering', 'WCAG accessible navigation', 'Responsive mobile-first'],
-    architectureNotes: 'Pure mathematical coordinate mapping without DOM cloning or layout thrashing.',
   },
 ];
 
