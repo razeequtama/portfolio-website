@@ -27,6 +27,15 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
 
   return (
     <header className="section-header">
+      {/* Large suit glyph that stamps in and fades to a background watermark */}
+      {glyph && (
+        <span
+          className={`section-suit-stamp ${isRed ? 'stamp-red' : 'stamp-black'}`}
+          aria-hidden="true"
+        >
+          {glyph}
+        </span>
+      )}
       <h1 className="section-title">
         {glyph && (
           <span

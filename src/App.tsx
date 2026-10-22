@@ -16,6 +16,7 @@ import './styles/variables.css';
 import './styles/global.css';
 import './styles/turntable.css';
 import './styles/pages.css';
+import './styles/scrollReveal.css';
 
 export function App() {
   // Active card index tracks the currently-visible section (driven by scroll + IntersectionObserver)
@@ -85,6 +86,32 @@ export function App() {
     scrollToSection(index);
   }, [scrollToSection]);
 
+  // Scroll-reveal: one-shot observer that adds `.is-revealed` to each
+  // non-welcome section block the first time it enters the viewport.
+  useEffect(() => {
+    const revealObservers: IntersectionObserver[] = [];
+
+    portfolioSections.forEach((section, i) => {
+      if (section.id === 'welcome') return; // welcome is always visible, skip
+      const el = sectionRefs.current[i];
+      if (!el) return;
+
+      const obs = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            el.classList.add('is-revealed');
+            obs.disconnect(); // one-shot: stop watching after first reveal
+          }
+        },
+        { threshold: 0.08 } // trigger when just 8% of the section is visible
+      );
+      obs.observe(el);
+      revealObservers.push(obs);
+    });
+
+    return () => revealObservers.forEach((obs) => obs.disconnect());
+  }, []);
+
   // IntersectionObserver: keep activeIndex in sync when user scrolls manually.
   // Skipped while a programmatic scroll is in flight.
   useEffect(() => {
@@ -145,7 +172,7 @@ export function App() {
           key={portfolioSections[i].id}
           id={portfolioSections[i].id}
           ref={(el) => { sectionRefs.current[i] = el; }}
-          className="portfolio-section-block"
+          className={`portfolio-section-block${portfolioSections[i].id !== 'welcome' ? ' will-reveal' : ''}`}
           aria-label={portfolioSections[i].title}
         >
           {page}
