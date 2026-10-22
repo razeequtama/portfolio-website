@@ -71,60 +71,6 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onNavigate }) => {
         {/* Hero Portrait: Profile image positioned to the right with vintage speech bubble */}
         <HeroPortrait imageSrc={mePhoto} alt={developerProfile.name} />
       </section>
-
-      {/* Metrics / At-a-Glance Statistics Grid */}
-      <section className="metrics-grid" aria-label="Key Highlights and Metrics">
-        <div className="surface-card metric-card">
-          <div className="metric-value">{developerProfile.yearsExperience}</div>
-          <div className="metric-label">Academic Foundation</div>
-        </div>
-
-        <div className="surface-card metric-card">
-          <div className="metric-value">{developerProfile.projectsShipped}</div>
-          <div className="metric-label">Technical Focus</div>
-        </div>
-
-        <div className="surface-card metric-card">
-          <div className="metric-value">{developerProfile.systemReliability}</div>
-          <div className="metric-label">Internship Status</div>
-        </div>
-      </section>
-
-      {/* Quick Callouts Grid */}
-      <section className="welcome-callouts" aria-label="Engineering Focus Callouts">
-        <div className="surface-card callout-card">
-          <div className="callout-icon-title">
-            <span>⚡</span>
-            <span>Modern Frontend Engineering</span>
-          </div>
-          <p className="callout-desc">
-            Building fluid, responsive web interfaces with React, TypeScript, and modern CSS.
-            Dedicated to modular component architecture, accessible keyboard navigation, and smooth user experiences.
-          </p>
-        </div>
-
-        <div className="surface-card callout-card">
-          <div className="callout-icon-title">
-            <span>⚙️</span>
-            <span>Backend APIs & Databases</span>
-          </div>
-          <p className="callout-desc">
-            Developing structured RESTful services with Python, FastAPI, Express.js, and relational SQL / MongoDB databases.
-            Focused on data validation, clean API contracts, and robust CRUD design.
-          </p>
-        </div>
-
-        <div className="surface-card callout-card">
-          <div className="callout-icon-title">
-            <span>🔍</span>
-            <span>Algorithms & Systems Foundations</span>
-          </div>
-          <p className="callout-desc">
-            Firm grounding in computer science fundamentals: C++ memory management, data structures,
-            algorithmic efficiency, and Linux terminal development environments.
-          </p>
-        </div>
-      </section>
     </div>
   );
 };

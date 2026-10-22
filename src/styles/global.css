@@ -116,6 +116,11 @@ textarea:focus-visible {
   border-bottom: none;
 }
 
+/* Welcome section has less content now — tighten its bottom gap */
+#welcome.portfolio-section-block {
+  padding-bottom: clamp(1rem, 3vh, 2rem);
+}
+
 @keyframes pageContentFadeIn {
   from {
     opacity: 0;
