@@ -43,7 +43,7 @@ export const portfolioSections: SectionMeta[] = [
     number: '02',
     cardSuit: 'spades',
     cardRank: '2',
-    title: 'ENGINEERING\nFOCUS',
+    title: 'ENGINEERING FOCUS',
     subtitle: 'How I choose an approach, think across boundaries, and check behavior.',
     shortDesc: 'Problem fit, thoughtful implementation, and correctness with clear limits.',
     badge: 'Deep Dive',

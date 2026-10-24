@@ -24,6 +24,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
 }) => {
   const glyph = suit ? SUIT_GLYPHS[suit] : undefined;
   const isRed = suit ? RED_SUITS.has(suit) : false;
+  let letterIndex = 0;
 
   return (
     <header className="section-header">
@@ -36,7 +37,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
           {glyph}
         </span>
       )}
-      <h1 className="section-title">
+      <h1 className="section-title" aria-label={title.replace(/\s+/g, ' ')}>
         {glyph && (
           <span
             className="section-title-suit"
@@ -46,7 +47,50 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
             {glyph}
           </span>
         )}
-        {title}
+        {title.split('\n').map((line, lineIndex) => (
+          <React.Fragment key={`${line}-${lineIndex}`}>
+            {lineIndex > 0 && <br />}
+            <span className="section-title-line" aria-hidden="true">
+              {line.split(/(\s+)/).map((word, wordIndex) => {
+                if (/^\s+$/.test(word)) return word;
+                if (!word) return null;
+
+                return (
+                  <span className="section-title-word" key={`${word}-${wordIndex}`}>
+                    {Array.from(word).map((letter) => {
+                      const index = letterIndex++;
+                      const x = ((index * 67) % 220) - 110;
+                      const y = ((index * 41) % 150) - 75;
+                      const rotation = ((index * 29) % 80) - 40;
+                      const style: React.CSSProperties & {
+                        '--deal-x': string;
+                        '--deal-y': string;
+                        '--deal-rotation': string;
+                        '--letter-delay': string;
+                      } = {
+                        '--deal-x': `${x}px`,
+                        '--deal-y': `${y}px`,
+                        '--deal-rotation': `${rotation}deg`,
+                        '--letter-delay': `${index * 22}ms`,
+                      };
+
+                      return (
+                        <span
+                          className="section-title-card-letter"
+                          data-suit={glyph ?? '♦'}
+                          key={`${letter}-${index}`}
+                          style={style}
+                        >
+                          {letter}
+                        </span>
+                      );
+                    })}
+                  </span>
+                );
+              })}
+            </span>
+          </React.Fragment>
+        ))}
       </h1>
       <p className="section-subtitle">{subtitle}</p>
     </header>

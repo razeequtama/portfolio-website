@@ -31,6 +31,98 @@
   z-index: 1;
 }
 
+.section-title {
+  perspective: 900px;
+}
+
+.section-title-line {
+  display: inline-block;
+}
+
+.section-title-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.section-title-card-letter {
+  position: relative;
+  display: inline-block;
+  color: inherit;
+  transform-origin: center;
+  transform-style: preserve-3d;
+}
+
+.section-title-card-letter::before {
+  content: attr(data-suit);
+  position: absolute;
+  inset: 0.04em 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border-strong);
+  border-radius: 0.12em;
+  background:
+    repeating-linear-gradient(
+      135deg,
+      transparent 0,
+      transparent 0.16em,
+      var(--border-subtle) 0.16em,
+      var(--border-subtle) calc(0.16em + 1px)
+    ),
+    var(--bg-surface);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.28);
+  color: var(--accent-color);
+  font-family: var(--font-display);
+  font-size: 0.38em;
+  line-height: 1;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.is-revealed .section-title-card-letter {
+  animation: sectionTitleCardDeal 1.15s cubic-bezier(0.18, 0.76, 0.25, 1) both;
+  animation-delay: calc(100ms + var(--letter-delay));
+}
+
+.is-revealed .section-title-card-letter::before {
+  animation: sectionTitleCardBack 1.15s ease both;
+  animation-delay: calc(100ms + var(--letter-delay));
+}
+
+@keyframes sectionTitleCardDeal {
+  0% {
+    color: transparent;
+    transform: translate3d(var(--deal-x), var(--deal-y), -40px)
+      rotate(var(--deal-rotation)) rotateY(180deg) scale(0.72);
+  }
+  16% {
+    color: transparent;
+    transform: translate3d(var(--deal-y), var(--deal-x), 40px)
+      rotate(calc(0deg - var(--deal-rotation))) rotateY(90deg) scale(0.82);
+  }
+  38% {
+    color: transparent;
+    transform: translate3d(0, 0, 0) rotate(var(--deal-rotation)) rotateY(180deg)
+      scale(1.08);
+  }
+  58% {
+    color: transparent;
+    transform: translate3d(0, 0, 0) rotate(0) rotateY(90deg) scale(1.12);
+  }
+  70% {
+    color: inherit;
+    transform: translate3d(0, 0, 0) rotate(0) rotateY(0) scale(1);
+  }
+  100% {
+    color: inherit;
+    transform: translate3d(0, 0, 0) rotate(0) rotateY(0) scale(1);
+  }
+}
+
+@keyframes sectionTitleCardBack {
+  0%, 48% { opacity: 1; }
+  64%, 100% { opacity: 0; }
+}
+
 /* ── 2. SUIT STAMP WATERMARK ──────────────────────────────────────────────── */
 .section-suit-stamp {
   /* Sits behind everything in the header */
@@ -95,3 +187,9 @@
 .is-revealed .surface-card:nth-child(7) { transition-delay: 0.66s; }
 .is-revealed .surface-card:nth-child(8) { transition-delay: 0.74s; }
 
+@media (prefers-reduced-motion: reduce) {
+  .is-revealed .section-title-card-letter,
+  .is-revealed .section-title-card-letter::before {
+    animation: none;
+  }
+}
