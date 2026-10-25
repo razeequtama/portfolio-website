@@ -183,65 +183,55 @@
   stroke: rgba(197, 160, 89, 0.55);
 }
 
-/* Corner Pips (Rank above Suit) */
-.card-back-pip {
-  position: absolute !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  gap: 0.15rem;
-  z-index: 6;
+/* Corner Pips (Rank above Suit Inside Card Frame) */
+.card-back-svg-pip {
   pointer-events: none;
+  user-select: none;
 }
 
-.card-back-pip.card-back-pip-tl,
-.card-back-pip.pip-top-left {
-  position: absolute !important;
-  top: 1.45rem !important;
-  left: 1.45rem !important;
-  bottom: auto !important;
-  right: auto !important;
-  transform: none !important;
-  margin: 0 !important;
+.svg-pip-backdrop {
+  fill: #141210;
+  stroke: rgba(212, 175, 55, 0.45);
+  stroke-width: 0.75;
 }
 
-.card-back-pip.card-back-pip-br,
-.card-back-pip.pip-bottom-right {
-  position: absolute !important;
-  bottom: 1.45rem !important;
-  right: 1.45rem !important;
-  top: auto !important;
-  left: auto !important;
-  transform: rotate(180deg) !important;
-  margin: 0 !important;
+[data-theme='light'] .svg-pip-backdrop {
+  fill: #f4ede1;
+  stroke: rgba(197, 160, 89, 0.55);
 }
 
-.card-back-pip .pip-rank {
+.svg-pip-rank {
   font-family: var(--font-display);
-  font-size: 1.35rem;
+  font-size: 20px;
   font-weight: 700;
   line-height: 1;
-  color: var(--color-gold);
+  fill: var(--color-gold);
   letter-spacing: -0.02em;
 }
 
-.card-back-pip .pip-suit {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  line-height: 1;
-  color: var(--color-gold);
+.svg-pip-suit {
+  fill: var(--color-gold);
+  transition: transform var(--transition-fast);
 }
 
-.project-card-back.is-red-suit .card-back-pip .pip-suit,
-.project-card-back.is-red-suit .card-back-pip .pip-rank {
-  color: #f43f5e;
+.project-card-back.is-red-suit .svg-pip-rank,
+.project-card-back.is-red-suit .svg-pip-suit {
+  fill: #f43f5e;
 }
 
-[data-theme='light'] .project-card-back.is-red-suit .card-back-pip .pip-suit,
-[data-theme='light'] .project-card-back.is-red-suit .card-back-pip .pip-rank {
-  color: #dc2626;
+[data-theme='light'] .project-card-back.is-red-suit .svg-pip-rank,
+[data-theme='light'] .project-card-back.is-red-suit .svg-pip-suit {
+  fill: #dc2626;
+}
+
+.project-card-back.is-black-suit .svg-pip-rank,
+.project-card-back.is-black-suit .svg-pip-suit {
+  fill: var(--color-gold);
+}
+
+[data-theme='light'] .project-card-back.is-black-suit .svg-pip-rank,
+[data-theme='light'] .project-card-back.is-black-suit .svg-pip-suit {
+  fill: #aa820a;
 }
 
 /* Central HTML Core Overlay (Medallion Center) */

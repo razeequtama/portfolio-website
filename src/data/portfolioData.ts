@@ -114,7 +114,7 @@ export const projectsData: ProjectItem[] = [
     title: 'MERCURY',
     subtitle: 'Real-Time Demand intelligence',
     description:
-      'Engineered an end-to-end task management and productivity dashboard featuring responsive UI components, user authentication, role-based project workspaces, and persistent database storage.',
+      'Mercury is an end-to-end commerce intelligence command center that transforms raw transactional data, inventory levels, and competitor market shifts into auditable operational decisions. It couples a responsive Next.js 16 frontend, an Express 5 API gateway, a PostgreSQL 16 relational data store, and a Python FastAPI microservice powered by Scikit-Learn continuous linear regression.',
     category: 'Full Stack',
     techStack: ['React', 'TypeScript', 'Node.js', 'Express', 'PostgreSQL'],
     featured: true,
@@ -129,7 +129,7 @@ export const projectsData: ProjectItem[] = [
     title: 'AEGIS',
     subtitle: 'Financial Fraud Detection & Graph Intelligence Platform',
     description:
-      'Designed and built an asynchronous backend service using Python and FastAPI, featuring automated schema validation with Pydantic, structured SQL database queries, and interactive Swagger OpenAPI documentation.',
+      'Aegis is an enterprise-grade transactional fraud detection, behavioral anomaly scoring, entity network graph intelligence, and analyst case management powered by Machine Learning and Redis.',
     category: 'Cloud',
     techStack: ['Python', 'FastAPI', 'SQL', 'Docker', 'Postman'],
     featured: true,
@@ -141,10 +141,10 @@ export const projectsData: ProjectItem[] = [
   },
   {
     id: 'corecraft-memory-engine',
-    title: 'LUX',
+    title: 'Lux',
     subtitle: 'High-performance C++ circular buffer & data structure library',
     description:
-      'Implemented a modular C++ systems library exploring manual memory allocation, custom circular ring buffers, and cache-friendly data structures with deterministic performance and clean resource cleanup.',
+      'LUX is an evidence-based data observability and data quality validation platform built for analytics engineers, and data consumers. It evaluates datasets against deterministic quality rules, maps multi-tier upstream-to-downstream lineage DAGs, disentangles pipeline execution success from underlying data corruption, and coordinates structured incident investigations with cryptographically verifiable audit reports.',
     category: 'Systems',
     techStack: ['C++', 'Linux', 'Bash', 'Makefile'],
     featured: false,
