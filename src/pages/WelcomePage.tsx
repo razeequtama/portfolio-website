@@ -33,7 +33,7 @@ const greetings = [
   'Kumusta',
   'Cześć',
 ];
-const initialGreetingIndex = 2; // Starts with 'Hi'
+const initialGreetingIndex = 2;
 
 interface WelcomePageProps {
   onNavigate: (sectionIndex: number) => void;
@@ -66,7 +66,6 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onNavigate }) => {
   return (
     <div className="page-welcome">
       <section className="welcome-hero">
-        {/* Subtle Interactive Tech Logo Background Glows */}
         <HeroTechGlows />
 
         <div className="welcome-hero-content">
@@ -89,16 +88,13 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onNavigate }) => {
             <span className="hero-title-role">{developerProfile.role}.</span>
           </h2>
 
-          {/* Hero Bio Summary */}
           <p className="hero-bio">
             I design and build resilient distributed systems, high-performance web applications,
             and robust developer tooling. Focused on deterministic architectures, strict typing,
             and fluid interactive experiences.
           </p>
 
-          {/* Action Buttons to Jump Directly to Other Sections */}
           <div className="welcome-actions">
-            {/* Jump to Projects (index 2) */}
             <button
               type="button"
               className="btn-primary"
@@ -107,7 +103,6 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onNavigate }) => {
               Explore Projects →
             </button>
 
-            {/* Jump to Contact (index 6) */}
             <button
               type="button"
               className="btn-secondary"
@@ -116,7 +111,6 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onNavigate }) => {
               Get In Touch
             </button>
 
-            {/* Direct CV Download Link */}
             <a
               href="#download-cv"
               className="btn-secondary"
@@ -127,7 +121,6 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onNavigate }) => {
           </div>
         </div>
 
-        {/* Hero Portrait: Profile image positioned to the right with vintage speech bubble */}
         <HeroPortrait imageSrc={mePhoto} alt={developerProfile.name} />
       </section>
     </div>

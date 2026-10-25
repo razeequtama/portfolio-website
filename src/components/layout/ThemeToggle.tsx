@@ -18,7 +18,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
       title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
     >
       {theme === 'dark' ? (
-        /* Sun Icon */
+        
         <svg
           width="19"
           height="19"
@@ -40,7 +40,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
           <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
         </svg>
       ) : (
-        /* Moon Icon */
+        
         <svg
           width="19"
           height="19"

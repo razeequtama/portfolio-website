@@ -27,7 +27,6 @@ export const TurntableCard: React.FC<TurntableCardProps> = ({
   transition,
   onClick,
 }) => {
-  // Mounting formula: transform: rotate(netAngle) translateY(-radius) scale(scale)
   const anchorStyle: React.CSSProperties = {
     transform: `rotate(${netAngle}deg) translateY(-${radius}px) scale(${scale})`,
     opacity,
@@ -57,15 +56,12 @@ export const TurntableCard: React.FC<TurntableCardProps> = ({
           }
         }}
       >
-        {/* Authentic Casino Card Inner Border Hairline Frame */}
         <div className="card-inner-frame" aria-hidden="true" />
 
-        {/* Subtle Large Center Watermark Playing Card Suit Symbol */}
         <div className="card-center-watermark" aria-hidden="true">
           <PlayingCardSuitIcon suit={suit} />
         </div>
 
-        {/* Top-Left Corner Pip (Rank above Suit) */}
         <div className="card-corner-pip pip-top-left" aria-hidden="true">
           <span className="pip-rank">{rank}</span>
           <span className="pip-suit">
@@ -73,16 +69,13 @@ export const TurntableCard: React.FC<TurntableCardProps> = ({
           </span>
         </div>
 
-        {/* Card Body: Title & Subtitle */}
         <div className="turntable-card-body">
           <div className="card-title">{section.title}</div>
           <div className="card-subtitle">{section.subtitle}</div>
         </div>
 
-        {/* Card Graphic: Blueprint Schematic & Visual Terminal */}
         <TurntableCardGraphic sectionId={section.id} isActive={isActive} />
 
-        {/* Card Footer: Inverted Corner Pip on Bottom-Right */}
         <div className="turntable-card-footer" aria-hidden="true">
           <div className="card-corner-pip pip-bottom-right">
             <span className="pip-rank">{rank}</span>

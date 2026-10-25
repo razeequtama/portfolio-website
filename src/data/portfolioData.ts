@@ -8,12 +8,6 @@ import type {
   ContactContent,
 } from '../types/portfolio';
 
-/* =========================================================================
-   PORTFOLIO CONFIGURATION & DATA SOURCE
-   Tailored for Raziq Rabbani Utama — Software Engineering Internship Portfolio
-   ========================================================================= */
-
-/* === Developer Profile & Quick At-a-Glance Highlights === */
 export const developerProfile: DeveloperProfile = {
   name: 'Raziq Rabbani Utama',
   role: 'Software Engineer',
@@ -24,7 +18,6 @@ export const developerProfile: DeveloperProfile = {
   systemReliability: 'Available',
 };
 
-/* === Section Definitions (7 items in the circular turntable carousel) === */
 export const portfolioSections: SectionMeta[] = [
   {
     id: 'welcome',
@@ -105,9 +98,6 @@ export const portfolioSections: SectionMeta[] = [
   },
 ];
 
-/* =========================================================================
-   02. PROJECTS DATA
-   ========================================================================= */
 export const projectsData: ProjectItem[] = [
   {
     id: 'omnitrack-task-hub',
@@ -162,9 +152,6 @@ export const projectsData: ProjectItem[] = [
   },
 ];
 
-/* =========================================================================
-   04. EXPERIENCE TIMELINE DATA
-   ========================================================================= */
 export const experienceData: ExperienceItem[] = [
   {
     id: 'exp-lab-assistant-binus',
@@ -208,9 +195,6 @@ export const experienceData: ExperienceItem[] = [
   },
 ];
 
-/* =========================================================================
-   05. TECH STACK & PROFICIENCY DATA
-   ========================================================================= */
 export const skillCategories: SkillCategory[] = [
   {
     id: 'languages',
@@ -283,9 +267,6 @@ export const skillCategories: SkillCategory[] = [
   },
 ];
 
-/* =========================================================================
-   06. ABOUT ME DATA
-   ========================================================================= */
 export const aboutData: AboutContent = {
   bioParagraphs: [
     "I'm a Software Engineering student at BINUS University with a strong interest in building software that solves real-world problems. I enjoy working across the full stack, from designing intuitive user interfaces to engineering backend systems and data-driven solutions.",
@@ -295,9 +276,6 @@ export const aboutData: AboutContent = {
   ],
 };
 
-/* =========================================================================
-   07. CONTACT DATA
-   ========================================================================= */
 export const contactData: ContactContent = {
   email: 'rabbaniu74m4@gmail.com',
   location: 'Kota Bekasi, Jawa Barat, Indonesia',

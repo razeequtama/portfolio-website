@@ -5,7 +5,6 @@ interface GearTableSurfaceProps {
   transition: string;
 }
 
-// Procedural 20-Tooth Bold Cogwheel Geometry (Clean, Industrial, Not overly detailed)
 function generateGearPath(
   cx: number,
   cy: number,
@@ -38,15 +37,11 @@ function generateGearPath(
       d += `A ${rRoot} ${rRoot} 0 0 1 ${x1} ${y1} `;
     }
 
-    // Left flank: root up to tooth crest
     d += `L ${x2} ${y2} `;
-    // Tooth top land: arc across outer radius
     d += `A ${rOuter} ${rOuter} 0 0 1 ${x3} ${y3} `;
-    // Right flank: tooth crest down to root
     d += `L ${x4} ${y4} `;
   }
 
-  // Close arc back to initial root point
   const firstT1 = -Math.PI / 2 - 0.23 * delta;
   const firstX1 = (cx + rRoot * Math.cos(firstT1)).toFixed(2);
   const firstY1 = (cy + rRoot * Math.sin(firstT1)).toFixed(2);
@@ -58,7 +53,6 @@ function generateGearPath(
 const NUM_TEETH = 20;
 const GEAR_PATH = generateGearPath(500, 500, NUM_TEETH, 492, 442);
 
-// 6 Clean Spoke Openings (Evenly spaced at 60°)
 const SPOKE_HOLES = Array.from({ length: 6 }, (_, i) => {
   const angle = (i * Math.PI) / 3;
   return {
@@ -86,7 +80,6 @@ export const GearTableSurface: React.FC<GearTableSurfaceProps> = ({
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
-          {/* Subtle Convex Metal Shading: tactile depth without visual clutter */}
           <radialGradient id="gear-surface-grad" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stopColor="var(--bg-elevated)" />
             <stop offset="48%" stopColor="var(--turntable-disc-bg)" />
@@ -96,7 +89,6 @@ export const GearTableSurface: React.FC<GearTableSurfaceProps> = ({
           </radialGradient>
         </defs>
 
-        {/* 1. Main 20-Tooth Cogwheel Body */}
         <path
           d={GEAR_PATH}
           fill="url(#gear-surface-grad)"
@@ -105,7 +97,6 @@ export const GearTableSurface: React.FC<GearTableSurfaceProps> = ({
           strokeLinejoin="round"
         />
 
-        {/* 2. Outer Bevel Rim (Defines the teeth rim) */}
         <circle
           cx="500"
           cy="500"
@@ -116,7 +107,6 @@ export const GearTableSurface: React.FC<GearTableSurfaceProps> = ({
           opacity="0.8"
         />
 
-        {/* 3. 6 Clean Spoke Lightening Holes */}
         {SPOKE_HOLES.map((hole, idx) => (
           <g key={`hole-${idx}`}>
             <circle
@@ -127,7 +117,6 @@ export const GearTableSurface: React.FC<GearTableSurfaceProps> = ({
               stroke="var(--border-strong)"
               strokeWidth="2.5"
             />
-            {/* Subtle inner depth shadow */}
             <circle
               cx={hole.cx}
               cy={hole.cy}
@@ -139,7 +128,6 @@ export const GearTableSurface: React.FC<GearTableSurfaceProps> = ({
           </g>
         ))}
 
-        {/* 4. Inner Hub Structural Ring */}
         <circle
           cx="500"
           cy="500"
@@ -150,7 +138,6 @@ export const GearTableSurface: React.FC<GearTableSurfaceProps> = ({
           opacity="0.85"
         />
 
-        {/* 5. Solid Central Hub */}
         <circle
           cx="500"
           cy="500"
@@ -160,7 +147,6 @@ export const GearTableSurface: React.FC<GearTableSurfaceProps> = ({
           strokeWidth="3"
         />
 
-        {/* 6. Axle Center Collar & Accent Jewel Core */}
         <circle
           cx="500"
           cy="500"

@@ -122,12 +122,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, onOpenVideo }
         if (entry.isIntersecting) {
           observer.disconnect();
 
-          // 1. Staggered card throw: thrown from outside the screen on the left, one by one
           throwTimerRef.current = window.setTimeout(() => {
             setIsThrown(true);
           }, 80 + index * 340);
 
-          // 2. Staggered flip reveal: once landed, flip one by one
           flipTimerRef.current = window.setTimeout(() => {
             setIsFlipped(true);
           }, 1150 + index * 480);
@@ -150,7 +148,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, onOpenVideo }
 
   const meta = getProjectCardMeta(project, index);
 
-  // Flight trajectory parameters per card column (increasing distance & rotation)
   const throwConfigs = [
     { initialY: '-20px', initialRot: '-26deg', overshootX: '12px', overshootRot: '1.6deg' },
     { initialY: '-35px', initialRot: '-30deg', overshootX: '16px', overshootRot: '2.0deg' },
@@ -178,7 +175,6 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, onOpenVideo }
         />
 
         <div className="project-card-front" inert={!isFlipped}>
-          {/* 1. Media preview snapshot space */}
           <div
             className="project-preview"
             style={{ background: project.previewGradient }}
@@ -195,10 +191,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, onOpenVideo }
             )}
           </div>
 
-          {/* 2. Left-aligned Logo and Title lockup with subtle glow */}
           {renderProjectBrand(project)}
 
-          {/* 3. Video Demo / Live Demo and Source Code directly below Title and Logo */}
           <div className="project-links">
             {project.videoDemoUrl ? (
               <button
@@ -233,13 +227,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, onOpenVideo }
             )}
           </div>
 
-          {/* 4. Subtitle */}
           <div className="project-subtitle">{project.subtitle}</div>
 
-          {/* 5. Description */}
           <p className="project-desc">{project.description}</p>
 
-          {/* 6. Tech stack tags */}
           <div className="project-tags">
             {project.techStack.map((tech) => (
               <span key={tech} className="tag-badge">

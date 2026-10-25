@@ -66,10 +66,8 @@ export const ContactPage: React.FC = () => {
       />
 
       <div className="contact-layout">
-        {/* Left Column: Direct Info & Social Profiles */}
         <div className="contact-info-panel">
           <div className="surface-card">
-            {/* === CHANGE HERE: Primary Contact Email === */}
             <div className="contact-meta-row" style={{ marginBottom: '1.25rem' }}>
               <span className="contact-meta-label">Direct Email</span>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
@@ -105,8 +103,6 @@ export const ContactPage: React.FC = () => {
               <span className="contact-meta-label">Expected Response</span>
               <span className="contact-meta-value">{contactData.responseTime}</span>
             </div>
-
-            {/* Download CV Button */}
             <div style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid var(--border-subtle)' }}>
               <button
                 type="button"
@@ -118,10 +114,7 @@ export const ContactPage: React.FC = () => {
               </button>
             </div>
           </div>
-
-          {/* Social Links List */}
           <div className="social-links-list">
-            {/* === DUPLICATE THIS BLOCK OF CODE TO ADD A NEW Social Profile === */}
             {contactData.socials.map((social) => (
               <a
                 key={social.platform}
@@ -139,8 +132,6 @@ export const ContactPage: React.FC = () => {
             ))}
           </div>
         </div>
-
-        {/* Right Column: Contact Form Skeleton */}
         <div className="surface-card">
           <h2 style={{ fontSize: 'var(--text-lg)', fontWeight: 700, marginBottom: '0.5rem' }}>
             Send a Direct Message

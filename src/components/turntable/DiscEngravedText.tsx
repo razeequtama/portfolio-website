@@ -16,7 +16,6 @@ export const DiscEngravedText: React.FC<DiscEngravedTextProps> = ({
 }) => {
   return (
     <div className="disc-flanking-controls" aria-label="Turntable Navigation Controls">
-      {/* PREVIOUS SECTION BUTTON (Only shown when there is a preceding card) */}
       {prevSection && (
         <button
           type="button"
@@ -35,7 +34,6 @@ export const DiscEngravedText: React.FC<DiscEngravedTextProps> = ({
         </button>
       )}
 
-      {/* NEXT SECTION BUTTON (Only shown when there is a succeeding card) */}
       {nextSection && (
         <button
           type="button"

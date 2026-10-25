@@ -14,7 +14,7 @@ const SUIT_GLYPHS: Record<SuitType, string> = {
 interface FlipCardLetterProps {
   char: string;
   suit: SuitType;
-  /** When true, the card is flipped by the parent intro animation */
+  
   introFlipped?: boolean;
 }
 
@@ -29,13 +29,11 @@ const FlipCardLetter: React.FC<FlipCardLetterProps> = ({ char, suit, introFlippe
     }
   }, []);
 
-  // Desktop mouse enter: flip immediately and cancel any pending flip-back timer
   const handleMouseEnter = () => {
     clearTimer();
     setIsFlipped(true);
   };
 
-  // Desktop mouse leave: pause for about two seconds before flipping back
   const handleMouseLeave = () => {
     clearTimer();
     timerRef.current = window.setTimeout(() => {
@@ -44,7 +42,6 @@ const FlipCardLetter: React.FC<FlipCardLetterProps> = ({ char, suit, introFlippe
     }, 500);
   };
 
-  // Phone / Tablet tap (or click): flips to card, pauses for 2 seconds, then automatically flips back
   const handleInteraction = (e?: React.SyntheticEvent) => {
     if (e) {
       e.stopPropagation();
@@ -66,7 +63,6 @@ const FlipCardLetter: React.FC<FlipCardLetterProps> = ({ char, suit, introFlippe
   const isRed = suit === 'hearts' || suit === 'diamonds';
   const suitGlyph = SUIT_GLYPHS[suit];
 
-  // Combine intro-driven flip with user-interaction flip
   const flipped = introFlipped || isFlipped;
 
   return (
@@ -85,32 +81,26 @@ const FlipCardLetter: React.FC<FlipCardLetterProps> = ({ char, suit, introFlippe
         }
       }}
     >
-      {/* Front Face: Natural Letter in Text Flow (Bold Instrument Serif) */}
       <span className="card-letter-front" aria-hidden="true">
         {char}
       </span>
 
-      {/* Back Face: Sleek & Nifty Miniature Casino Playing Card */}
       <span
         className={`card-letter-back ${isRed ? 'card-suit-red' : 'card-suit-black'}`}
         aria-hidden="true"
       >
-        {/* Miniature Gold Hairline Inner Frame */}
         <span className="mini-card-frame" />
 
-        {/* Top-Left Corner Pip */}
         <span className="mini-pip pip-tl">
           <span className="mini-pip-letter">{char}</span>
           <span className="mini-pip-suit">{suitGlyph}</span>
         </span>
 
-        {/* Center: Prominent Letter with Watermark Suit */}
         <span className="mini-card-center">
           <span className="mini-card-watermark">{suitGlyph}</span>
           <span className="mini-card-letter">{char}</span>
         </span>
 
-        {/* Bottom-Right Inverted Corner Pip */}
         <span className="mini-pip pip-br">
           <span className="mini-pip-letter">{char}</span>
           <span className="mini-pip-suit">{suitGlyph}</span>
@@ -120,9 +110,7 @@ const FlipCardLetter: React.FC<FlipCardLetterProps> = ({ char, suit, introFlippe
   );
 };
 
-// Duration (ms) each letter stays flipped during the intro wave
 const INTRO_FLIP_HOLD_MS = 500;
-// Stagger delay (ms) between each consecutive letter starting to flip
 const INTRO_STAGGER_MS = 90;
 
 interface FlipCardNameProps {
@@ -133,21 +121,18 @@ interface FlipCardNameProps {
 export const FlipCardName: React.FC<FlipCardNameProps> = ({ name, suffix }) => {
   const totalLetters = Array.from(name.replace(/ /g, '')).length;
 
-  // introFlippedSet: set of letter indices currently flipped by the intro wave
   const [introFlippedSet, setIntroFlippedSet] = useState<ReadonlySet<number>>(new Set());
 
   useEffect(() => {
     const timers: number[] = [];
 
     for (let i = 0; i < totalLetters; i++) {
-      // Flip letter i ON
       timers.push(
         window.setTimeout(() => {
           setIntroFlippedSet((prev) => new Set([...prev, i]));
         }, i * INTRO_STAGGER_MS)
       );
 
-      // Flip letter i OFF (after the hold period)
       timers.push(
         window.setTimeout(() => {
           setIntroFlippedSet((prev) => {
@@ -162,7 +147,6 @@ export const FlipCardName: React.FC<FlipCardNameProps> = ({ name, suffix }) => {
     return () => {
       timers.forEach((t) => clearTimeout(t));
     };
-    // Run only once on mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

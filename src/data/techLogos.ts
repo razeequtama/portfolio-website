@@ -1,4 +1,3 @@
-// Automatically extracted authentic SVG vector paths for the 14 interactive hero tech logos
 export interface TechLogo {
   id: string;
   name: string;

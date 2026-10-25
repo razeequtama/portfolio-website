@@ -34,7 +34,6 @@ export const HeroPortrait: React.FC<HeroPortraitProps> = ({ imageSrc, alt }) => 
     setIsTyping(true);
 
     let charIdx = 0;
-    // ~36ms per letter gives an elegant, vintage typewriter pace
     typewriterTimerRef.current = window.setInterval(() => {
       charIdx++;
       setDisplayedText(fullQuote.slice(0, charIdx));
@@ -60,11 +59,9 @@ export const HeroPortrait: React.FC<HeroPortraitProps> = ({ imageSrc, alt }) => 
       autoCloseTimerRef.current = null;
     }
     setIsTyping(false);
-    // Cycle sequentially to the next quote for the next interaction
     setQuoteIndex((prev) => (prev + 1) % HERO_PORTRAIT_QUOTES.length);
   }, []);
 
-  // Desktop hover interactions
   const handleMouseEnter = () => {
     const isDesktop =
       typeof window !== 'undefined' &&
@@ -86,14 +83,12 @@ export const HeroPortrait: React.FC<HeroPortraitProps> = ({ imageSrc, alt }) => 
     closeBubble();
   };
 
-  // Mobile / tablet click/tap interaction (and keyboard trigger)
   const handleInteraction = (e?: React.SyntheticEvent) => {
     if (e) {
       e.stopPropagation();
     }
 
     if (isActive) {
-      // If already open, advance immediately to next quote
       if (typewriterTimerRef.current) clearInterval(typewriterTimerRef.current);
       if (autoCloseTimerRef.current) clearTimeout(autoCloseTimerRef.current);
 
@@ -107,7 +102,6 @@ export const HeroPortrait: React.FC<HeroPortraitProps> = ({ imageSrc, alt }) => 
       return;
     }
 
-    // Open and begin typing
     setIsActive(true);
     startTyping(HERO_PORTRAIT_QUOTES[quoteIndex]);
 
@@ -116,7 +110,6 @@ export const HeroPortrait: React.FC<HeroPortraitProps> = ({ imageSrc, alt }) => 
     }, 4200);
   };
 
-  // Keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
@@ -126,7 +119,6 @@ export const HeroPortrait: React.FC<HeroPortraitProps> = ({ imageSrc, alt }) => 
     }
   };
 
-  // Click outside listener for mobile/tablet
   useEffect(() => {
     if (!isActive) return;
 
@@ -143,7 +135,6 @@ export const HeroPortrait: React.FC<HeroPortraitProps> = ({ imageSrc, alt }) => 
     };
   }, [isActive, closeBubble]);
 
-  // Clean up timers on unmount
   useEffect(() => {
     return () => {
       if (typewriterTimerRef.current) clearInterval(typewriterTimerRef.current);
@@ -167,7 +158,6 @@ export const HeroPortrait: React.FC<HeroPortraitProps> = ({ imageSrc, alt }) => 
     >
       <div className="hero-image-glow" aria-hidden="true" />
 
-      {/* Vintage Speech Bubble pointing to the portrait head */}
       <div
         className={`hero-speech-bubble ${isActive ? 'is-visible' : ''}`}
         aria-live="polite"

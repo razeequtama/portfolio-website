@@ -15,7 +15,6 @@ export const ExperiencePage: React.FC = () => {
         suit={experienceMeta.cardSuit}
       />
 
-      {/* Experience Timeline */}
       <div className="timeline-container">
         {experienceData.map((item: ExperienceItem) => (
           <div key={item.id} className="timeline-item">

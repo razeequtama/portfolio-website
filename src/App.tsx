@@ -3,7 +3,6 @@ import { portfolioSections } from './data/portfolioData';
 import { Layout } from './components/layout/Layout';
 import { TurntableDock } from './components/turntable/TurntableDock';
 
-// The 7 Dedicated Section Pages
 import { WelcomePage } from './pages/WelcomePage';
 import { ProjectsPage } from './pages/ProjectsPage';
 import { EngineeringPage } from './pages/EngineeringPage';
@@ -19,17 +18,14 @@ import './styles/pages.css';
 import './styles/scrollReveal.css';
 
 export function App() {
-  // Active card index tracks the currently-visible section (driven by scroll + IntersectionObserver)
   const [activeIndex, setActiveIndex] = useState<number>(0);
 
-  // Theme state: 'dark' (default) or 'light'
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     const saved = localStorage.getItem('theme-preference');
     if (saved === 'light' || saved === 'dark') return saved;
     return 'dark';
   });
 
-  // Apply theme to html data-theme attribute
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme-preference', theme);
@@ -39,20 +35,14 @@ export function App() {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
   };
 
-  // Refs to each section DOM element for scroll-into-view navigation
   const sectionRefs = useRef<(HTMLElement | null)[]>(
     portfolioSections.map(() => null)
   );
 
-  // When true, the IntersectionObserver ignores intersection events because
-  // we triggered a programmatic scroll — prevents the turntable from
-  // spinning through every intermediate section during navigation.
   const isProgrammaticScrollRef = useRef<boolean>(false);
   const programmaticScrollTimerRef = useRef<number | null>(null);
 
-  // Scroll the viewport to a section smoothly and lock IO for ~1 s
   const scrollToSection = useCallback((index: number) => {
-    // Suppress IO-driven activeIndex updates for the duration of the scroll
     isProgrammaticScrollRef.current = true;
     if (programmaticScrollTimerRef.current !== null) {
       clearTimeout(programmaticScrollTimerRef.current);
@@ -68,7 +58,6 @@ export function App() {
     }
   }, []);
 
-  // Navigation handlers: update turntable immediately then scroll
   const handleNext = useCallback(() => {
     const next = Math.min(activeIndex + 1, portfolioSections.length - 1);
     setActiveIndex(next);
@@ -86,13 +75,11 @@ export function App() {
     scrollToSection(index);
   }, [scrollToSection]);
 
-  // Scroll-reveal: one-shot observer that adds `.is-revealed` to each
-  // non-welcome section block the first time it enters the viewport.
   useEffect(() => {
     const revealObservers: IntersectionObserver[] = [];
 
     portfolioSections.forEach((section, i) => {
-      if (section.id === 'welcome') return; // welcome is always visible, skip
+      if (section.id === 'welcome') return;
       const el = sectionRefs.current[i];
       if (!el) return;
 
@@ -100,10 +87,10 @@ export function App() {
         ([entry]) => {
           if (entry.isIntersecting) {
             el.classList.add('is-revealed');
-            obs.disconnect(); // one-shot: stop watching after first reveal
+            obs.disconnect();
           }
         },
-        { threshold: 0.08 } // trigger when just 8% of the section is visible
+        { threshold: 0.08 }
       );
       obs.observe(el);
       revealObservers.push(obs);
@@ -112,8 +99,6 @@ export function App() {
     return () => revealObservers.forEach((obs) => obs.disconnect());
   }, []);
 
-  // IntersectionObserver: keep activeIndex in sync when user scrolls manually.
-  // Skipped while a programmatic scroll is in flight.
   useEffect(() => {
     const observers: IntersectionObserver[] = [];
 
@@ -128,7 +113,6 @@ export function App() {
           }
         },
         {
-          // Trigger when a section occupies at least 30% of the viewport
           threshold: 0.3,
         }
       );

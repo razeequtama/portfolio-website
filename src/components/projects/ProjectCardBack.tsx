@@ -45,10 +45,8 @@ export const ProjectCardBack: React.FC<ProjectCardBackProps> = ({
         }
       }}
     >
-      {/* Dynamic Foil Sheen Sweep across Card Face */}
       <div className="card-back-foil-sweep" aria-hidden="true" />
 
-      {/* SVG Vector Guilloché & Gilded Engraving Framework */}
       <svg
         className="card-back-guilloche-svg"
         viewBox="0 0 340 540"
@@ -57,7 +55,6 @@ export const ProjectCardBack: React.FC<ProjectCardBackProps> = ({
         aria-hidden="true"
       >
         <defs>
-          {/* Metallic Gold Foil Linear Gradient */}
           <linearGradient id={goldGradId} x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#f5d77f" />
             <stop offset="35%" stopColor="#d4af37" />
@@ -65,7 +62,6 @@ export const ProjectCardBack: React.FC<ProjectCardBackProps> = ({
             <stop offset="100%" stopColor="#e8c252" />
           </linearGradient>
 
-          {/* Micro-Diamond Guilloché Pattern */}
           <pattern
             id={patternId}
             width="20"
@@ -93,13 +89,11 @@ export const ProjectCardBack: React.FC<ProjectCardBackProps> = ({
             />
           </pattern>
 
-          {/* Mask to keep center medallion clean of background grid */}
           <mask id={maskId}>
             <rect width="340" height="540" fill="#ffffff" />
             <circle cx="170" cy="216" r="72" fill="#000000" />
           </mask>
 
-          {/* Circular Text Paths for the Central Seal */}
           <path
             id={pathTopId}
             d="M 102,216 A 68,68 0 1,1 238,216"
@@ -112,7 +106,6 @@ export const ProjectCardBack: React.FC<ProjectCardBackProps> = ({
           />
         </defs>
 
-        {/* Outer Gilded Hairline Border */}
         <rect
           x="12"
           y="12"
@@ -124,7 +117,6 @@ export const ProjectCardBack: React.FC<ProjectCardBackProps> = ({
           className="card-border-outer"
         />
 
-        {/* Secondary Delicate Beaded Frame */}
         <rect
           x="18"
           y="18"
@@ -137,7 +129,6 @@ export const ProjectCardBack: React.FC<ProjectCardBackProps> = ({
           className="card-border-dashed"
         />
 
-        {/* Third Inner Solid Hairline Frame */}
         <rect
           x="23"
           y="23"
@@ -149,7 +140,6 @@ export const ProjectCardBack: React.FC<ProjectCardBackProps> = ({
           className="card-border-inner"
         />
 
-        {/* Guilloché Lattice Background Field (masked around medallion) */}
         <rect
           x="24"
           y="24"
@@ -160,8 +150,6 @@ export const ProjectCardBack: React.FC<ProjectCardBackProps> = ({
           mask={`url(#${maskId})`}
         />
 
-        {/* Four Ornate Victorian / Casino Corner Flourishes */}
-        {/* Top-Left */}
         <g className="corner-flourish">
           <path
             d="M12 38 C12 24 24 12 38 12 M12 26 C20 26 26 20 26 12"
@@ -170,7 +158,6 @@ export const ProjectCardBack: React.FC<ProjectCardBackProps> = ({
           />
           <circle cx="28" cy="28" r="2.2" fill={`url(#${goldGradId})`} />
         </g>
-        {/* Top-Right */}
         <g className="corner-flourish">
           <path
             d="M328 38 C328 24 316 12 302 12 M328 26 C320 26 314 20 314 12"
@@ -179,7 +166,6 @@ export const ProjectCardBack: React.FC<ProjectCardBackProps> = ({
           />
           <circle cx="312" cy="28" r="2.2" fill={`url(#${goldGradId})`} />
         </g>
-        {/* Bottom-Left */}
         <g className="corner-flourish">
           <path
             d="M12 502 C12 516 24 528 38 528 M12 514 C20 514 26 520 26 528"
@@ -188,7 +174,6 @@ export const ProjectCardBack: React.FC<ProjectCardBackProps> = ({
           />
           <circle cx="28" cy="512" r="2.2" fill={`url(#${goldGradId})`} />
         </g>
-        {/* Bottom-Right */}
         <g className="corner-flourish">
           <path
             d="M328 502 C328 516 316 528 302 528 M328 514 C320 514 314 520 314 528"
@@ -198,9 +183,7 @@ export const ProjectCardBack: React.FC<ProjectCardBackProps> = ({
           <circle cx="312" cy="512" r="2.2" fill={`url(#${goldGradId})`} />
         </g>
 
-        {/* Central Medallion Architecture (Center: 170, 216) */}
         <g className="central-medallion-group">
-          {/* Outer Plaque Base */}
           <circle
             cx="170"
             cy="216"
@@ -210,7 +193,6 @@ export const ProjectCardBack: React.FC<ProjectCardBackProps> = ({
             strokeWidth="1.5"
           />
 
-          {/* Beaded Ring */}
           <circle
             cx="170"
             cy="216"
@@ -222,7 +204,6 @@ export const ProjectCardBack: React.FC<ProjectCardBackProps> = ({
             className="medallion-bead-ring"
           />
 
-          {/* Engraved Circular Typography: Top Path */}
           <text
             className="medallion-text"
             fontSize="6.5"
@@ -236,7 +217,6 @@ export const ProjectCardBack: React.FC<ProjectCardBackProps> = ({
             </textPath>
           </text>
 
-          {/* Engraved Circular Typography: Bottom Path */}
           <text
             className="medallion-text"
             fontSize="6.5"
@@ -250,7 +230,6 @@ export const ProjectCardBack: React.FC<ProjectCardBackProps> = ({
             </textPath>
           </text>
 
-          {/* Inner Medallion Border */}
           <circle
             cx="170"
             cy="216"
@@ -271,7 +250,6 @@ export const ProjectCardBack: React.FC<ProjectCardBackProps> = ({
             className="medallion-inner-beads"
           />
 
-          {/* Radiating Compass / Sunburst Rays */}
           {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((deg) => (
             <line
               key={deg}
@@ -286,7 +264,6 @@ export const ProjectCardBack: React.FC<ProjectCardBackProps> = ({
             />
           ))}
 
-          {/* Inner Medallion Center Shield Fill */}
           <circle
             cx="170"
             cy="216"
@@ -294,7 +271,6 @@ export const ProjectCardBack: React.FC<ProjectCardBackProps> = ({
             className="medallion-core-circle"
           />
         </g>
-        {/* Top-Left Corner Pip (Rank & Suit Inside Card Frame) */}
         <g className="card-back-svg-pip card-back-svg-pip-tl">
           <rect
             x="26"
@@ -320,7 +296,6 @@ export const ProjectCardBack: React.FC<ProjectCardBackProps> = ({
           </g>
         </g>
 
-        {/* Bottom-Right Inverted Corner Pip (180° Point Reflection) */}
         <g
           className="card-back-svg-pip card-back-svg-pip-br"
           transform="rotate(180 170 270)"
@@ -350,7 +325,6 @@ export const ProjectCardBack: React.FC<ProjectCardBackProps> = ({
         </g>
       </svg>
 
-      {/* Center Seal Core: Large Emblem & Roman Numeral */}
       <div className="medallion-html-core" aria-hidden="true">
         <div className={`medallion-suit-glyph suit-${meta.suit}`}>
           <PlayingCardSuitIcon suit={meta.suit} />
@@ -362,7 +336,6 @@ export const ProjectCardBack: React.FC<ProjectCardBackProps> = ({
         </div>
       </div>
 
-      {/* Prominent, Grand Project Title Display */}
       <div className="card-back-title-section" aria-hidden="true">
         <div className="card-back-title-divider">
           <span className="divider-flourish" />

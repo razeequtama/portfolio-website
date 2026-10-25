@@ -16,7 +16,6 @@ export const TechStackPage: React.FC = () => {
         suit={techStackMeta.cardSuit}
       />
 
-      {/* Categorized Skills Grid */}
       <div className="tech-stack-grid">
         {skillCategories.map((category: SkillCategory) => (
           <div key={category.id} className="surface-card stack-category-card">

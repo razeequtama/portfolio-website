@@ -46,7 +46,6 @@ export const getProjectCardMeta = (project: ProjectItem, index: number): Project
   const titleLower = project.title.toLowerCase();
   const idLower = project.id.toLowerCase();
 
-  // 01. Mercury: Sovereign Ace of Spades
   if (titleLower.includes('mercury') || idLower.includes('mercury') || idLower.includes('omnitrack')) {
     return {
       suit: 'spades',
@@ -59,7 +58,6 @@ export const getProjectCardMeta = (project: ProjectItem, index: number): Project
     };
   }
 
-  // 02. Aegis: Sentinel King of Hearts
   if (titleLower.includes('aegis') || idLower.includes('aegis') || idLower.includes('fastapi')) {
     return {
       suit: 'hearts',
@@ -72,7 +70,6 @@ export const getProjectCardMeta = (project: ProjectItem, index: number): Project
     };
   }
 
-  // 03. Lux: High-Performance Engine (Jack of Clubs)
   if (titleLower.includes('lux') || idLower.includes('lux') || idLower.includes('corecraft')) {
     return {
       suit: 'clubs',
@@ -85,7 +82,6 @@ export const getProjectCardMeta = (project: ProjectItem, index: number): Project
     };
   }
 
-  // Graceful fallback for any additional projects
   const suitList: PlayingCardSuit[] = ['diamonds', 'spades', 'hearts', 'clubs'];
   const suit = suitList[index % suitList.length];
   const glyphMap: Record<PlayingCardSuit, string> = {

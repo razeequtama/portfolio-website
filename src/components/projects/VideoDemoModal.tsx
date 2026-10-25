@@ -16,11 +16,9 @@ export const VideoDemoModal: React.FC<VideoDemoModalProps> = ({ project, onClose
   useEffect(() => {
     if (!project) return;
 
-    // Lock body scrolling while modal is active
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
 
-    // Focus close button on mount for quick keyboard access
     closeButtonRef.current?.focus();
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -43,7 +41,6 @@ export const VideoDemoModal: React.FC<VideoDemoModalProps> = ({ project, onClose
   }
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    // Avoid closing if click was on the scrollbar track
     if (e.clientX > e.currentTarget.clientWidth) {
       return;
     }
@@ -64,7 +61,6 @@ export const VideoDemoModal: React.FC<VideoDemoModalProps> = ({ project, onClose
         aria-modal="true"
         aria-labelledby="video-modal-title"
       >
-        {/* Modal Header */}
         <div className="video-modal-header">
           <div className="video-modal-title-wrap">
             <h2 id="video-modal-title" className="video-modal-title">
@@ -88,7 +84,6 @@ export const VideoDemoModal: React.FC<VideoDemoModalProps> = ({ project, onClose
           </div>
         </div>
 
-        {/* Video Player */}
         <div className="video-player-container">
           <video
             ref={videoRef}
@@ -105,7 +100,6 @@ export const VideoDemoModal: React.FC<VideoDemoModalProps> = ({ project, onClose
           </video>
         </div>
 
-        {/* Modal Footer */}
         <div className="video-modal-footer">
           <div className="video-modal-meta">
             <span className="video-modal-subtitle">{project.subtitle}</span>
