@@ -5,6 +5,7 @@ import type { ProjectItem } from '../types/portfolio';
 import { ProjectCardBack } from '../components/projects/ProjectCardBack';
 import { getProjectCardMeta } from '../utils/cardUtils';
 import { VideoDemoModal } from '../components/projects/VideoDemoModal';
+import { GitHubIcon } from '../components/common/GitHubIcon';
 import mercuryLogo from '../assets/projects_logos/mercury_logo.svg';
 import aegisLogo from '../assets/projects_logos/aegis_logo.svg';
 import luxLogoText from '../assets/projects_logos/lux_logo_text.svg';
@@ -177,12 +178,22 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, onOpenVideo }
         />
 
         <div className="project-card-front" inert={!isFlipped}>
-          {/* 1. Rectangular media preview space (ready for screenshot / video) */}
+          {/* 1. Media preview snapshot space */}
           <div
             className="project-preview"
             style={{ background: project.previewGradient }}
             aria-label={`${project.title} media preview`}
-          />
+          >
+            {project.snapshotUrl && (
+              <img
+                src={project.snapshotUrl}
+                alt={`${project.title} snapshot`}
+                className="project-preview-img"
+                loading="lazy"
+                decoding="async"
+              />
+            )}
+          </div>
 
           {/* 2. Left-aligned Logo and Title lockup with subtle glow */}
           {renderProjectBrand(project)}
@@ -216,7 +227,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, onOpenVideo }
                 rel="noopener noreferrer"
                 className="project-link-btn"
               >
-                <span>Source Code [GH] ↗</span>
+                <GitHubIcon />
+                <span>Source Code ↗</span>
               </a>
             )}
           </div>

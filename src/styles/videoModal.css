@@ -11,10 +11,31 @@
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  padding: 1.25rem;
+  padding: 2.25rem 1.25rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
   animation: modalBackdropFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Custom scrollbar for modal backdrop */
+.video-modal-backdrop::-webkit-scrollbar {
+  width: 8px;
+}
+
+.video-modal-backdrop::-webkit-scrollbar-track {
+  background: rgba(10, 9, 8, 0.6);
+}
+
+.video-modal-backdrop::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.video-modal-backdrop::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-color, #e11d48);
 }
 
 @keyframes modalBackdropFadeIn {
@@ -30,7 +51,7 @@
   position: relative;
   width: 100%;
   max-width: 960px;
-  max-height: 92vh;
+  margin: auto;
   background: var(--bg-surface, #181614);
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: var(--radius-lg, 12px);
@@ -60,7 +81,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.9rem 1.25rem;
+  padding: 0.95rem 1.35rem;
   border-bottom: 1px solid var(--border-color, #2e2b27);
   background: rgba(26, 24, 22, 0.96);
   gap: 1rem;
@@ -69,54 +90,16 @@
 .video-modal-title-wrap {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
   min-width: 0;
-}
-
-.video-modal-indicator {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-family: var(--font-mono, monospace);
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  color: var(--accent-color, #e11d48);
-  background: rgba(225, 29, 72, 0.12);
-  border: 1px solid rgba(225, 29, 72, 0.3);
-  padding: 0.15rem 0.55rem;
-  border-radius: var(--radius-full, 9999px);
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-.video-modal-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: var(--accent-color, #e11d48);
-  box-shadow: 0 0 8px var(--accent-color, #e11d48);
-  animation: pulseIndicator 1.8s infinite ease-in-out;
-}
-
-@keyframes pulseIndicator {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.35;
-    transform: scale(0.75);
-  }
 }
 
 .video-modal-title {
   margin: 0;
   font-family: var(--font-sans, sans-serif);
-  font-size: var(--text-base, 1rem);
+  font-size: 1.05rem;
   font-weight: 700;
   color: var(--text-primary, #f5f0e8);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.05em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -189,17 +172,17 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.85rem 1.25rem;
+  padding: 0.95rem 1.35rem;
   background: rgba(22, 20, 18, 0.96);
   border-top: 1px solid var(--border-color, #2e2b27);
-  gap: 1rem;
+  gap: 1.25rem;
   flex-wrap: wrap;
 }
 
 .video-modal-meta {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.35rem;
   min-width: 0;
   flex: 1;
 }
@@ -208,9 +191,7 @@
   font-family: var(--font-mono, monospace);
   font-size: var(--text-xs, 0.75rem);
   color: var(--accent-color, #e11d48);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.4;
 }
 
 .video-modal-tags {
@@ -222,7 +203,7 @@
 .video-modal-tag {
   font-family: var(--font-mono, monospace);
   font-size: 0.68rem;
-  padding: 0.1rem 0.45rem;
+  padding: 0.12rem 0.45rem;
   border-radius: var(--radius-sm, 4px);
   background-color: var(--bg-surface-hover, #22201d);
   border: 1px solid var(--border-color, #2e2b27);
@@ -236,18 +217,28 @@
   flex-shrink: 0;
 }
 
+.project-gh-icon {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+  transition: transform var(--transition-fast, 150ms ease);
+}
+
+.project-link-btn:hover .project-gh-icon {
+  transform: scale(1.1);
+}
+
 @media (max-width: 640px) {
   .video-modal-backdrop {
-    padding: 0.5rem;
+    padding: 1rem 0.5rem;
   }
   .video-modal-header {
-    padding: 0.65rem 0.85rem;
+    padding: 0.75rem 1rem;
   }
   .video-modal-kbd {
     display: none;
   }
   .video-modal-footer {
-    padding: 0.65rem 0.85rem;
+    padding: 0.75rem 1rem;
   }
 }
-

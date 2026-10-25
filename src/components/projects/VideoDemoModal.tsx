@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import type { ProjectItem } from '../../types/portfolio';
+import { GitHubIcon } from '../common/GitHubIcon';
 import '../../styles/videoModal.css';
 
 interface VideoDemoModalProps {
@@ -42,6 +43,10 @@ export const VideoDemoModal: React.FC<VideoDemoModalProps> = ({ project, onClose
   }
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Avoid closing if click was on the scrollbar track
+    if (e.clientX > e.currentTarget.clientWidth) {
+      return;
+    }
     if (e.target === e.currentTarget) {
       onClose();
     }
@@ -62,12 +67,8 @@ export const VideoDemoModal: React.FC<VideoDemoModalProps> = ({ project, onClose
         {/* Modal Header */}
         <div className="video-modal-header">
           <div className="video-modal-title-wrap">
-            <span className="video-modal-indicator">
-              <span className="video-modal-dot" aria-hidden="true" />
-              Demo Preview
-            </span>
             <h2 id="video-modal-title" className="video-modal-title">
-              {project.title}
+              {project.title.toUpperCase()} VIDEO DEMO
             </h2>
           </div>
 
@@ -97,6 +98,7 @@ export const VideoDemoModal: React.FC<VideoDemoModalProps> = ({ project, onClose
             autoPlay
             playsInline
             preload="auto"
+            poster={project.snapshotUrl}
           >
             <source src={project.videoDemoUrl} type="video/mp4" />
             Your browser does not support the video tag.
@@ -124,7 +126,8 @@ export const VideoDemoModal: React.FC<VideoDemoModalProps> = ({ project, onClose
                 rel="noopener noreferrer"
                 className="project-link-btn"
               >
-                <span>Source Code [GH] ↗</span>
+                <GitHubIcon />
+                <span>Source Code ↗</span>
               </a>
             )}
           </div>
@@ -135,4 +138,3 @@ export const VideoDemoModal: React.FC<VideoDemoModalProps> = ({ project, onClose
 
   return createPortal(modalContent, document.body);
 };
-

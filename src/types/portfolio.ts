@@ -33,6 +33,7 @@ export interface ProjectItem {
   liveUrl?: string;
   githubUrl?: string;
   videoDemoUrl?: string;
+  snapshotUrl?: string;
   metrics: string[];
   architectureNotes?: string;
 }
