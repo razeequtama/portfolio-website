@@ -315,9 +315,6 @@ export const ProjectCardBack: React.FC<ProjectCardBackProps> = ({
 
         <h3 className="card-back-project-title">{project.title}</h3>
 
-        <div className="card-back-project-subtitle">
-          {project.category.toUpperCase()} • EDITION {meta.number}
-        </div>
       </div>
 
       {/* Bottom-Right Inverted Corner Pip */}

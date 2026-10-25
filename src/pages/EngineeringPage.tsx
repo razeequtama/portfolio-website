@@ -87,7 +87,7 @@ export const EngineeringPage: React.FC = () => {
                 <h3>Check what the API promises.</h3>
               </div>
               <p>
-                I’ve worked on verifying Mercury’s forecast API. Its automated tests compare
+                I’ve worked on verifying Mercury’s, Aegis', and Lux's forecast API. Their automated tests compare
                 responses with known expected outputs across these behaviors.
               </p>
             </div>
