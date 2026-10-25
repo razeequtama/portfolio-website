@@ -112,7 +112,7 @@ export const projectsData: ProjectItem[] = [
   {
     id: 'omnitrack-task-hub',
     title: 'MERCURY',
-    subtitle: 'Full-stack task management & collaboration dashboard',
+    subtitle: 'Real-Time Demand intelligence',
     description:
       'Engineered an end-to-end task management and productivity dashboard featuring responsive UI components, user authentication, role-based project workspaces, and persistent database storage.',
     category: 'Full Stack',
@@ -127,7 +127,7 @@ export const projectsData: ProjectItem[] = [
   {
     id: 'fastapi-pulse-service',
     title: 'AEGIS',
-    subtitle: 'Asynchronous backend microservice with automated validation',
+    subtitle: 'Financial Fraud Detection & Graph Intelligence Platform',
     description:
       'Designed and built an asynchronous backend service using Python and FastAPI, featuring automated schema validation with Pydantic, structured SQL database queries, and interactive Swagger OpenAPI documentation.',
     category: 'Cloud',

@@ -19,16 +19,16 @@ const renderProjectBrand = (project: ProjectItem) => {
   if (titleUpper.includes('MERCURY') || project.id === 'omnitrack-task-hub') {
     return (
       <div className="project-brand-showcase">
-        <div className="project-brand-glow glow-mercury" aria-hidden="true" />
         <div className="project-brand-lockup">
+          <div className="project-brand-glow glow-mercury" aria-hidden="true" />
           <img
             src={mercuryLogo}
-            alt="Mercury logo"
+            alt=""
             className="brand-logo-mercury"
             loading="lazy"
             decoding="async"
           />
-          <span className="brand-text-mercury">MERCURY</span>
+          <h2 className="brand-text-mercury">MERCURY</h2>
         </div>
       </div>
     );
@@ -37,16 +37,16 @@ const renderProjectBrand = (project: ProjectItem) => {
   if (titleUpper.includes('AEGIS') || project.id === 'fastapi-pulse-service') {
     return (
       <div className="project-brand-showcase">
-        <div className="project-brand-glow glow-aegis" aria-hidden="true" />
         <div className="project-brand-lockup">
+          <div className="project-brand-glow glow-aegis" aria-hidden="true" />
           <img
             src={aegisLogo}
-            alt="Aegis logo"
+            alt=""
             className="brand-logo-aegis"
             loading="lazy"
             decoding="async"
           />
-          <span className="brand-text-aegis">AEGIS</span>
+          <h2 className="brand-text-aegis">AEGIS</h2>
         </div>
       </div>
     );
@@ -55,23 +55,24 @@ const renderProjectBrand = (project: ProjectItem) => {
   if (titleUpper.includes('LUX') || project.id === 'corecraft-memory-engine') {
     return (
       <div className="project-brand-showcase">
-        <div className="project-brand-glow glow-lux" aria-hidden="true" />
         <div className="project-brand-lockup">
+          <div className="project-brand-glow glow-lux" aria-hidden="true" />
           <img
             src={luxLogoText}
-            alt="LUX logo and wordmark"
+            alt="LUX"
             className="brand-logo-lux"
             loading="lazy"
             decoding="async"
           />
+          <h2 className="sr-only">LUX</h2>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="project-preview-mock">
-      <span>{project.techStack.slice(0, 3).join(' • ')}</span>
+    <div className="project-brand-showcase">
+      <h2 className="project-title">{project.title}</h2>
     </div>
   );
 };
@@ -174,33 +175,17 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
         />
 
         <div className="project-card-front" inert={!isFlipped}>
+          {/* 1. Rectangular media preview space (ready for screenshot / video) */}
           <div
             className="project-preview"
             style={{ background: project.previewGradient }}
-          >
-            <div className="preview-badge-row">
-              <span className="project-category-badge">{project.category}</span>
-              {project.featured && (
-                <span className="project-category-badge" style={{ borderColor: 'var(--accent-color)' }}>
-                  ★ Featured
-                </span>
-              )}
-            </div>
-            {renderProjectBrand(project)}
-          </div>
+            aria-label={`${project.title} media preview`}
+          />
 
-          <h2 className="project-title sr-only">{project.title}</h2>
-          <div className="project-subtitle">{project.subtitle}</div>
-          <p className="project-desc">{project.description}</p>
+          {/* 2. Left-aligned Logo and Title lockup with subtle glow */}
+          {renderProjectBrand(project)}
 
-          <div className="project-tags">
-            {project.techStack.map((tech) => (
-              <span key={tech} className="tag-badge">
-                {tech}
-              </span>
-            ))}
-          </div>
-
+          {/* 3. Live Demo and Source Code directly below Title and Logo */}
           <div className="project-links">
             {project.liveUrl && (
               <a
@@ -222,6 +207,21 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
                 <span>Source Code [GH] ↗</span>
               </a>
             )}
+          </div>
+
+          {/* 4. Subtitle */}
+          <div className="project-subtitle">{project.subtitle}</div>
+
+          {/* 5. Description */}
+          <p className="project-desc">{project.description}</p>
+
+          {/* 6. Tech stack tags */}
+          <div className="project-tags">
+            {project.techStack.map((tech) => (
+              <span key={tech} className="tag-badge">
+                {tech}
+              </span>
+            ))}
           </div>
         </div>
       </div>
