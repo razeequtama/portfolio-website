@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { SectionHeader } from '../components/common/SectionHeader';
-import { portfolioSections, projectsData } from '../data/portfolioData';
+import { getPortfolioSections, getProjectsData } from '../data/portfolioData';
+import { useLanguage } from '../context/LanguageContext';
 import type { ProjectItem } from '../types/portfolio';
 import { ProjectCardBack } from '../components/projects/ProjectCardBack';
 import { getProjectCardMeta } from '../utils/cardUtils';
@@ -13,6 +14,7 @@ import luxLogoText from '../assets/projects_logos/lux_logo_text.svg';
 interface ProjectCardProps {
   project: ProjectItem;
   index: number;
+  language: string;
   onOpenVideo: (project: ProjectItem) => void;
 }
 
@@ -80,7 +82,7 @@ const renderProjectBrand = (project: ProjectItem) => {
   );
 };
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, onOpenVideo }) => {
+const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, language, onOpenVideo }) => {
   const cardRef = useRef<HTMLElement>(null);
   const throwTimerRef = useRef<number | null>(null);
   const flipTimerRef = useRef<number | null>(null);
@@ -155,6 +157,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, onOpenVideo }
   ];
   const config = throwConfigs[index % throwConfigs.length];
 
+  const liveDemoLabel = language === 'id' ? 'Demo Langsung ↗' : 'Live Demo ↗';
+  const sourceCodeLabel = language === 'id' ? 'Kode Sumber ↗' : 'Source Code ↗';
+
   return (
     <article
       ref={cardRef}
@@ -211,7 +216,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, onOpenVideo }
                 rel="noopener noreferrer"
                 className="project-link-btn"
               >
-                <span>Live Demo ↗</span>
+                <span>{liveDemoLabel}</span>
               </a>
             ) : null}
             {project.githubUrl && (
@@ -222,7 +227,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, onOpenVideo }
                 className="project-link-btn"
               >
                 <GitHubIcon />
-                <span>Source Code ↗</span>
+                <span>{sourceCodeLabel}</span>
               </a>
             )}
           </div>
@@ -245,7 +250,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, onOpenVideo }
 };
 
 export const ProjectsPage: React.FC = () => {
-  const projectsMeta = portfolioSections[2];
+  const { language } = useLanguage();
+  const projectsMeta = getPortfolioSections(language)[2];
+  const projects = getProjectsData(language);
   const [selectedVideoProject, setSelectedVideoProject] = useState<ProjectItem | null>(null);
 
   return (
@@ -257,11 +264,12 @@ export const ProjectsPage: React.FC = () => {
       />
 
       <div className="projects-grid">
-        {projectsData.map((project: ProjectItem, index: number) => (
+        {projects.map((project: ProjectItem, index: number) => (
           <ProjectCard
             key={project.id}
             project={project}
             index={index}
+            language={language}
             onOpenVideo={setSelectedVideoProject}
           />
         ))}

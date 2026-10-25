@@ -63,6 +63,40 @@
   box-shadow: var(--shadow-md);
 }
 
+/* --- WELCOME HERO ENTERING ANIMATIONS --- */
+@keyframes heroFadeSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroPortraitEnterDesktop {
+  0% {
+    opacity: 0;
+    transform: translate(10px, -10px) scale(0.93);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(10px, -34px) scale(1);
+  }
+}
+
+@keyframes heroPortraitEnterMobile {
+  0% {
+    opacity: 0;
+    transform: translateY(22px) scale(0.93);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* --- 01. WELCOME PAGE --- */
 .welcome-hero {
   display: flex;
@@ -98,6 +132,7 @@
   margin-right: clamp(1rem, 2vw, 2.5rem);
   transform: translate(10px, -34px);
   z-index: 2;
+  animation: heroPortraitEnterDesktop 0.95s cubic-bezier(0.16, 1, 0.3, 1) 0.18s both;
 }
 
 .hero-image-glow {
@@ -176,6 +211,7 @@
     transform: none;
     justify-content: center;
     padding-right: 0;
+    animation-name: heroPortraitEnterMobile;
   }
 
   .welcome-hero-image {
@@ -211,6 +247,7 @@
   line-height: 1.1;
   letter-spacing: -0.015em;
   color: var(--text-primary);
+  animation: heroFadeSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both;
 }
 
 .hero-title-greeting {
@@ -284,6 +321,14 @@
     transition: none;
     transform: none;
   }
+
+  .hero-main-title,
+  .hero-bio,
+  .welcome-actions > *,
+  .welcome-hero-image-wrapper {
+    animation: none !important;
+    opacity: 1 !important;
+  }
 }
 
 .hero-highlight-name {
@@ -296,6 +341,19 @@
   color: var(--text-secondary);
   max-width: 950px;
   line-height: 1.6;
+  animation: heroFadeSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.22s both;
+}
+
+.welcome-actions > :nth-child(1) {
+  animation: heroFadeSlideUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.36s both;
+}
+
+.welcome-actions > :nth-child(2) {
+  animation: heroFadeSlideUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.46s both;
+}
+
+.welcome-actions > :nth-child(3) {
+  animation: heroFadeSlideUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.56s both;
 }
 
 .welcome-actions {
@@ -1186,16 +1244,21 @@
 }
 
 /* --- 06. ABOUT ME PAGE --- */
+.page-about {
+  width: 100%;
+}
+
 .about-intro-card {
-  font-size: var(--text-base);
+  width: 100%;
+  max-width: 100%;
+  padding: clamp(1.75rem, 3.5vw, 3rem);
+  font-size: clamp(1.05rem, 1.18vw, 1.15rem);
   line-height: 1.85;
   color: var(--text-secondary);
-  padding: 2.25rem;
-  max-width: 900px;
 }
 
 .about-paragraph {
-  margin-bottom: 1.35rem;
+  margin-bottom: 1.5rem;
 }
 
 .about-paragraph:last-child {

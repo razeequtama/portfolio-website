@@ -1,11 +1,14 @@
 import React from 'react';
 import { SectionHeader } from '../components/common/SectionHeader';
-import { portfolioSections, skillCategories } from '../data/portfolioData';
+import { getPortfolioSections, getSkillCategories } from '../data/portfolioData';
+import { useLanguage } from '../context/LanguageContext';
 import { TechIcon } from '../components/tech/TechIcon';
 import type { SkillCategory } from '../types/portfolio';
 
 export const TechStackPage: React.FC = () => {
-  const techStackMeta = portfolioSections[4];
+  const { language } = useLanguage();
+  const techStackMeta = getPortfolioSections(language)[4];
+  const categories = getSkillCategories(language);
 
   return (
     <div className="page-tech-stack">
@@ -16,11 +19,10 @@ export const TechStackPage: React.FC = () => {
       />
 
       <div className="tech-stack-grid">
-        {skillCategories.map((category: SkillCategory) => (
+        {categories.map((category: SkillCategory) => (
           <div key={category.id} className="surface-card stack-category-card">
             <div className="stack-category-header">
               <h2 className="stack-category-name">{category.name}</h2>
-              
             </div>
 
             <div className="tech-chips-wrap">

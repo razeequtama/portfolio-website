@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useLanguage } from '../../context/LanguageContext';
 import '../../styles/heroPortrait.css';
 
 interface HeroPortraitProps {
@@ -6,15 +7,27 @@ interface HeroPortraitProps {
   alt: string;
 }
 
-const HERO_PORTRAIT_QUOTES = [
-  "Pretty handsome guy, ain't he?",
-  "Always doing my best.",
-  "Delivering goods, all the time.",
-  "Learning and improving by the second.",
-  "I can be fun too!",
-];
+const HERO_PORTRAIT_QUOTES = {
+  en: [
+    "Pretty handsome guy, ain't he?",
+    "Always doing my best.",
+    "Delivering goods, all the time.",
+    "Learning and improving by the second.",
+    "I can be fun too!",
+  ],
+  id: [
+    "Cukup tampan, bukan?",
+    "Selalu melakukan yang terbaik.",
+    "Memberikan hasil berkualitas, setiap saat.",
+    "Belajar dan berkembang setiap detik.",
+    "Saya juga bisa asyik, lho!",
+  ],
+};
 
 export const HeroPortrait: React.FC<HeroPortraitProps> = ({ imageSrc, alt }) => {
+  const { language } = useLanguage();
+  const quotes = HERO_PORTRAIT_QUOTES[language] || HERO_PORTRAIT_QUOTES.en;
+
   const [isActive, setIsActive] = useState(false);
   const [quoteIndex, setQuoteIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState('');
@@ -59,8 +72,8 @@ export const HeroPortrait: React.FC<HeroPortraitProps> = ({ imageSrc, alt }) => 
       autoCloseTimerRef.current = null;
     }
     setIsTyping(false);
-    setQuoteIndex((prev) => (prev + 1) % HERO_PORTRAIT_QUOTES.length);
-  }, []);
+    setQuoteIndex((prev) => (prev + 1) % quotes.length);
+  }, [quotes.length]);
 
   const handleMouseEnter = () => {
     const isDesktop =
@@ -70,7 +83,7 @@ export const HeroPortrait: React.FC<HeroPortraitProps> = ({ imageSrc, alt }) => 
     if (!isDesktop) return;
 
     setIsActive(true);
-    startTyping(HERO_PORTRAIT_QUOTES[quoteIndex]);
+    startTyping(quotes[quoteIndex % quotes.length]);
   };
 
   const handleMouseLeave = () => {
@@ -92,9 +105,9 @@ export const HeroPortrait: React.FC<HeroPortraitProps> = ({ imageSrc, alt }) => 
       if (typewriterTimerRef.current) clearInterval(typewriterTimerRef.current);
       if (autoCloseTimerRef.current) clearTimeout(autoCloseTimerRef.current);
 
-      const nextIdx = (quoteIndex + 1) % HERO_PORTRAIT_QUOTES.length;
+      const nextIdx = (quoteIndex + 1) % quotes.length;
       setQuoteIndex(nextIdx);
-      startTyping(HERO_PORTRAIT_QUOTES[nextIdx]);
+      startTyping(quotes[nextIdx]);
 
       autoCloseTimerRef.current = window.setTimeout(() => {
         closeBubble();
@@ -103,7 +116,7 @@ export const HeroPortrait: React.FC<HeroPortraitProps> = ({ imageSrc, alt }) => 
     }
 
     setIsActive(true);
-    startTyping(HERO_PORTRAIT_QUOTES[quoteIndex]);
+    startTyping(quotes[quoteIndex % quotes.length]);
 
     autoCloseTimerRef.current = window.setTimeout(() => {
       closeBubble();
@@ -154,7 +167,7 @@ export const HeroPortrait: React.FC<HeroPortraitProps> = ({ imageSrc, alt }) => 
       role="button"
       aria-haspopup="dialog"
       aria-expanded={isActive}
-      aria-label={`${alt}. Click or hover to reveal quote.`}
+      aria-label={`${alt}. ${language === 'id' ? 'Klik atau arahkan kursor untuk melihat pesan.' : 'Click or hover to reveal quote.'}`}
     >
       <div className="hero-image-glow" aria-hidden="true" />
 

@@ -1,10 +1,13 @@
 import React from 'react';
 import { SectionHeader } from '../components/common/SectionHeader';
-import { portfolioSections, experienceData } from '../data/portfolioData';
+import { getPortfolioSections, getExperienceData } from '../data/portfolioData';
+import { useLanguage } from '../context/LanguageContext';
 import type { ExperienceItem } from '../types/portfolio';
 
 export const ExperiencePage: React.FC = () => {
-  const experienceMeta = portfolioSections[3];
+  const { language } = useLanguage();
+  const experienceMeta = getPortfolioSections(language)[3];
+  const experiences = getExperienceData(language);
 
   return (
     <div className="page-experience">
@@ -15,7 +18,7 @@ export const ExperiencePage: React.FC = () => {
       />
 
       <div className="timeline-container">
-        {experienceData.map((item: ExperienceItem) => (
+        {experiences.map((item: ExperienceItem) => (
           <div key={item.id} className="timeline-item">
             <div className="timeline-dot" aria-hidden="true" />
 

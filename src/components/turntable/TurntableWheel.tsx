@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { portfolioSections } from '../../data/portfolioData';
+import { getPortfolioSections } from '../../data/portfolioData';
+import { useLanguage } from '../../context/LanguageContext';
 import { TurntableCard } from './TurntableCard';
 import { GearTableSurface } from './GearTableSurface';
 
@@ -31,6 +32,8 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
   showFirstVisitCue,
   onSelectIndex,
 }) => {
+  const { language } = useLanguage();
+  const sections = getPortfolioSections(language);
   const [radius, setRadius] = useState<number>(() =>
     typeof window !== 'undefined' ? getResponsiveRadius(window.innerWidth) : 410
   );
@@ -323,7 +326,7 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
       />
 
       <div className="turntable-cards-layer">
-        {portfolioSections.map((section, idx) => {
+        {sections.map((section, idx) => {
           const diff = idx - effectiveVisualIndex;
 
           const netAngle = diff * STEP_ANGLE + dragOffsetAngle;

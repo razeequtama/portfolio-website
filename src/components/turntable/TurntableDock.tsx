@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { portfolioSections } from '../../data/portfolioData';
+import { getPortfolioSections } from '../../data/portfolioData';
+import { useLanguage } from '../../context/LanguageContext';
 import { TurntableWheel } from './TurntableWheel';
 import { DiscEngravedText } from './DiscEngravedText';
 
@@ -18,6 +19,10 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
   onNext,
   onPrev,
 }) => {
+  const { language } = useLanguage();
+  const sections = getPortfolioSections(language);
+  const isID = language === 'id';
+
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [isManuallyCollapsed, setIsManuallyCollapsed] = useState<boolean>(false);
@@ -115,7 +120,7 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
         const steps = Math.trunc(scrollAccumulatorRef.current / SCROLL_STEP_THRESHOLD);
         scrollAccumulatorRef.current -= steps * SCROLL_STEP_THRESHOLD;
 
-        const target = Math.max(0, Math.min(portfolioSections.length - 1, activeIndex + steps));
+        const target = Math.max(0, Math.min(sections.length - 1, activeIndex + steps));
         if (target !== activeIndex) {
           onSelectIndex(target);
         }
@@ -126,7 +131,7 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
     return () => {
       dockEl.removeEventListener('wheel', handleWheel);
     };
-  }, [activeIndex, onSelectIndex]);
+  }, [activeIndex, onSelectIndex, sections.length]);
 
   const lastToggleTimeRef = useRef<number>(0);
 
@@ -319,9 +324,9 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
     isSwipingUpRef.current = false;
   };
 
-  const totalCards = portfolioSections.length;
-  const prevSection = activeIndex > 0 ? portfolioSections[activeIndex - 1] : null;
-  const nextSection = activeIndex < totalCards - 1 ? portfolioSections[activeIndex + 1] : null;
+  const totalCards = sections.length;
+  const prevSection = activeIndex > 0 ? sections[activeIndex - 1] : null;
+  const nextSection = activeIndex < totalCards - 1 ? sections[activeIndex + 1] : null;
 
   const dockSwipeStyle: React.CSSProperties | undefined =
     swipeProgress !== null
@@ -354,7 +359,7 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
-      aria-label="Interactive Circular Turntable Navigation"
+      aria-label={isID ? 'Navigasi Turntable Interaktif' : 'Interactive Circular Turntable Navigation'}
       role="region"
       aria-roledescription="turntable-dock"
     >
@@ -370,18 +375,26 @@ export const TurntableDock: React.FC<TurntableDockProps> = ({
             type="button"
             className={`touch-pill-btn ${isDockOpen ? 'touch-collapse-pill' : 'touch-expand-pill'} ${isCueActive ? 'has-cue-glow' : ''}`}
             onClick={toggleDock}
-            aria-label={isDockOpen ? 'Collapse turntable dock' : 'Expand turntable dock'}
+            aria-label={
+              isDockOpen
+                ? isID
+                  ? 'Tutup navigasi turntable'
+                  : 'Collapse turntable dock'
+                : isID
+                  ? 'Buka navigasi turntable'
+                  : 'Expand turntable dock'
+            }
           >
             {!isDockOpen ? (
               <>
                 <span className="expand-pill-arrow" aria-hidden="true">
                   ▴
                 </span>
-                <span>Expand</span>
+                <span>{isID ? 'Buka' : 'Expand'}</span>
               </>
             ) : (
               <>
-                <span>Collapse</span>
+                <span>{isID ? 'Tutup' : 'Collapse'}</span>
                 <span className="collapse-pill-arrow" aria-hidden="true">
                   ▾
                 </span>

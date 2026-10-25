@@ -1,9 +1,12 @@
 import React from 'react';
 import { SectionHeader } from '../components/common/SectionHeader';
-import { portfolioSections, aboutData } from '../data/portfolioData';
+import { getPortfolioSections, getAboutData } from '../data/portfolioData';
+import { useLanguage } from '../context/LanguageContext';
 
 export const AboutPage: React.FC = () => {
-  const aboutMeta = portfolioSections[5];
+  const { language } = useLanguage();
+  const aboutMeta = getPortfolioSections(language)[5];
+  const about = getAboutData(language);
 
   return (
     <div className="page-about">
@@ -14,7 +17,7 @@ export const AboutPage: React.FC = () => {
       />
 
       <div className="surface-card about-intro-card">
-        {aboutData.bioParagraphs.map((paragraph, idx) => (
+        {about.bioParagraphs.map((paragraph, idx) => (
           <p key={idx} className="about-paragraph">
             {paragraph}
           </p>

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { portfolioSections } from './data/portfolioData';
+import { getPortfolioSections } from './data/portfolioData';
+import { useLanguage } from './context/LanguageContext';
 import { Layout } from './components/layout/Layout';
 import { TurntableDock } from './components/turntable/TurntableDock';
 
@@ -18,6 +19,8 @@ import './styles/pages.css';
 import './styles/scrollReveal.css';
 
 export function App() {
+  const { language } = useLanguage();
+  const sections = getPortfolioSections(language);
   const [activeIndex, setActiveIndex] = useState<number>(0);
 
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
@@ -36,7 +39,7 @@ export function App() {
   };
 
   const sectionRefs = useRef<(HTMLElement | null)[]>(
-    portfolioSections.map(() => null)
+    sections.map(() => null)
   );
 
   const isProgrammaticScrollRef = useRef<boolean>(false);
@@ -58,27 +61,27 @@ export function App() {
     }
   }, []);
 
-  const handleNext = useCallback(() => {
-    const next = Math.min(activeIndex + 1, portfolioSections.length - 1);
+  const handleNext = () => {
+    const next = Math.min(activeIndex + 1, sections.length - 1);
     setActiveIndex(next);
     scrollToSection(next);
-  }, [activeIndex, scrollToSection]);
+  };
 
-  const handlePrev = useCallback(() => {
+  const handlePrev = () => {
     const prev = Math.max(activeIndex - 1, 0);
     setActiveIndex(prev);
     scrollToSection(prev);
-  }, [activeIndex, scrollToSection]);
+  };
 
-  const handleSelectIndex = useCallback((index: number) => {
+  const handleSelectIndex = (index: number) => {
     setActiveIndex(index);
     scrollToSection(index);
-  }, [scrollToSection]);
+  };
 
   useEffect(() => {
     const revealObservers: IntersectionObserver[] = [];
 
-    portfolioSections.forEach((section, i) => {
+    sections.forEach((section, i) => {
       if (section.id === 'welcome') return;
       const el = sectionRefs.current[i];
       if (!el) return;
@@ -97,12 +100,12 @@ export function App() {
     });
 
     return () => revealObservers.forEach((obs) => obs.disconnect());
-  }, []);
+  }, [sections]);
 
   useEffect(() => {
     const observers: IntersectionObserver[] = [];
 
-    portfolioSections.forEach((_, i) => {
+    sections.forEach((_, i) => {
       const el = sectionRefs.current[i];
       if (!el) return;
 
@@ -123,9 +126,9 @@ export function App() {
     return () => {
       observers.forEach((obs) => obs.disconnect());
     };
-  }, []);
+  }, [sections]);
 
-  const currentSection = portfolioSections[activeIndex];
+  const currentSection = sections[activeIndex];
 
   const pages = [
     <WelcomePage onNavigate={handleSelectIndex} />,
@@ -153,11 +156,11 @@ export function App() {
     >
       {pages.map((page, i) => (
         <section
-          key={portfolioSections[i].id}
-          id={portfolioSections[i].id}
+          key={sections[i].id}
+          id={sections[i].id}
           ref={(el) => { sectionRefs.current[i] = el; }}
-          className={`portfolio-section-block${portfolioSections[i].id !== 'welcome' ? ' will-reveal' : ''}`}
-          aria-label={portfolioSections[i].title}
+          className={`portfolio-section-block${sections[i].id !== 'welcome' ? ' will-reveal' : ''}`}
+          aria-label={sections[i].title}
         >
           {page}
         </section>

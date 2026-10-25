@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { developerProfile } from '../data/portfolioData';
+import { getDeveloperProfile } from '../data/portfolioData';
+import { useLanguage } from '../context/LanguageContext';
 import mePhoto from '../assets/Me.avif';
 import { HeroTechGlows } from '../components/welcome/HeroTechGlows';
 import { FlipCardName } from '../components/welcome/FlipCardName';
@@ -40,6 +41,9 @@ interface WelcomePageProps {
 }
 
 export const WelcomePage: React.FC<WelcomePageProps> = ({ onNavigate }) => {
+  const { language } = useLanguage();
+  const profile = getDeveloperProfile(language);
+
   const [greeting, setGreeting] = useState(greetings[initialGreetingIndex]);
   const [isGreetingVisible, setIsGreetingVisible] = useState(true);
 
@@ -63,6 +67,17 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onNavigate }) => {
     return () => window.clearTimeout(timer);
   }, []);
 
+  const greetingPrefix = language === 'id' ? 'Saya' : "I'm";
+
+  const heroBio =
+    language === 'id'
+      ? 'Saya merancang dan membangun sistem terdistribusi yang tangguh, aplikasi web berkinerja tinggi, dan perangkat developer yang andal. Berfokus pada arsitektur deterministik, pengetikan ketat (strict typing), dan pengalaman interaktif yang mulus.'
+      : 'I design and build resilient distributed systems, high-performance web applications, and robust developer tooling. Focused on deterministic architectures, strict typing, and fluid interactive experiences.';
+
+  const btnExplore = language === 'id' ? 'Jelajahi Proyek →' : 'Explore Projects →';
+  const btnContact = language === 'id' ? 'Hubungi Saya' : 'Get In Touch';
+  const btnCV = language === 'id' ? 'Unduh CV ↓' : 'Download CV ↓';
+
   return (
     <div className="page-welcome">
       <section className="welcome-hero">
@@ -70,29 +85,25 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onNavigate }) => {
 
         <div className="welcome-hero-content">
           <h2 className="hero-main-title">
-            <span className="hero-title-greeting" aria-label="Hi, I'm">
+            <span className="hero-title-greeting" aria-label={`${greeting}, ${greetingPrefix}`}>
               <span
                 className={`hero-title-greeting-word${isGreetingVisible ? '' : ' is-changing'}`}
                 aria-hidden="true"
               >
                 <bdi dir="auto">{greeting},</bdi>
               </span>{' '}
-              I'm
+              {greetingPrefix}
             </span>
             <span className="hero-title-space"> </span>
             <br className="hero-title-break-mobile" />
             <span className="hero-title-name">
-              <FlipCardName name={developerProfile.name} suffix="." />
+              <FlipCardName name={profile.name} suffix="." />
             </span>
             <br />
-            <span className="hero-title-role">{developerProfile.role}.</span>
+            <span className="hero-title-role">{profile.role}.</span>
           </h2>
 
-          <p className="hero-bio">
-            I design and build resilient distributed systems, high-performance web applications,
-            and robust developer tooling. Focused on deterministic architectures, strict typing,
-            and fluid interactive experiences.
-          </p>
+          <p className="hero-bio">{heroBio}</p>
 
           <div className="welcome-actions">
             <button
@@ -100,7 +111,7 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onNavigate }) => {
               className="btn-primary"
               onClick={() => onNavigate(2)}
             >
-              Explore Projects →
+              {btnExplore}
             </button>
 
             <button
@@ -108,7 +119,7 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onNavigate }) => {
               className="btn-secondary"
               onClick={() => onNavigate(6)}
             >
-              Get In Touch
+              {btnContact}
             </button>
 
             <a
@@ -116,12 +127,12 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ onNavigate }) => {
               className="btn-secondary"
               onClick={handleDownloadCV}
             >
-              Download CV ↓
+              {btnCV}
             </a>
           </div>
         </div>
 
-        <HeroPortrait imageSrc={mePhoto} alt={developerProfile.name} />
+        <HeroPortrait imageSrc={mePhoto} alt={profile.name} />
       </section>
     </div>
   );
