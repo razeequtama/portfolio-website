@@ -1186,20 +1186,16 @@
 }
 
 /* --- 06. ABOUT ME PAGE --- */
-.about-layout {
-  display: flex;
-  flex-direction: column;
-  gap: 2.5rem;
-}
-
 .about-intro-card {
   font-size: var(--text-base);
-  line-height: 1.7;
+  line-height: 1.85;
   color: var(--text-secondary);
+  padding: 2.25rem;
+  max-width: 900px;
 }
 
 .about-paragraph {
-  margin-bottom: 1rem;
+  margin-bottom: 1.35rem;
 }
 
 .about-paragraph:last-child {

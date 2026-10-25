@@ -2,17 +2,6 @@ import React from 'react';
 import { SectionHeader } from '../components/common/SectionHeader';
 import { portfolioSections } from '../data/portfolioData';
 
-const projectBoundaries = [
-  'Frontend',
-  'APIs',
-  'Data models',
-  'Processing',
-  'Forecasting',
-  'Integration',
-  'Testing',
-  'Debugging',
-];
-
 const forecastApiChecks = [
   'HTTP status',
   'Response schema',
@@ -73,11 +62,6 @@ export const EngineeringPage: React.FC = () => {
               I’ve worked across these parts of projects, and I’m interested in how each
               responsibility affects the next—without assuming one structure fits every system.
             </p>
-            <ul className="engineering-boundaries" aria-label="Areas I've worked across">
-              {projectBoundaries.map((boundary) => (
-                <li key={boundary}>{boundary}</li>
-              ))}
-            </ul>
           </article>
 
           <article className="surface-card engineering-card engineering-evidence">

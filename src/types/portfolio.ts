@@ -81,11 +81,11 @@ export interface CoreValue {
 }
 
 export interface AboutContent {
-  headline: string;
+  headline?: string;
   bioParagraphs: string[];
-  personalInterests: PersonalInterest[];
-  coreValues: CoreValue[];
-  careerTrajectory: string[];
+  personalInterests?: PersonalInterest[];
+  coreValues?: CoreValue[];
+  careerTrajectory?: string[];
 }
 
 export interface SocialLink {

@@ -287,59 +287,11 @@ export const skillCategories: SkillCategory[] = [
    06. ABOUT ME DATA
    ========================================================================= */
 export const aboutData: AboutContent = {
-  headline: 'Curious, driven, and committed to growing as a software engineer.',
   bioParagraphs: [
-    'I am an aspiring Software Engineer and Computer Science student actively seeking my first software engineering internship. My technical enthusiasm spans full-stack web applications, backend service architecture, and systems programming fundamentals.',
-    'I approach software engineering with curiosity and discipline. Whether building asynchronous REST APIs with Python and FastAPI, exploring C++ memory management and data structures, or crafting fluid and responsive web experiences with React and TypeScript, I prioritize writing clean, maintainable, and well-typed code.',
-    'As an intern, I look forward to contributing meaningfully to production projects, absorbing best practices from senior mentors, and bringing a proactive, eager-to-learn mindset to every team challenge.',
-  ],
-  personalInterests: [
-    {
-      title: 'Analog Audio & Vinyl Turntables',
-      description: 'Appreciating analog acoustics, mechanical turntables, and vinyl record sound engineering.',
-      detail: 'Mechanical tonearms, vinyl sound grooves, acoustic precision.',
-      tag: 'Craft',
-    },
-    {
-      title: 'Algorithmic Problem Solving',
-      description: 'Strengthening problem-solving intuition through data structure exercises and logic challenges.',
-      detail: 'Graph traversal, dynamic programming, algorithmic efficiency.',
-      tag: 'Computer Science',
-    },
-    {
-      title: 'Open Source & Tech Exploration',
-      description: 'Reading source code from popular open-source repositories and experimenting with new tools.',
-      detail: 'Exploring compiler internals, developer tooling, web standards.',
-      tag: 'Learning',
-    },
-    {
-      title: 'Hardware & Workstation Setups',
-      description: 'Curating ergonomic and minimalist developer hardware and mechanical keyboards.',
-      detail: 'Mechanical switches, clean cable management, focused workspaces.',
-      tag: 'Hardware',
-    },
-  ],
-  coreValues: [
-    {
-      title: 'Continuous Growth & Humility',
-      tagline: 'Always eager to learn, listen, and iterate.',
-      description: 'Actively seeking feedback from teammates and mentors to rapidly improve code quality and engineering intuition.',
-    },
-    {
-      title: 'Code Craftsmanship & Clarity',
-      tagline: 'Clear and readable code always beats cleverness.',
-      description: 'Writing descriptive, type-safe, and self-documenting code with meaningful naming conventions and modular organization.',
-    },
-    {
-      title: 'Dependability & Team Ownership',
-      tagline: 'Taking initiative and seeing problems through.',
-      description: 'Communicating proactively, embracing challenging tasks, and demonstrating reliable follow-through on every project.',
-    },
-  ],
-  careerTrajectory: [
-    'Securing a software engineering internship to contribute to real-world production software.',
-    'Deepening knowledge of backend architectures, scalable databases, and API performance.',
-    'Continuously refining full-stack development skills with modern TypeScript and Python ecosystems.',
+    "I'm a Software Engineering student at BINUS University with a strong interest in building software that solves real-world problems. I enjoy working across the full stack, from designing intuitive user interfaces to engineering backend systems and data-driven solutions.",
+    "Through projects like Mercury, Aegis, and Lux, I've developed a deeper appreciation for what makes software effective beyond simply working. Performance, reliability, accuracy, and maintainability are integral to the engineering process. I approach problems analytically and iteratively, breaking down complexity, investigating solutions, and continuously refining my work.",
+    "Beyond engineering, I have a strong passion for design, particularly UI/UX, typography, and visual systems. I enjoy bringing technical functionality and visual clarity together to create software that is both well-engineered and intuitive to use.",
+    "I'm currently seeking a software engineering internship where I can contribute to meaningful projects, learn from experienced engineers, and continue developing my ability to build effective, reliable, and scalable software.",
   ],
 };
 
