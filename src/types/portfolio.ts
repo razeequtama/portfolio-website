@@ -32,6 +32,7 @@ export interface ProjectItem {
   previewGradient: string;
   liveUrl?: string;
   githubUrl?: string;
+  videoDemoUrl?: string;
   metrics: string[];
   architectureNotes?: string;
 }

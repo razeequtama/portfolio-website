@@ -4,6 +4,7 @@ import { portfolioSections, projectsData } from '../data/portfolioData';
 import type { ProjectItem } from '../types/portfolio';
 import { ProjectCardBack } from '../components/projects/ProjectCardBack';
 import { getProjectCardMeta } from '../utils/cardUtils';
+import { VideoDemoModal } from '../components/projects/VideoDemoModal';
 import mercuryLogo from '../assets/projects_logos/mercury_logo.svg';
 import aegisLogo from '../assets/projects_logos/aegis_logo.svg';
 import luxLogoText from '../assets/projects_logos/lux_logo_text.svg';
@@ -11,6 +12,7 @@ import luxLogoText from '../assets/projects_logos/lux_logo_text.svg';
 interface ProjectCardProps {
   project: ProjectItem;
   index: number;
+  onOpenVideo: (project: ProjectItem) => void;
 }
 
 const renderProjectBrand = (project: ProjectItem) => {
@@ -77,7 +79,7 @@ const renderProjectBrand = (project: ProjectItem) => {
   );
 };
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
+const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, onOpenVideo }) => {
   const cardRef = useRef<HTMLElement>(null);
   const throwTimerRef = useRef<number | null>(null);
   const flipTimerRef = useRef<number | null>(null);
@@ -185,9 +187,19 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
           {/* 2. Left-aligned Logo and Title lockup with subtle glow */}
           {renderProjectBrand(project)}
 
-          {/* 3. Live Demo and Source Code directly below Title and Logo */}
+          {/* 3. Video Demo / Live Demo and Source Code directly below Title and Logo */}
           <div className="project-links">
-            {project.liveUrl && (
+            {project.videoDemoUrl ? (
+              <button
+                type="button"
+                className="project-link-btn project-link-video"
+                onClick={() => onOpenVideo(project)}
+                aria-label={`Watch video demo for ${project.title}`}
+              >
+                <span className="btn-play-icon" aria-hidden="true">▶</span>
+                <span>Video Demo</span>
+              </button>
+            ) : project.liveUrl ? (
               <a
                 href={project.liveUrl}
                 target="_blank"
@@ -196,7 +208,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
               >
                 <span>Live Demo ↗</span>
               </a>
-            )}
+            ) : null}
             {project.githubUrl && (
               <a
                 href={project.githubUrl}
@@ -231,6 +243,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
 
 export const ProjectsPage: React.FC = () => {
   const projectsMeta = portfolioSections[2];
+  const [selectedVideoProject, setSelectedVideoProject] = useState<ProjectItem | null>(null);
 
   return (
     <div className="page-projects">
@@ -243,9 +256,19 @@ export const ProjectsPage: React.FC = () => {
 
       <div className="projects-grid">
         {projectsData.map((project: ProjectItem, index: number) => (
-          <ProjectCard key={project.id} project={project} index={index} />
+          <ProjectCard
+            key={project.id}
+            project={project}
+            index={index}
+            onOpenVideo={setSelectedVideoProject}
+          />
         ))}
       </div>
+
+      <VideoDemoModal
+        project={selectedVideoProject}
+        onClose={() => setSelectedVideoProject(null)}
+      />
     </div>
   );
 };

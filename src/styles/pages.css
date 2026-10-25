@@ -648,10 +648,35 @@
   transition: all var(--transition-fast);
 }
 
+.project-link-btn {
+  cursor: pointer;
+  text-decoration: none;
+  line-height: 1.2;
+}
+
 .project-link-btn:hover {
   border-color: var(--accent-color);
   color: var(--accent-color);
   background-color: rgba(255, 255, 255, 0.06);
+}
+
+.project-link-video {
+  background-color: rgba(225, 29, 72, 0.1);
+  border-color: rgba(225, 29, 72, 0.45);
+  color: #fb7185;
+}
+
+.project-link-video:hover {
+  background-color: rgba(225, 29, 72, 0.22);
+  border-color: var(--accent-color);
+  color: #ffffff;
+  box-shadow: 0 0 14px rgba(225, 29, 72, 0.35);
+}
+
+.btn-play-icon {
+  font-size: 0.65rem;
+  transform: translateY(-0.5px);
+  display: inline-block;
 }
 
 .project-subtitle {
