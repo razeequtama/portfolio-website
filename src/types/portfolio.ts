@@ -54,15 +54,16 @@ export interface ExperienceItem {
 
 export interface SkillItem {
   name: string;
-  level: number; // 1-100 or 1-5
-  experienceYears: string;
+  color?: string;
+  level?: number;
+  experienceYears?: string;
   highlight?: string;
 }
 
 export interface SkillCategory {
   id: string;
   name: string;
-  description: string;
+  description?: string;
   skills: SkillItem[];
 }
 
