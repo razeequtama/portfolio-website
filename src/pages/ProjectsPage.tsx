@@ -4,11 +4,77 @@ import { portfolioSections, projectsData } from '../data/portfolioData';
 import type { ProjectItem } from '../types/portfolio';
 import { ProjectCardBack } from '../components/projects/ProjectCardBack';
 import { getProjectCardMeta } from '../utils/cardUtils';
+import mercuryLogo from '../assets/projects_logos/mercury_logo.svg';
+import aegisLogo from '../assets/projects_logos/aegis_logo.svg';
+import luxLogoText from '../assets/projects_logos/lux_logo_text.svg';
 
 interface ProjectCardProps {
   project: ProjectItem;
   index: number;
 }
+
+const renderProjectBrand = (project: ProjectItem) => {
+  const titleUpper = project.title.toUpperCase();
+
+  if (titleUpper.includes('MERCURY') || project.id === 'omnitrack-task-hub') {
+    return (
+      <div className="project-brand-showcase">
+        <div className="project-brand-glow glow-mercury" aria-hidden="true" />
+        <div className="project-brand-lockup">
+          <img
+            src={mercuryLogo}
+            alt="Mercury logo"
+            className="brand-logo-mercury"
+            loading="lazy"
+            decoding="async"
+          />
+          <span className="brand-text-mercury">MERCURY</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (titleUpper.includes('AEGIS') || project.id === 'fastapi-pulse-service') {
+    return (
+      <div className="project-brand-showcase">
+        <div className="project-brand-glow glow-aegis" aria-hidden="true" />
+        <div className="project-brand-lockup">
+          <img
+            src={aegisLogo}
+            alt="Aegis logo"
+            className="brand-logo-aegis"
+            loading="lazy"
+            decoding="async"
+          />
+          <span className="brand-text-aegis">AEGIS</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (titleUpper.includes('LUX') || project.id === 'corecraft-memory-engine') {
+    return (
+      <div className="project-brand-showcase">
+        <div className="project-brand-glow glow-lux" aria-hidden="true" />
+        <div className="project-brand-lockup">
+          <img
+            src={luxLogoText}
+            alt="LUX logo and wordmark"
+            className="brand-logo-lux"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="project-preview-mock">
+      <span>{project.techStack.slice(0, 3).join(' • ')}</span>
+    </div>
+  );
+};
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
   const cardRef = useRef<HTMLElement>(null);
@@ -120,12 +186,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
                 </span>
               )}
             </div>
-            <div className="project-preview-mock">
-              <span>{project.techStack.slice(0, 3).join(' • ')}</span>
-            </div>
+            {renderProjectBrand(project)}
           </div>
 
-          <h2 className="project-title">{project.title}</h2>
+          <h2 className="project-title sr-only">{project.title}</h2>
           <div className="project-subtitle">{project.subtitle}</div>
           <p className="project-desc">{project.description}</p>
 
