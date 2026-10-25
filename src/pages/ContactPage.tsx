@@ -7,6 +7,8 @@ export const ContactPage: React.FC = () => {
   const contactMeta = portfolioSections[6];
 
   const [formSubmitted, setFormSubmitted] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const [copiedEmail, setCopiedEmail] = useState<boolean>(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -21,13 +23,37 @@ export const ContactPage: React.FC = () => {
     setTimeout(() => setCopiedEmail(false), 2500);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setFormSubmitted(true);
-    setTimeout(() => {
-      setFormSubmitted(false);
-      setFormData({ name: '', email: '', subject: '', message: '' });
-    }, 4000);
+    setIsSubmitting(true);
+    setErrorMessage('');
+
+    try {
+      const formElement = e.currentTarget;
+      const data = new FormData(formElement);
+      data.append('access_key', 'b77b5cba-89ec-4564-89ba-da731f6ad43c');
+
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        body: data,
+      });
+
+      const res = await response.json();
+      if (res.success) {
+        setFormSubmitted(true);
+        setFormData({ name: '', email: '', subject: '', message: '' });
+        formElement.reset();
+        setTimeout(() => {
+          setFormSubmitted(false);
+        }, 6000);
+      } else {
+        setErrorMessage(res.message || 'Something went wrong. Please try again or reach out directly via email.');
+      }
+    } catch {
+      setErrorMessage('Unable to send message. Please check your connection or reach out directly via email.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -124,6 +150,20 @@ export const ContactPage: React.FC = () => {
             Send a message below.
           </p>
 
+          {errorMessage && (
+            <div
+              className="form-status-alert"
+              style={{
+                borderColor: '#ef4444',
+                color: '#f87171',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                marginBottom: '1rem',
+              }}
+            >
+              {errorMessage}
+            </div>
+          )}
+
           {formSubmitted ? (
             <div className="form-status-alert">
               <strong>Message Received!</strong> Thank you for reaching out. I will get back to you shortly.
@@ -136,6 +176,7 @@ export const ContactPage: React.FC = () => {
                 </label>
                 <input
                   id="contact-name"
+                  name="name"
                   type="text"
                   required
                   placeholder="e.g. Alex Chen"
@@ -151,6 +192,7 @@ export const ContactPage: React.FC = () => {
                 </label>
                 <input
                   id="contact-email"
+                  name="email"
                   type="email"
                   required
                   placeholder="name@company.com"
@@ -166,6 +208,7 @@ export const ContactPage: React.FC = () => {
                 </label>
                 <input
                   id="contact-subject"
+                  name="subject"
                   type="text"
                   required
                   placeholder="e.g. Software Engineering Internship Opportunity"
@@ -181,6 +224,7 @@ export const ContactPage: React.FC = () => {
                 </label>
                 <textarea
                   id="contact-message"
+                  name="message"
                   required
                   placeholder="Feel free to share details about the opportunity or what you'd like to collaborate on..."
                   className="form-textarea"
@@ -193,8 +237,9 @@ export const ContactPage: React.FC = () => {
                 type="submit"
                 className="btn-primary"
                 style={{ justifyContent: 'center', marginTop: '0.5rem' }}
+                disabled={isSubmitting}
               >
-                Send Message →
+                {isSubmitting ? 'Sending...' : 'Send Message →'}
               </button>
             </form>
           )}
@@ -203,4 +248,3 @@ export const ContactPage: React.FC = () => {
     </div>
   );
 };
-

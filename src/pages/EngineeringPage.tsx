@@ -60,7 +60,7 @@ export const EngineeringPage: React.FC = () => {
             </div>
             <p>
               I’ve worked across these parts of projects, and I’m interested in how each
-              responsibility affects the next—without assuming one structure fits every system.
+              responsibility affects the next without assuming one structure fits every system.
             </p>
           </article>
 
