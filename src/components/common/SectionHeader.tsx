@@ -92,7 +92,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
           </React.Fragment>
         ))}
       </h1>
-      <p className="section-subtitle">{subtitle}</p>
+      {subtitle ? <p className="section-subtitle">{subtitle}</p> : null}
     </header>
   );
 };

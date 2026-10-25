@@ -41,13 +41,14 @@ export interface ProjectItem {
 export interface ExperienceItem {
   id: string;
   role: string;
-  company: string;
+  company?: string;
   period: string;
   location: string;
-  type: 'Full-Time' | 'Contract' | 'Education';
-  summary: string;
+  type?: 'Full-Time' | 'Contract' | 'Education' | string;
+  summary?: string;
   achievements: string[];
-  techStack: string[];
+  techStack?: string[];
+  image?: string;
   featuredBadge?: string;
 }
 
