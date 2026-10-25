@@ -12,14 +12,13 @@ const RED_SUITS = new Set(['hearts', 'diamonds']);
 interface SectionHeaderProps {
   number?: string;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   badge?: string;
   suit?: string;
 }
 
 export const SectionHeader: React.FC<SectionHeaderProps> = ({
   title,
-  subtitle,
   suit,
 }) => {
   const glyph = suit ? SUIT_GLYPHS[suit] : undefined;
@@ -91,7 +90,6 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
           </React.Fragment>
         ))}
       </h1>
-      {subtitle ? <p className="section-subtitle">{subtitle}</p> : null}
     </header>
   );
 };

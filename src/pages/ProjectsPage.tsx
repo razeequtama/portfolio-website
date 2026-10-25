@@ -253,7 +253,6 @@ export const ProjectsPage: React.FC = () => {
       <SectionHeader
         number={projectsMeta.number}
         title={projectsMeta.title}
-        subtitle={projectsMeta.subtitle}
         suit={projectsMeta.cardSuit}
       />
 

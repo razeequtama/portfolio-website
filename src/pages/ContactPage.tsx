@@ -61,7 +61,6 @@ export const ContactPage: React.FC = () => {
       <SectionHeader
         number={contactMeta.number}
         title={contactMeta.title}
-        subtitle={contactMeta.subtitle}
         suit={contactMeta.cardSuit}
       />
 

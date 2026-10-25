@@ -11,7 +11,6 @@ export const ExperiencePage: React.FC = () => {
       <SectionHeader
         number={experienceMeta.number}
         title={experienceMeta.title}
-        subtitle={experienceMeta.subtitle}
         suit={experienceMeta.cardSuit}
       />
 

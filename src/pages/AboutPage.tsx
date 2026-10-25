@@ -10,7 +10,6 @@ export const AboutPage: React.FC = () => {
       <SectionHeader
         number={aboutMeta.number}
         title={aboutMeta.title}
-        subtitle={aboutMeta.subtitle}
         suit={aboutMeta.cardSuit}
       />
 

@@ -12,7 +12,6 @@ export const TechStackPage: React.FC = () => {
       <SectionHeader
         number={techStackMeta.number}
         title={techStackMeta.title}
-        subtitle={techStackMeta.subtitle}
         suit={techStackMeta.cardSuit}
       />
 

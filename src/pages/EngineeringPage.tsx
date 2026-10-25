@@ -19,7 +19,6 @@ export const EngineeringPage: React.FC = () => {
       <SectionHeader
         number={engineeringMeta.number}
         title={engineeringMeta.title}
-        subtitle={engineeringMeta.subtitle}
         suit={engineeringMeta.cardSuit}
       />
 
