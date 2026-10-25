@@ -1,23 +1,39 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { SectionHeader } from '../components/common/SectionHeader';
 import { portfolioSections, projectsData } from '../data/portfolioData';
 import type { ProjectItem } from '../types/portfolio';
-
-const projectSuits: Record<string, string> = {
-  mercury: '♠',
-  aegis: '♥',
-  lux: '♣',
-};
+import { ProjectCardBack } from '../components/projects/ProjectCardBack';
+import { getProjectCardMeta } from '../utils/cardUtils';
 
 interface ProjectCardProps {
   project: ProjectItem;
+  index: number;
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
+const ProjectCard: React.FC<ProjectCardProps> = ({ project, index }) => {
   const cardRef = useRef<HTMLElement>(null);
+  const throwTimerRef = useRef<number | null>(null);
+  const flipTimerRef = useRef<number | null>(null);
+
+  const [isThrown, setIsThrown] = useState(
+    () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  );
   const [isFlipped, setIsFlipped] = useState(
     () => window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   );
+
+  const handleReveal = useCallback(() => {
+    if (throwTimerRef.current !== null) {
+      window.clearTimeout(throwTimerRef.current);
+      throwTimerRef.current = null;
+    }
+    if (flipTimerRef.current !== null) {
+      window.clearTimeout(flipTimerRef.current);
+      flipTimerRef.current = null;
+    }
+    setIsThrown(true);
+    setIsFlipped(true);
+  }, []);
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -26,39 +42,70 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
 
     const card = cardRef.current;
     if (!card || !('IntersectionObserver' in window)) {
+      setIsThrown(true);
       const frame = window.requestAnimationFrame(() => setIsFlipped(true));
       return () => window.cancelAnimationFrame(frame);
     }
 
-    let revealTimer: number | undefined;
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           observer.disconnect();
-          revealTimer = window.setTimeout(() => setIsFlipped(true), 1500);
+
+          // 1. Staggered card throw: thrown from outside the screen on the left, one by one
+          throwTimerRef.current = window.setTimeout(() => {
+            setIsThrown(true);
+          }, 80 + index * 340);
+
+          // 2. Staggered flip reveal: once landed, flip one by one
+          flipTimerRef.current = window.setTimeout(() => {
+            setIsFlipped(true);
+          }, 1150 + index * 480);
         }
       },
-      { threshold: 0.3 },
+      { threshold: 0.15 },
     );
 
     observer.observe(card);
     return () => {
       observer.disconnect();
-      if (revealTimer !== undefined) window.clearTimeout(revealTimer);
+      if (throwTimerRef.current !== null) {
+        window.clearTimeout(throwTimerRef.current);
+      }
+      if (flipTimerRef.current !== null) {
+        window.clearTimeout(flipTimerRef.current);
+      }
     };
-  }, []);
+  }, [index]);
+
+  const meta = getProjectCardMeta(project, index);
+
+  // Flight trajectory parameters per card column (increasing distance & rotation)
+  const throwConfigs = [
+    { initialY: '-20px', initialRot: '-26deg', overshootX: '12px', overshootRot: '1.6deg' },
+    { initialY: '-35px', initialRot: '-30deg', overshootX: '16px', overshootRot: '2.0deg' },
+    { initialY: '-45px', initialRot: '-34deg', overshootX: '20px', overshootRot: '2.4deg' },
+  ];
+  const config = throwConfigs[index % throwConfigs.length];
 
   return (
     <article
       ref={cardRef}
-      className="surface-card project-card"
+      className={`surface-card project-card ${isThrown ? 'is-thrown' : 'is-waiting-throw'}`}
+      style={{
+        '--throw-initial-y': config.initialY,
+        '--throw-initial-rot': config.initialRot,
+        '--throw-overshoot-x': config.overshootX,
+        '--throw-overshoot-rot': config.overshootRot,
+      } as React.CSSProperties}
       aria-label={`${project.title} project`}
     >
       <div className={`project-card-inner${isFlipped ? ' is-flipped' : ''}`}>
-        <div className="project-card-back" aria-hidden="true">
-          <span className="project-card-back-suit">{projectSuits[project.id] ?? '♦'}</span>
-          <span className="project-card-back-title">{project.title}</span>
-        </div>
+        <ProjectCardBack
+          project={project}
+          meta={meta}
+          onReveal={handleReveal}
+        />
 
         <div className="project-card-front" inert={!isFlipped}>
           <div
@@ -131,8 +178,8 @@ export const ProjectsPage: React.FC = () => {
       />
 
       <div className="projects-grid">
-        {projectsData.map((project: ProjectItem) => (
-          <ProjectCard key={project.id} project={project} />
+        {projectsData.map((project: ProjectItem, index: number) => (
+          <ProjectCard key={project.id} project={project} index={index} />
         ))}
       </div>
     </div>

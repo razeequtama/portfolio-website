@@ -4,6 +4,7 @@
 @import './styles/turntable.css';
 @import './styles/pages.css';
 @import './styles/flipCardName.css';
+@import './styles/projectCardBack.css';
 
 #root {
   width: 100%;

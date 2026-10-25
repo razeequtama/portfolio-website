@@ -1,0 +1,447 @@
+/* === THE CARD COLLECTOR: LUXURY PLAYING CARD BACK === */
+
+.project-card-back.card-collector-back {
+  display: flex;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+  background: linear-gradient(165deg, #1e1c19 0%, #151311 55%, #0f0e0d 100%);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  color: var(--text-primary);
+  box-shadow:
+    inset 0 0 28px rgba(0, 0, 0, 0.65),
+    0 12px 36px rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  transition:
+    border-color var(--transition-normal),
+    box-shadow var(--transition-normal),
+    transform var(--transition-fast);
+}
+
+[data-theme='light'] .project-card-back.card-collector-back {
+  background: linear-gradient(165deg, #fbf7f0 0%, #f4ede1 55%, #eae0d0 100%);
+  border-color: rgba(197, 160, 89, 0.5);
+  box-shadow:
+    inset 0 0 24px rgba(212, 175, 55, 0.12),
+    0 12px 32px rgba(28, 25, 23, 0.12);
+}
+
+.project-card-back.card-collector-back:hover {
+  border-color: rgba(212, 175, 55, 0.75);
+  box-shadow:
+    inset 0 0 28px rgba(0, 0, 0, 0.5),
+    0 16px 44px rgba(0, 0, 0, 0.55),
+    0 0 24px rgba(212, 175, 55, 0.22);
+}
+
+[data-theme='light'] .project-card-back.card-collector-back:hover {
+  border-color: rgba(197, 160, 89, 0.85);
+  box-shadow:
+    inset 0 0 24px rgba(212, 175, 55, 0.2),
+    0 16px 40px rgba(28, 25, 23, 0.16),
+    0 0 20px rgba(197, 160, 89, 0.25);
+}
+
+/* Dynamic Foil Sheen Sweep across Card Face */
+.card-back-foil-sweep {
+  position: absolute;
+  inset: -60%;
+  background: linear-gradient(
+    115deg,
+    transparent 35%,
+    rgba(212, 175, 55, 0.06) 44%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(212, 175, 55, 0.06) 56%,
+    transparent 65%
+  );
+  transform: translateX(-120%) rotate(25deg);
+  pointer-events: none;
+  z-index: 5;
+  animation: cardFoilSweep 5.5s cubic-bezier(0.2, 0.7, 0.2, 1) infinite;
+}
+
+[data-theme='light'] .card-back-foil-sweep {
+  background: linear-gradient(
+    115deg,
+    transparent 35%,
+    rgba(197, 160, 89, 0.1) 44%,
+    rgba(255, 255, 255, 0.45) 50%,
+    rgba(197, 160, 89, 0.1) 56%,
+    transparent 65%
+  );
+}
+
+@keyframes cardFoilSweep {
+  0%, 25% {
+    transform: translateX(-130%) rotate(25deg);
+    opacity: 0;
+  }
+  35% {
+    opacity: 1;
+  }
+  50%, 100% {
+    transform: translateX(130%) rotate(25deg);
+    opacity: 0;
+  }
+}
+
+/* SVG Vector Guilloché & Gilded Engraving Framework */
+.card-back-guilloche-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.guilloche-stroke-primary {
+  color: var(--color-gold);
+  opacity: 0.32;
+}
+
+[data-theme='light'] .guilloche-stroke-primary {
+  opacity: 0.38;
+}
+
+.guilloche-dot {
+  color: var(--color-gold);
+  opacity: 0.5;
+}
+
+.guilloche-stroke-secondary {
+  color: #ffffff;
+  opacity: 0.08;
+}
+
+[data-theme='light'] .guilloche-stroke-secondary {
+  color: #1c1917;
+  opacity: 0.06;
+}
+
+.card-border-outer {
+  filter: drop-shadow(0 0 2px rgba(212, 175, 55, 0.4));
+}
+
+.card-border-dashed {
+  color: var(--color-gold);
+  opacity: 0.35;
+}
+
+.card-border-inner {
+  filter: drop-shadow(0 0 1px rgba(212, 175, 55, 0.25));
+}
+
+.corner-flourish {
+  opacity: 0.9;
+}
+
+/* Central Medallion Architecture */
+.medallion-base {
+  fill: #181614;
+}
+
+[data-theme='light'] .medallion-base {
+  fill: #f5eee2;
+}
+
+.medallion-bead-ring {
+  color: var(--color-gold);
+  opacity: 0.4;
+}
+
+.medallion-text {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+[data-theme='light'] .medallion-text {
+  text-shadow: none;
+}
+
+.medallion-inner-rim {
+  filter: drop-shadow(0 0 2px rgba(212, 175, 55, 0.35));
+}
+
+.medallion-inner-beads {
+  color: var(--color-gold);
+  opacity: 0.45;
+}
+
+.medallion-core-circle {
+  fill: #12100e;
+  stroke: rgba(212, 175, 55, 0.45);
+  stroke-width: 0.85;
+}
+
+[data-theme='light'] .medallion-core-circle {
+  fill: #ffffff;
+  stroke: rgba(197, 160, 89, 0.55);
+}
+
+/* Corner Pips (Rank above Suit) */
+.card-back-pip {
+  position: absolute !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 0.15rem;
+  z-index: 6;
+  pointer-events: none;
+}
+
+.card-back-pip.card-back-pip-tl,
+.card-back-pip.pip-top-left {
+  position: absolute !important;
+  top: 1.45rem !important;
+  left: 1.45rem !important;
+  bottom: auto !important;
+  right: auto !important;
+  transform: none !important;
+  margin: 0 !important;
+}
+
+.card-back-pip.card-back-pip-br,
+.card-back-pip.pip-bottom-right {
+  position: absolute !important;
+  bottom: 1.45rem !important;
+  right: 1.45rem !important;
+  top: auto !important;
+  left: auto !important;
+  transform: rotate(180deg) !important;
+  margin: 0 !important;
+}
+
+.card-back-pip .pip-rank {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-gold);
+  letter-spacing: -0.02em;
+}
+
+.card-back-pip .pip-suit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--color-gold);
+}
+
+.project-card-back.is-red-suit .card-back-pip .pip-suit,
+.project-card-back.is-red-suit .card-back-pip .pip-rank {
+  color: #f43f5e;
+}
+
+[data-theme='light'] .project-card-back.is-red-suit .card-back-pip .pip-suit,
+[data-theme='light'] .project-card-back.is-red-suit .card-back-pip .pip-rank {
+  color: #dc2626;
+}
+
+/* Central HTML Core Overlay (Medallion Center) */
+.medallion-html-core {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 6;
+  pointer-events: none;
+  text-align: center;
+  width: 100%;
+}
+
+.medallion-suit-glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.75rem;
+  line-height: 1;
+  color: var(--color-gold);
+  filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.45));
+  transition: transform 0.3s ease;
+}
+
+.medallion-suit-glyph.suit-hearts,
+.medallion-suit-glyph.suit-diamonds {
+  color: #f43f5e;
+  filter: drop-shadow(0 0 14px rgba(244, 63, 94, 0.55));
+}
+
+[data-theme='light'] .medallion-suit-glyph.suit-hearts,
+[data-theme='light'] .medallion-suit-glyph.suit-diamonds {
+  color: #dc2626;
+  filter: drop-shadow(0 0 10px rgba(220, 38, 38, 0.4));
+}
+
+.project-card-back.card-collector-back:hover .medallion-suit-glyph {
+  transform: scale(1.08);
+}
+
+.medallion-roman-numeral {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 0.25rem;
+  letter-spacing: 0.08em;
+}
+
+.roman-star {
+  font-size: 0.58rem;
+  color: var(--color-gold);
+}
+
+/* =========================================================================
+   PROMINENT PROJECT TITLE SECTION
+   ========================================================================= */
+
+.card-back-title-section {
+  position: absolute;
+  bottom: 3.4rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 6;
+  pointer-events: none;
+  text-align: center;
+  padding: 0 1.5rem;
+}
+
+.card-back-title-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 68%;
+  max-width: 190px;
+  margin-bottom: 0.65rem;
+}
+
+.divider-flourish {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+  opacity: 0.65;
+}
+
+.divider-star {
+  color: var(--color-gold);
+  font-size: 0.65rem;
+}
+
+.card-back-project-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.35rem, 4.4vw, 3.25rem);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  text-shadow:
+    0 0 20px rgba(212, 175, 55, 0.45),
+    0 2px 6px rgba(0, 0, 0, 0.9);
+  transition: transform 0.3s ease, letter-spacing 0.3s ease;
+}
+
+.project-card-back.is-red-suit .card-back-project-title {
+  text-shadow:
+    0 0 22px rgba(244, 63, 94, 0.45),
+    0 2px 6px rgba(0, 0, 0, 0.9);
+}
+
+[data-theme='light'] .card-back-project-title {
+  color: #1c1917;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.project-card-back.card-collector-back:hover .card-back-project-title {
+  letter-spacing: 0.2em;
+  transform: scale(1.03);
+}
+
+.card-back-project-subtitle {
+  margin-top: 0.55rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.26em;
+  color: var(--color-gold);
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+/* =========================================================================
+   DEALER THROW ANIMATION: CARDS THROWN FROM OUTSIDE SCREEN ON THE LEFT
+   ========================================================================= */
+
+/* Disarm generic scrollReveal translate transition on project cards */
+.will-reveal .project-card,
+.is-revealed .project-card {
+  transition: border-color var(--transition-normal), box-shadow var(--transition-normal) !important;
+}
+
+/* Resting state off-screen to the left before being thrown */
+.project-card.is-waiting-throw {
+  opacity: 0 !important;
+  pointer-events: none;
+  transform: translate3d(calc(-100vw - 140px), var(--throw-initial-y, -30px), 0) rotate(var(--throw-initial-rot, -28deg)) scale(0.92);
+  will-change: transform, opacity;
+}
+
+/* Active card throw flying across the screen from the left */
+.project-card.is-thrown {
+  animation: cardThrowFromLeft 0.84s cubic-bezier(0.12, 0.94, 0.22, 1) forwards;
+  will-change: transform, opacity;
+}
+
+@keyframes cardThrowFromLeft {
+  0% {
+    opacity: 0;
+    transform: translate3d(calc(-100vw - 140px), var(--throw-initial-y, -30px), 0) rotate(var(--throw-initial-rot, -28deg)) scale(0.92);
+    box-shadow: -35px 25px 50px rgba(0, 0, 0, 0.7);
+  }
+  20% {
+    opacity: 1;
+  }
+  70% {
+    /* Fast flight deceleration, hitting landing spot with slight forward slide & angle */
+    transform: translate3d(var(--throw-overshoot-x, 14px), 2px, 0) rotate(var(--throw-overshoot-rot, 1.8deg)) scale(1.018);
+    box-shadow: -15px 16px 36px rgba(0, 0, 0, 0.55);
+  }
+  86% {
+    /* Subtle counter-rebound / table friction */
+    transform: translate3d(-3px, -1px, 0) rotate(-0.6deg) scale(0.998);
+  }
+  100% {
+    /* Settles cleanly on the table felt */
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-card.is-waiting-throw,
+  .project-card.is-thrown {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

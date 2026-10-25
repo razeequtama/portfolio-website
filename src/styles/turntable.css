@@ -723,14 +723,14 @@
   z-index: 3;
 }
 
-.pip-top-left {
+.turntable-card .pip-top-left {
   position: absolute;
   top: 13px;
   left: 14px;
   z-index: 3;
 }
 
-.pip-bottom-right {
+.turntable-card .pip-bottom-right {
   position: static;
   transform: rotate(180deg);
   margin-right: 2px;

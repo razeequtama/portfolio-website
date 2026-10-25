@@ -54,6 +54,7 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
   const introSpinTimerRef = useRef<number | null>(null);
   const resetTimerRef = useRef<number | null>(null);
   const startSpinTimerRef = useRef<number | null>(null);
+  const dragRafRef = useRef<number | null>(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -145,6 +146,7 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
       if (introSpinTimerRef.current) clearTimeout(introSpinTimerRef.current);
       if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
       if (startSpinTimerRef.current) clearTimeout(startSpinTimerRef.current);
+      if (dragRafRef.current !== null) cancelAnimationFrame(dragRafRef.current);
     };
   }, []);
 
@@ -195,7 +197,12 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
       }
 
       currentDragAngleRef.current = angleDelta;
-      setDragOffsetAngle(angleDelta);
+      if (dragRafRef.current === null) {
+        dragRafRef.current = requestAnimationFrame(() => {
+          setDragOffsetAngle(currentDragAngleRef.current);
+          dragRafRef.current = null;
+        });
+      }
     },
     [isDragging, radius, activeIndex]
   );
@@ -226,6 +233,10 @@ export const TurntableWheel: React.FC<TurntableWheelProps> = ({
     }
 
     // Reset drag angle offset smoothly
+    if (dragRafRef.current !== null) {
+      cancelAnimationFrame(dragRafRef.current);
+      dragRafRef.current = null;
+    }
     setDragOffsetAngle(0);
     currentDragAngleRef.current = 0;
   }, [isDragging, activeIndex, onSelectIndex]);
